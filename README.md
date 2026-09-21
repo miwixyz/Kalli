@@ -1,5 +1,7 @@
 # Kalli
 
+<img src="assets/Kalli-App_Icon.png" width="128" align="right" alt="Kalli">
+
 Menüleisten-Kalender für macOS. Bewusst klein.
 
 Zeigt Datum, Monatsraster, Termine und Erinnerungen — und sonst nichts.
@@ -92,6 +94,61 @@ Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für dies
    Fenster zu farbigem Nebel. Die Einstellungen liegen deshalb im
    Popover selbst, nicht in einem eigenen Fenster.
 
+## Dokumentation
+
+| Wo | Was |
+|---|---|
+| `Kalli/Resources/HILFE.md` | Bedienung — wird **in der App** unter Einstellungen → Hilfe angezeigt |
+| `Kalli/Resources/RECHTLICHES.md` | Lizenz, Datenschutz, Gewährleistung — ebenfalls in der App |
+| `CHANGELOG.md` | Änderungen je Version — in der App unter „Änderungen" |
+
+Diese drei Dateien liegen **als Dateien im App-Bundle**, nicht als Zeichenketten
+im Quelltext. `make build` spiegelt das CHANGELOG bei jedem Durchlauf frisch,
+die Versionsnummer liest die App aus der `Info.plist`.
+
+Der Grund ist eine teuer bezahlte Erfahrung aus Tippi: Eine Hilfe, die im Code
+steht, driftet — sie ist eine Kopie, und Kopien veralten. Dort hing sie an einem
+Tag fünf Versionen hinterher.
+
+### Das Doku-Gate
+
+`make install` läuft nicht, wenn die Doku dem Code hinterherhinkt:
+
+```bash
+bash scripts/docs-gate.sh
+```
+
+Geprüft wird, was maschinell prüfbar ist — nicht, ob die Prosa gut ist:
+
+1. Existieren `CHANGELOG.md`, `README.md`, `LICENSE`, `HILFE.md`, `RECHTLICHES.md`?
+2. Kennt das CHANGELOG die Version aus `project.yml`?
+3. Wurden Swift-Dateien geändert, seit die Doku zuletzt angefasst wurde?
+4. Stimmt das CHANGELOG im Bundle mit dem im Repo überein?
+
+Bewusst übergehen geht — aber nur laut, und die Begründung landet in der Ausgabe:
+
+```bash
+DOCS_WAIVER="nur Formatierung" make install
+```
+
+Beim allerersten Lauf hat das Gate sofort eine fehlende `LICENSE` gefunden, die
+beim Umbenennen des Projekts verloren gegangen war.
+
+## Aktualisieren
+
+Kalli hat **kein Sparkle**. Automatische Updates brauchen einen öffentlich
+erreichbaren Appcast, und das Repo ist privat. Der Update-Weg ist:
+
+```bash
+cd ~/Coding/Kalli && git pull && make install
+```
+
 ## Lizenz
 
-MIT.
+MIT — siehe [LICENSE](LICENSE). Rechtliche Hinweise und Datenschutz stehen in
+`Kalli/Resources/RECHTLICHES.md` und in der App unter Einstellungen → Hilfe →
+Rechtliches.
+
+**Kurz zum Datenschutz:** Kalli sendet nichts. Kein Server, keine Analyse, keine
+Kennungen. Gelesen werden Kalender und Erinnerungen — ausschließlich lesend.
+Gespeichert werden nur die eigenen Einstellungen, keine Termininhalte.

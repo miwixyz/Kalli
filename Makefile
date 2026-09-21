@@ -1,11 +1,17 @@
-.PHONY: gen build run install clean
+.PHONY: docs gen build run install clean check-docs
 
 APP = Kalli
 CONFIG ?= Debug
 DERIVED = build
 DEST = /Applications/$(APP).app
 
-gen:
+# Das CHANGELOG lebt im Repo-Wurzelverzeichnis. Damit die App nie eine aeltere
+# Fassung anzeigt als das Repo enthaelt, wird es bei JEDEM Build frisch
+# gespiegelt -- kein Vorsatz, ein Schritt.
+docs:
+	cp CHANGELOG.md Kalli/Resources/CHANGELOG.md
+
+gen: docs
 	xcodegen generate
 
 build: gen
@@ -22,7 +28,10 @@ run: build
 
 # Autostart (SMAppService) verlangt einen festen Ort und eine stabile Signatur.
 # Aus dem build-Ordner heraus vergisst macOS die Registrierung beim nächsten Build.
-install: build
+check-docs:
+	@bash scripts/docs-gate.sh
+
+install: check-docs build
 	@pkill -x $(APP) || true
 	@test -d "$(DEST)" && rm -rf "$(DEST)" || true
 	cp -R $(DERIVED)/Build/Products/$(CONFIG)/$(APP).app /Applications/

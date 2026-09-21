@@ -16,6 +16,7 @@ struct SettingsView: View {
         case sources = "Kalender"
         case menuBar = "Menüleiste"
         case popover = "Ansicht"
+        case help = "Hilfe"
         var id: String { rawValue }
     }
 
@@ -35,6 +36,7 @@ struct SettingsView: View {
                     case .sources: SourcesSection()
                     case .menuBar: MenuBarSection()
                     case .popover: PopoverSection()
+                    case .help: HelpView()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
