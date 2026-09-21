@@ -73,7 +73,7 @@ MacCal/
 
 Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für diese Größe.
 
-## Drei Entscheidungen, die nicht offensichtlich sind
+## Vier Entscheidungen, die nicht offensichtlich sind
 
 1. **Wiederkehrende Termine werden nicht selbst aufgelöst.** `EKEventStore`
    expandiert sie inklusive Ausnahmen und verschobener Einzeltermine. Eigene
@@ -89,8 +89,8 @@ Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für dies
    gewünschte.
 4. **Liquid Glass nur auf dem Popover.** Vollflächige Transluzenz mittelt das
    Hintergrundbild auf seine Durchschnittsfarbe; auf buntem Schreibtisch werden
-   Fenster zu farbigem Nebel. Das Einstellungsfenster bleibt deshalb solide —
-   so wie Finder, Mail und Notizen es auch halten.
+   Fenster zu farbigem Nebel. Die Einstellungen liegen deshalb im
+   Popover selbst, nicht in einem eigenen Fenster.
 
 ## Lizenz
 
