@@ -10,6 +10,8 @@ Erste Fassung, in einer Sitzung gebaut.
 
 - **App-Symbol** — Kalli als 3D-Maskottchen, Geschwister von Tippi: gleiche
   Bauform, gleiche Farbwelt, aber ein Kalenderblatt statt einer Sprechblase
+- **App-Symbol in der Hilfe sichtbar** — Kalli hat kein Dock-Symbol und kein
+  „Über"-Fenster; ohne diesen Platz wäre das Maskottchen nur im Finder zu sehen
 - **Menüleisten-Symbol** — gezeichnetes Kalenderblatt mit der heutigen Zahl,
   Template-Image (folgt Hell/Dunkel), abschaltbar
 - **Hilfe, Änderungen und Rechtliches in der App** — als Dateien im Bundle,

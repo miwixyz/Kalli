@@ -52,9 +52,21 @@ struct HelpView: View {
             }
             .frame(height: 380)
 
-            Text(version)
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
+            // Das App-Symbol hat sonst keinen Ort: Kalli ist eine
+            // LSUIElement-App ohne Dock-Symbol und ohne "Über"-Fenster.
+            // Ohne diese Zeile existiert das Maskottchen nur im Finder.
+            HStack(spacing: 8) {
+                if let icon = NSApp.applicationIconImage {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: 34, height: 34)
+                }
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Kalli").font(.callout.weight(.semibold))
+                    Text(version).font(.caption2).foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
         }
     }
 

@@ -4,7 +4,9 @@ Kalli zeigt deinen Kalender im Menübalken. Nur lesen, nie schreiben.
 
 ## Menüleiste
 
-Das **Kalenderblatt mit der Tageszahl** ist immer da. Daneben lassen sich
+Das **Kalenderblatt mit der Tageszahl** lässt sich unter Einstellungen →
+Menüleiste einschalten (ab Werk aus, weil neben dem Datumstext die Zahl sonst
+zweimal dasteht). Daneben lassen sich
 einblenden:
 
 - **Datum als Text** — Format frei wählbar (`EEE d. MMM` → Mo 21. Sep)
@@ -16,6 +18,9 @@ einblenden:
 
 Schaltest du Symbol *und* Datum ab, bliebe der Eintrag leer und Kalli wäre in
 der Leiste nicht mehr auffindbar. Das Symbol bleibt in dem Fall sichtbar.
+
+Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
+taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
 
 ## Popover
 
