@@ -21,6 +21,7 @@ struct KalliApp: App {
                 .environment(prefs)
                 .environment(store)
                 .environment(label)
+                .tint(Theme.accent)
                 .task {
                     // Berechtigung erst beim ersten Öffnen erfragen, nicht beim
                     // Start: Ein Dialog, der ungefragt beim Login aufpoppt, wird

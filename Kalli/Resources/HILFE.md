@@ -29,8 +29,8 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
 
 ## Popover
 
-- **Monatsraster** — heute ist gefüllt in der Akzentfarbe, der angeklickte Tag
-  bekommt einen Ring. Ein Punkt unter der Zahl heißt: an diesem Tag steht etwas an.
+- **Monatsraster** — heute ist ein gefüllter Kreis in Kallis Blau, der
+  angeklickte Tag ein Ring. Ein Punkt unter der Zahl heißt: an diesem Tag steht etwas an.
 - **Schriftgröße** in fünf Stufen (Einstellungen → Ansicht). Sie skaliert
   Schrift, Rasterzellen und Fensterbreite **gemeinsam** — sonst wüchse der Text
   und das Raster bliebe stehen.

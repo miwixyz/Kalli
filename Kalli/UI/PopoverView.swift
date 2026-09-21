@@ -82,7 +82,7 @@ struct PopoverView: View {
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
-        .glassSurface(in: RoundedRectangle(cornerRadius: 12))
+        .glassSurface(in: RoundedRectangle(cornerRadius: 14))
         .task(id: visibleMonth) {
             await store.load(month: visibleMonth, calendar: calendar)
             label.update()
@@ -97,6 +97,7 @@ struct PopoverView: View {
                  ? "Einstellungen"
                  : monthFormatter.string(from: visibleMonth).capitalized)
                 .font(.headline)
+                .contentTransition(.numericText())
             Spacer()
             if !showingSettings {
                 Button { step(-1) } label: { Image(systemName: "chevron.left") }
@@ -291,6 +292,32 @@ struct PopoverView: View {
     }
 }
 
+/// Schlanker Fortschrittsbalken mit runden Enden.
+///
+/// Statt `ProgressView(.linear)`: Der Systembalken bringt eigene Höhe, eigene
+/// Einfassung und eine eckige Spur mit — drei Dinge, die sich nicht anpassen
+/// lassen und neben runden Karten fremd wirken.
+private struct ProgressBar: View {
+    let value: Double
+    let color: Color
+    let height: CGFloat
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule().fill(.primary.opacity(0.10))
+                Capsule()
+                    .fill(
+                        LinearGradient(colors: [color, color.opacity(0.75)],
+                                       startPoint: .leading, endPoint: .trailing)
+                    )
+                    .frame(width: max(height, geo.size.width * min(max(value, 0), 1)))
+            }
+        }
+        .frame(height: height)
+    }
+}
+
 /// Eine Gruppe mit Überschrift. Trennlinien nur innerhalb der Gruppe — die
 /// Gruppen selbst trennt der Abstand plus die Überschrift.
 private struct AgendaGroup: View {
@@ -303,14 +330,14 @@ private struct AgendaGroup: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .font(.system(size: 9, weight: .semibold))
-                .tracking(0.6)
+                .font(.caption2.weight(.semibold))
+                .tracking(0.8)
                 .foregroundStyle(.tertiary)
-                .padding(.bottom, 3)
+                .padding(.bottom, 5)
 
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 if index > 0 {
-                    Divider().opacity(0.35).padding(.leading, 17)
+                    Divider().opacity(0.22).padding(.leading, 18)
                 }
                 AgendaRow(item: item, showProgress: showProgress,
                           isFading: justCompleted.contains(item.id),
@@ -344,15 +371,23 @@ private struct UpcomingBanner: View {
                     .foregroundStyle(progress != nil ? .primary : .secondary)
             }
             if showProgress, let progress {
-                ProgressView(value: progress)
-                    .progressViewStyle(.linear)
-                    .tint(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
+                ProgressBar(value: progress,
+                            color: Color(red: item.color.r, green: item.color.g,
+                                         blue: item.color.b),
+                            height: 5)
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 11)
+        .padding(.vertical, 9)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 8).fill(.quaternary.opacity(0.5)))
+        .background {
+            RoundedRectangle(cornerRadius: Theme.cardRadius)
+                .fill(Theme.accent.opacity(0.10))
+                .overlay {
+                    RoundedRectangle(cornerRadius: Theme.cardRadius)
+                        .strokeBorder(Theme.accent.opacity(0.22), lineWidth: 0.8)
+                }
+        }
     }
 }
 
@@ -383,7 +418,8 @@ private struct AgendaRow: View {
                         onToggle?()
                     } label: {
                         Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 11))
+                            .font(.system(size: 12))
+                            .symbolEffect(.bounce, value: item.isCompleted)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -413,15 +449,15 @@ private struct AgendaRow: View {
                         if let remaining = item.remainingLabel() {
                             Text(remaining)
                                 .font(.caption2.weight(.medium))
-                                .foregroundStyle(.tint)
+                                .foregroundStyle(Theme.accent)
                         }
                     }
                 }
                 if showProgress, let progress = item.progress() {
-                    ProgressView(value: progress)
-                        .progressViewStyle(.linear)
-                        .tint(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
-                        .frame(height: 2)
+                    ProgressBar(value: progress,
+                                color: Color(red: item.color.r, green: item.color.g,
+                                             blue: item.color.b),
+                                height: 3)
                 }
             }
             Spacer(minLength: 0)
@@ -430,16 +466,16 @@ private struct AgendaRow: View {
             // bleibt der Kreis selbst der Schalter.
             if isFading {
                 Button("Rückgängig") { onToggle?() }
-                    .font(.caption2)
+                    .font(.caption2.weight(.medium))
                     .buttonStyle(.plain)
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(Theme.accent)
             }
         }
         .opacity(isFading ? 0.55 : 1)
         .background {
             if isFading {
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(.tint.opacity(0.10))
+                    .fill(Theme.accent.opacity(0.10))
                     .padding(.horizontal, -4)
             }
         }

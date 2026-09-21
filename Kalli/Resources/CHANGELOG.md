@@ -32,10 +32,20 @@ Erste Fassung, in einer Sitzung gebaut.
   **Damit gilt „Kalli schreibt nie" nicht mehr.** Geschrieben wird ausschließlich
   dieses eine Kennzeichen; Info.plist, RECHTLICHES, HILFE und README sind
   entsprechend nachgezogen.
+- **Eigene Akzentfarbe** (`#3070F0`, aus der Tippi-Familie) statt der
+  System-Akzentfarbe, als Verlauf mit weichem Schein. Heute ist jetzt ein
+  gefüllter **Kreis**, der ausgewählte Tag ein Ring — Kreise wirken leichter
+  als Kacheln und sind die Form, die Apple für „jetzt" verwendet
+- **Eigener Fortschrittsbalken** mit runden Enden statt `ProgressView(.linear)`;
+  der Systembalken bringt eigene Höhe, Einfassung und eine eckige Spur mit, die
+  sich nicht anpassen lassen
+- **Hinweisfläche** in Markenfarbe mit feiner Kontur statt grauem Kasten
 - **Schriftgröße in fünf Stufen** — über `dynamicTypeSize` für alle Texte, plus
   ein Layoutfaktor für Rasterzellen und Fensterbreite. Beides muss zusammen
   skalieren; eine Stufe statt Punktwerte je Textstelle, weil die App durchgehend
-  semantische Schriften nutzt
+  semantische Schriften nutzt. *Nachgebessert:* Das Monatsraster nutzte feste
+  Punktgrößen (`.system(size:)`), die `dynamicTypeSize` grundsätzlich ignorieren —
+  dort wirkt jetzt derselbe Faktor wie für die Zellen
 - **Nachleuchten beim Abhaken** — die erledigte Aufgabe bleibt drei Sekunden
   sichtbar (durchgestrichen, abgedunkelt, mit Rückgängig-Knopf) und blendet
   dann aus. Vorher verschwand sie im selben Moment wie der Klick, womit ein

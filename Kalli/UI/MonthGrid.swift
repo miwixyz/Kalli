@@ -68,7 +68,7 @@ struct MonthGrid: View {
                             isInMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
                             hasItems: hasItems(day),
                             dayNumber: calendar.component(.day, from: day),
-                            width: cellW, height: cellH
+                            width: cellW, height: cellH, scale: scale
                         )
                         .onTapGesture { selection = day }
                     }
@@ -87,40 +87,54 @@ private struct DayCell: View {
     let dayNumber: Int
     let width: CGFloat
     let height: CGFloat
+    let scale: Double
 
     var body: some View {
         VStack(spacing: 1) {
             Text("\(dayNumber)")
-                .font(.system(size: 15, weight: isToday ? .bold : .regular))
+                // Feste Punktgroessen ignorieren dynamicTypeSize — deshalb hier
+                // derselbe Faktor wie fuer die Zellen. Sonst waechst die Zelle
+                // und die Zahl darin bleibt stehen.
+                .font(.system(size: 15 * scale, weight: isToday ? .semibold : .regular))
                 .monospacedDigit()
             // Kräftiger als zuvor: bei 3 pt und .quaternary war kaum zu sehen,
             // an welchen Tagen etwas steht.
             Circle()
-                .frame(width: 4, height: 4)
-                .opacity(hasItems ? 0.85 : 0)
+                .frame(width: 4.5 * scale, height: 4.5 * scale)
+                .opacity(hasItems ? 0.8 : 0)
         }
         .foregroundStyle(todayStyle)
         .frame(width: width, height: height)
         .background {
-            // Heute = gefüllt in der Akzentfarbe, wie in Apples Kalender.
-            // Markiert = nur ein Ring, deutlich andere Gestalt.
+            // Heute = gefuellter Kreis mit Verlauf. Ein Kreis wirkt leichter
+            // als eine Kachel und ist die Form, die Apple in Kalender und
+            // Erinnerungen fuer "jetzt" verwendet.
             //
-            // Vorher waren beide dieselbe Farbe in zwei Deckkraftstufen
-            // (0.25 und 0.14) und dadurch praktisch nicht zu unterscheiden.
-            // Zwei Zustände, die sich nur in der Helligkeit unterscheiden,
-            // sind keine zwei Zustände.
+            // Markiert = Ring. Zwei Zustaende brauchen zwei Gestalten, nicht
+            // dieselbe Farbe in zwei Helligkeiten.
             if isToday {
-                RoundedRectangle(cornerRadius: 9).fill(.tint)
+                Circle()
+                    .fill(Theme.accentFill)
+                    .frame(width: min(width, height) - 4 * scale,
+                           height: min(width, height) - 4 * scale)
+                    .shadow(color: Theme.accentGlow, radius: 5 * scale, y: 1.5 * scale)
             } else if isSelected {
-                RoundedRectangle(cornerRadius: 9).fill(.secondary.opacity(0.18))
+                Circle()
+                    .fill(.primary.opacity(0.07))
+                    .frame(width: min(width, height) - 4 * scale,
+                           height: min(width, height) - 4 * scale)
             }
         }
         .overlay {
             if isSelected {
-                RoundedRectangle(cornerRadius: 9)
-                    .strokeBorder(isToday ? AnyShapeStyle(.white.opacity(0.9))
-                                          : AnyShapeStyle(.secondary),
-                                  lineWidth: 1.5)
+                Circle()
+                    .strokeBorder(
+                        isToday ? AnyShapeStyle(.white.opacity(0.85))
+                                : AnyShapeStyle(Theme.accent.opacity(0.75)),
+                        lineWidth: 1.6
+                    )
+                    .frame(width: min(width, height) - 4 * scale,
+                           height: min(width, height) - 4 * scale)
             }
         }
         .contentShape(Rectangle())
