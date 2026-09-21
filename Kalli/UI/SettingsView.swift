@@ -178,6 +178,12 @@ private struct PopoverSection: View {
 
         Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
         Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
+        Toggle("Vergangene Termine ausblenden", isOn: $prefs.hidePastEvents)
+        Text("Gilt nur für den heutigen Tag. Ganztägige Termine und Aufgaben bleiben "
+             + "sichtbar — eine überfällige Aufgabe ist nicht erledigt, sondern das "
+             + "Gegenteil davon.")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
 
         Divider()
 

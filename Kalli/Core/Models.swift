@@ -60,6 +60,18 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
         return false
     }
 
+    /// Ist dieser Termin bereits beendet?
+    ///
+    /// Ganztägige gelten nie als vorbei — sie betreffen den ganzen Tag, auch
+    /// abends noch. Und Aufgaben ebenfalls nicht: Eine überfällige Aufgabe ist
+    /// nicht erledigt, sondern das Gegenteil davon. Sie auszublenden, weil ihr
+    /// Zeitpunkt vorbei ist, würde genau das Wichtigste verstecken.
+    func isOver(at now: Date = Date()) -> Bool {
+        guard !isAllDay, !isReminder else { return false }
+        guard let end = end ?? start else { return false }
+        return end <= now
+    }
+
     /// Anteil der bereits vergangenen Zeit, 0…1. `nil`, wenn der Termin nicht
     /// gerade läuft oder keine Dauer hat.
     func progress(at now: Date = Date()) -> Double? {

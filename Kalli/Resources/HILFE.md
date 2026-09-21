@@ -29,6 +29,16 @@ der Leiste nicht mehr auffindbar. Das Symbol bleibt in dem Fall sichtbar.
   - **Termine** mit Uhrzeit (Kreis)
   - **Aufgaben** aus der Erinnerungen-App (Kreisumriss, abgehakt = durchgestrichen)
 
+**Vergangene Termine ausblenden** (Einstellungen → Ansicht) räumt die Liste im
+Lauf des Tages auf. Der Filter gilt **nur für heute** — an anderen Tagen wäre
+entweder alles vergangen oder nichts, und die Liste sähe leer statt aufgeräumt
+aus. Ganztägige Termine und Aufgaben bleiben sichtbar: Eine überfällige Aufgabe
+ist nicht erledigt, sondern das Gegenteil davon.
+
+Unter der Liste steht dann, wie viele Einträge verborgen sind — ein Klick darauf
+zeigt sie wieder. Eine versteckte Zeile ohne Hinweis sieht aus wie ein fehlender
+Termin.
+
 Die Farbe kommt jeweils vom Kalender, die **Form** von der Art. So bleibt die
 Bedeutung erkennbar, auch wenn zwei Kalender ähnlich eingefärbt sind.
 
@@ -40,7 +50,7 @@ Zahnrad unten links, drei Reiter:
 |---|---|
 | **Kalender** | Jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
 | **Menüleiste** | Symbol, Datum, Datumsformat, nächster Termin, Kürzungslänge |
-| **Ansicht** | Kalenderwochen, erledigte Erinnerungen, Fortschritt, Hinweis auf Kommendes, Start bei der Anmeldung |
+| **Ansicht** | Kalenderwochen, erledigte Erinnerungen, vergangene Termine, Fortschritt, Hinweis auf Kommendes, Start bei der Anmeldung |
 
 ## Start bei der Anmeldung
 

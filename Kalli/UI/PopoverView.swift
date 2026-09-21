@@ -106,7 +106,7 @@ struct PopoverView: View {
 
             let items = visibleItems
             if items.isEmpty {
-                Text("Nichts geplant.")
+                Text(hiddenPastCount > 0 ? "Heute ist nichts mehr offen." : "Nichts geplant.")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -127,6 +127,19 @@ struct PopoverView: View {
                                 items: group.items,
                                 showProgress: prefs.showRunningProgress
                             )
+                        }
+                        if hiddenPastCount > 0 {
+                            Button {
+                                prefs.hidePastEvents = false
+                            } label: {
+                                Text(hiddenPastCount == 1
+                                     ? "1 vergangener Termin ausgeblendet"
+                                     : "\(hiddenPastCount) vergangene Termine ausgeblendet")
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Klicken, um vergangene Termine wieder anzuzeigen")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -150,8 +163,23 @@ struct PopoverView: View {
     }
 
     private var visibleItems: [AgendaItem] {
-        store.items(on: selection, calendar: calendar)
+        // Der Vergangenheitsfilter greift NUR am heutigen Tag. An einem anderen
+        // Tag ist alles vergangen oder alles künftig — dort würde er die Liste
+        // komplett leeren und sähe aus wie ein Fehler.
+        let filterPast = prefs.hidePastEvents && calendar.isDateInToday(selection)
+        return store.items(on: selection, calendar: calendar)
             .filter { prefs.showCompletedReminders || !$0.isCompleted }
+            .filter { !filterPast || !$0.isOver() }
+    }
+
+    /// Wie viele Einträge der Vergangenheitsfilter gerade verbirgt.
+    /// Eine versteckte Zeile ohne Hinweis sieht aus wie ein fehlender Termin.
+    private var hiddenPastCount: Int {
+        guard prefs.hidePastEvents, calendar.isDateInToday(selection) else { return 0 }
+        return store.items(on: selection, calendar: calendar)
+            .filter { prefs.showCompletedReminders || !$0.isCompleted }
+            .filter { $0.isOver() }
+            .count
     }
 
     /// Reihenfolge der Gruppen: erst was den ganzen Tag gilt (der Rahmen),
