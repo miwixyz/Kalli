@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>de</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+
+	<!-- Menüleisten-App: kein Dock-Icon, kein Hauptfenster beim Start. -->
+	<key>LSUIElement</key>
+	<true/>
+
+	<!-- Ohne diese beiden Texte schlägt der Zugriff STILL fehl (macOS 14+).
+	     Der Nutzer sieht dann keinen Dialog, und die Liste bleibt einfach leer. -->
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>MacCal zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — MacCal ändert nichts in deinen Kalendern.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>MacCal zeigt deine Erinnerungen neben den Terminen an. Der Zugriff ist ausschließlich lesend — MacCal ändert nichts an deinen Erinnerungen.</string>
+</dict>
+</plist>
