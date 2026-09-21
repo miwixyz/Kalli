@@ -12,8 +12,10 @@ Erste Fassung, in einer Sitzung gebaut.
   Bauform, gleiche Farbwelt, aber ein Kalenderblatt statt einer Sprechblase
 - **App-Symbol in der Hilfe sichtbar** — Kalli hat kein Dock-Symbol und kein
   „Über"-Fenster; ohne diesen Platz wäre das Maskottchen nur im Finder zu sehen
-- **Menüleisten-Symbol** — gezeichnetes Kalenderblatt mit der heutigen Zahl,
-  Template-Image (folgt Hell/Dunkel), abschaltbar
+- **Menüleisten-Symbol** — Kallis Kopf-Silhouette mit der heutigen Tageszahl.
+  Gleiche Kopfform wie Tippis Leistensymbol, damit beide Apps nebeneinander als
+  Familie lesbar sind; an die Stelle des Visiers tritt die Zahl. Template-Image
+  (folgt Hell/Dunkel), abschaltbar
 - **Hilfe, Änderungen und Rechtliches in der App** — als Dateien im Bundle,
   bei jedem Build frisch gespiegelt; die Versionsnummer kommt aus der Info.plist
 - **Start bei der Anmeldung** über `SMAppService`, Systemzustand wird gelesen

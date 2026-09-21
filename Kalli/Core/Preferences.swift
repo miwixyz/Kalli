@@ -28,8 +28,9 @@ final class Preferences {
         didSet { defaults.set(Array(hiddenSourceIDs), forKey: Key.hidden) }
     }
 
-    /// Kalenderblatt-Symbol in der Leiste. Neben dem Datumstext ist es
-    /// redundant — die Zahl steht dann zweimal da.
+    /// Kallis Kopf-Silhouette in der Leiste. Ab Werk an: Sie ist das
+    /// Wiedererkennungszeichen der App und als Familie zu Tippi lesbar —
+    /// nicht bloß eine Wiederholung des Datums.
     var showIconInMenuBar: Bool {
         didSet { defaults.set(showIconInMenuBar, forKey: Key.showIcon) }
     }
@@ -85,7 +86,7 @@ final class Preferences {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
-        showIconInMenuBar = defaults.object(forKey: Key.showIcon) as? Bool ?? false
+        showIconInMenuBar = defaults.object(forKey: Key.showIcon) as? Bool ?? true
         showDateInMenuBar = defaults.object(forKey: Key.showDate) as? Bool ?? true
         showNextEventInMenuBar = defaults.object(forKey: Key.showNextEvent) as? Bool ?? true
         nextEventMaxChars = defaults.object(forKey: Key.nextEventWidth) as? Int ?? 22

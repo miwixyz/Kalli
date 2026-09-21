@@ -125,7 +125,7 @@ private struct MenuBarSection: View {
     var body: some View {
         @Bindable var prefs = prefs
 
-        Toggle("Kalenderblatt-Symbol", isOn: $prefs.showIconInMenuBar)
+        Toggle("Kalli-Symbol anzeigen", isOn: $prefs.showIconInMenuBar)
             .onChange(of: prefs.showIconInMenuBar) { label.update() }
 
         Toggle("Datum als Text", isOn: $prefs.showDateInMenuBar)
