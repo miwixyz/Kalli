@@ -14,6 +14,17 @@ struct PopoverView: View {
     /// sichtbar wird, bevor der Filter sie entfernt.
     @State private var justCompleted: Set<String> = []
 
+    /// Stufe 2 ist `.large` — Apples Standardgroesse.
+    private var dynamicSize: DynamicTypeSize {
+        switch prefs.textSizeStep {
+        case 0: .xSmall
+        case 1: .small
+        case 3: .xLarge
+        case 4: .xxLarge
+        default: .large
+        }
+    }
+
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
         c.locale = Locale(identifier: "de_DE")
@@ -56,6 +67,7 @@ struct PopoverView: View {
                     selection: $selection,
                     calendar: calendar,
                     showWeekNumbers: prefs.showWeekNumbers,
+                    scale: prefs.layoutScale,
                     hasItems: { store.hasItems(on: $0, calendar: calendar) }
                 )
                 Divider()
@@ -65,7 +77,8 @@ struct PopoverView: View {
             footer
         }
         .padding(12)
-        .frame(width: prefs.showWeekNumbers ? 396 : 360)
+        .frame(width: (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
+        .dynamicTypeSize(dynamicSize)
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
@@ -157,8 +170,9 @@ struct PopoverView: View {
                     .padding(.trailing, 2)
                 }
                 .scrollIndicators(.automatic)
-                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(items.count) * 46, 380),
-                       maxHeight: 560)
+                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(items.count) * 46, 380)
+                                  * prefs.layoutScale,
+                       maxHeight: 560 * prefs.layoutScale)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

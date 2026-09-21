@@ -16,6 +16,7 @@ final class Preferences {
         static let showWeekNumbers = "showWeekNumbers"
         static let showCompleted = "showCompletedReminders"
         static let hidePast = "hidePastEvents"
+        static let textSize = "textSizeStep"
         static let showProgress = "showRunningProgress"
         static let showUpcoming = "showUpcomingBanner"
         static let upcomingLead = "upcomingLeadMinutes"
@@ -63,6 +64,28 @@ final class Preferences {
         didSet { defaults.set(showCompletedReminders, forKey: Key.showCompleted) }
     }
 
+    /// Schriftgroesse als Stufe 0…4, Standard 2 (= Systemgroesse).
+    ///
+    /// Bewusst eine Stufe und kein Punktwert: Die App nutzt durchgehend
+    /// semantische Schriften (.caption, .callout, .headline). Die skaliert
+    /// SwiftUI ueber `dynamicTypeSize` konsistent mit — ein eigener Punktwert
+    /// je Textstelle waere fuenfzig Zahlen, die auseinanderlaufen.
+    var textSizeStep: Int {
+        didSet { defaults.set(textSizeStep, forKey: Key.textSize) }
+    }
+
+    /// Faktor fuer alles, was NICHT Text ist: Zellen, Breiten, Abstaende.
+    /// Ohne ihn waechst die Schrift und das Raster bleibt stehen.
+    var layoutScale: Double {
+        switch textSizeStep {
+        case 0: 0.86
+        case 1: 0.93
+        case 3: 1.10
+        case 4: 1.22
+        default: 1.0
+        }
+    }
+
     /// Bereits beendete Termine des heutigen Tages ausblenden.
     var hidePastEvents: Bool {
         didSet { defaults.set(hidePastEvents, forKey: Key.hidePast) }
@@ -94,6 +117,7 @@ final class Preferences {
         showWeekNumbers = defaults.object(forKey: Key.showWeekNumbers) as? Bool ?? true
         showCompletedReminders = defaults.object(forKey: Key.showCompleted) as? Bool ?? false
         hidePastEvents = defaults.object(forKey: Key.hidePast) as? Bool ?? false
+        textSizeStep = defaults.object(forKey: Key.textSize) as? Int ?? 2
         showRunningProgress = defaults.object(forKey: Key.showProgress) as? Bool ?? true
         showUpcomingBanner = defaults.object(forKey: Key.showUpcoming) as? Bool ?? true
         upcomingLeadMinutes = defaults.object(forKey: Key.upcomingLead) as? Int ?? 60

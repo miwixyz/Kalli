@@ -176,6 +176,22 @@ private struct PopoverSection: View {
     var body: some View {
         @Bindable var prefs = prefs
 
+        VStack(alignment: .leading, spacing: 3) {
+            Picker("Schriftgröße", selection: $prefs.textSizeStep) {
+                Text("Sehr klein").tag(0)
+                Text("Klein").tag(1)
+                Text("Standard").tag(2)
+                Text("Groß").tag(3)
+                Text("Sehr groß").tag(4)
+            }
+            Text("Skaliert Schrift, Raster und Fensterbreite gemeinsam — sonst "
+                 + "wächst der Text und das Raster bleibt stehen.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+
+        Divider()
+
         Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
         Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
         Toggle("Vergangene Termine ausblenden", isOn: $prefs.hidePastEvents)

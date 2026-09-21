@@ -31,6 +31,9 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
 
 - **Monatsraster** — heute ist gefüllt in der Akzentfarbe, der angeklickte Tag
   bekommt einen Ring. Ein Punkt unter der Zahl heißt: an diesem Tag steht etwas an.
+- **Schriftgröße** in fünf Stufen (Einstellungen → Ansicht). Sie skaliert
+  Schrift, Rasterzellen und Fensterbreite **gemeinsam** — sonst wüchse der Text
+  und das Raster bliebe stehen.
 - **Kalenderwochen** links, abschaltbar
 - **Hinweis oben** — was gerade läuft oder bald beginnt, mit Fortschrittsbalken.
   Die Vorlaufzeit ist einstellbar (5 bis 240 Minuten).
@@ -70,7 +73,7 @@ Zahnrad unten links, drei Reiter:
 |---|---|
 | **Kalender** | Jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
 | **Menüleiste** | Symbol, Datum, Datumsformat, nächster Termin, Kürzungslänge |
-| **Ansicht** | Kalenderwochen, erledigte Erinnerungen, vergangene Termine, Fortschritt, Hinweis auf Kommendes, Start bei der Anmeldung |
+| **Ansicht** | Schriftgröße, Kalenderwochen, erledigte Erinnerungen, vergangene Termine, Fortschritt, Hinweis auf Kommendes, Start bei der Anmeldung |
 
 ## Start bei der Anmeldung
 

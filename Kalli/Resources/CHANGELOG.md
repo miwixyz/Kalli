@@ -32,6 +32,10 @@ Erste Fassung, in einer Sitzung gebaut.
   **Damit gilt „Kalli schreibt nie" nicht mehr.** Geschrieben wird ausschließlich
   dieses eine Kennzeichen; Info.plist, RECHTLICHES, HILFE und README sind
   entsprechend nachgezogen.
+- **Schriftgröße in fünf Stufen** — über `dynamicTypeSize` für alle Texte, plus
+  ein Layoutfaktor für Rasterzellen und Fensterbreite. Beides muss zusammen
+  skalieren; eine Stufe statt Punktwerte je Textstelle, weil die App durchgehend
+  semantische Schriften nutzt
 - **Nachleuchten beim Abhaken** — die erledigte Aufgabe bleibt drei Sekunden
   sichtbar (durchgestrichen, abgedunkelt, mit Rückgängig-Knopf) und blendet
   dann aus. Vorher verschwand sie im selben Moment wie der Klick, womit ein

@@ -8,7 +8,12 @@ struct MonthGrid: View {
     @Binding var selection: Date
     let calendar: Calendar
     let showWeekNumbers: Bool
+    var scale: Double = 1.0
     let hasItems: (Date) -> Bool
+
+    private var cellW: CGFloat { 44 * scale }
+    private var cellH: CGFloat { 40 * scale }
+    private var weekW: CGFloat { 30 * scale }
 
     private var weeks: [[Date]] {
         guard let interval = calendar.dateInterval(of: .month, for: month),
@@ -37,13 +42,13 @@ struct MonthGrid: View {
                     Text("KW")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
-                        .frame(width: 30)
+                        .frame(width: weekW)
                 }
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
-                        .frame(width: 44)
+                        .frame(width: cellW)
                 }
             }
 
@@ -53,7 +58,7 @@ struct MonthGrid: View {
                         Text("\(calendar.component(.weekOfYear, from: first))")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.tertiary)
-                            .frame(width: 30)
+                            .frame(width: weekW)
                     }
                     ForEach(week, id: \.self) { day in
                         DayCell(
@@ -62,7 +67,8 @@ struct MonthGrid: View {
                             isSelected: calendar.isDate(day, inSameDayAs: selection),
                             isInMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
                             hasItems: hasItems(day),
-                            dayNumber: calendar.component(.day, from: day)
+                            dayNumber: calendar.component(.day, from: day),
+                            width: cellW, height: cellH
                         )
                         .onTapGesture { selection = day }
                     }
@@ -79,6 +85,8 @@ private struct DayCell: View {
     let isInMonth: Bool
     let hasItems: Bool
     let dayNumber: Int
+    let width: CGFloat
+    let height: CGFloat
 
     var body: some View {
         VStack(spacing: 1) {
@@ -92,7 +100,7 @@ private struct DayCell: View {
                 .opacity(hasItems ? 0.85 : 0)
         }
         .foregroundStyle(todayStyle)
-        .frame(width: 44, height: 40)
+        .frame(width: width, height: height)
         .background {
             // Heute = gefüllt in der Akzentfarbe, wie in Apples Kalender.
             // Markiert = nur ein Ring, deutlich andere Gestalt.
