@@ -32,6 +32,10 @@ Erste Fassung, in einer Sitzung gebaut.
   **Damit gilt „Kalli schreibt nie" nicht mehr.** Geschrieben wird ausschließlich
   dieses eine Kennzeichen; Info.plist, RECHTLICHES, HILFE und README sind
   entsprechend nachgezogen.
+- **Vorlaufzeit für den nächsten Termin in der Leiste** — 15 Min., 30 Min.,
+  1 Stunde oder 2 Stunden. Davor bleibt die Leiste schmal. Eigener Wert,
+  getrennt vom Popover-Hinweis: Die Leiste ist immer sichtbar und muss knapp
+  bleiben, das Popover sieht man nur auf Klick
 - **Eigene Akzentfarbe** (`#3070F0`, aus der Tippi-Familie) statt der
   System-Akzentfarbe, als Verlauf mit weichem Schein. Heute ist jetzt ein
   gefüllter **Kreis**, der ausgewählte Tag ein Ring — Kreise wirken leichter

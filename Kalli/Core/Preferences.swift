@@ -20,6 +20,7 @@ final class Preferences {
         static let showProgress = "showRunningProgress"
         static let showUpcoming = "showUpcomingBanner"
         static let upcomingLead = "upcomingLeadMinutes"
+        static let menuBarLead = "menuBarLeadMinutes"
     }
 
     private let defaults: UserDefaults
@@ -101,6 +102,16 @@ final class Preferences {
         didSet { defaults.set(showUpcomingBanner, forKey: Key.showUpcoming) }
     }
 
+    /// Ab wann der nächste Termin in der Menüleiste auftaucht (Minuten).
+    ///
+    /// Bewusst ein **eigener** Wert, nicht derselbe wie für den Popover-Hinweis:
+    /// Die Leiste ist immer sichtbar und muss knapp bleiben — dort stört ein
+    /// Termin, der erst in fünf Stunden beginnt. Das Popover sieht man nur,
+    /// wenn man es öffnet; dort darf der Hinweis früher erscheinen.
+    var menuBarLeadMinutes: Int {
+        didSet { defaults.set(menuBarLeadMinutes, forKey: Key.menuBarLead) }
+    }
+
     /// Wie lange vorher der Hinweis erscheint.
     var upcomingLeadMinutes: Int {
         didSet { defaults.set(upcomingLeadMinutes, forKey: Key.upcomingLead) }
@@ -121,6 +132,7 @@ final class Preferences {
         showRunningProgress = defaults.object(forKey: Key.showProgress) as? Bool ?? true
         showUpcomingBanner = defaults.object(forKey: Key.showUpcoming) as? Bool ?? true
         upcomingLeadMinutes = defaults.object(forKey: Key.upcomingLead) as? Int ?? 60
+        menuBarLeadMinutes = defaults.object(forKey: Key.menuBarLead) as? Int ?? 60
     }
 
     /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.

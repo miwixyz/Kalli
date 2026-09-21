@@ -83,7 +83,12 @@ final class MenuBarLabel {
            let remaining = running.remainingLabel() {
             let sep = parts.isEmpty ? "" : "· "
             parts.append("\(sep)\(shorten(running.title)) \(remaining)")
-        } else if prefs.showNextEventInMenuBar, let next = store.nextEvent, let start = next.start {
+        } else if prefs.showNextEventInMenuBar, let next = store.nextEvent,
+                  let start = next.start,
+                  // Erst ab der eingestellten Vorlaufzeit. Ein Termin, der in
+                  // fuenf Stunden beginnt, ist in einer stets sichtbaren Leiste
+                  // kein Hinweis, sondern Belegung.
+                  start.timeIntervalSinceNow <= Double(prefs.menuBarLeadMinutes) * 60 {
             let sep = parts.isEmpty ? "" : "· "
             // Tag voranstellen, wenn der Termin nicht heute ist. Ohne das liest
             // sich "08:00 Praxis" um 15 Uhr wie ein laufender Termin, obwohl es

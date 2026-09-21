@@ -18,6 +18,14 @@ einblenden:
 - **Nächster Termin** — Uhrzeit und Titel, gekürzt auf eine feste Länge, damit
   die Breite der Leiste nicht bei jedem Terminwechsel springt.
   Ist der Termin nicht heute, steht der Tag davor („morgen 08:00 Praxis").
+
+  **Er erscheint erst kurz vorher** — wählbar 15 Min., 30 Min., 1 Stunde oder
+  2 Stunden (Einstellungen → Menüleiste). Davor bleibt die Leiste schmal. Ein
+  Termin, der erst in fünf Stunden beginnt, ist in einer stets sichtbaren Leiste
+  kein Hinweis, sondern Belegung.
+
+  Die Vorlaufzeit ist bewusst **getrennt** von der des Popover-Hinweises: Das
+  Popover sieht man nur, wenn man es öffnet — dort darf früher gewarnt werden.
 - **Restzeit des laufenden Termins** — verdrängt den nächsten Termin, solange
   etwas läuft. Was gerade passiert, ist dringender als was kommt.
 

@@ -156,10 +156,19 @@ private struct MenuBarSection: View {
             .onChange(of: prefs.showNextEventInMenuBar) { label.update() }
 
         if prefs.showNextEventInMenuBar {
+            Picker("Erst ab", selection: $prefs.menuBarLeadMinutes) {
+                Text("15 Min. vorher").tag(15)
+                Text("30 Min. vorher").tag(30)
+                Text("1 Stunde vorher").tag(60)
+                Text("2 Stunden vorher").tag(120)
+            }
+            .onChange(of: prefs.menuBarLeadMinutes) { label.update() }
+
             Stepper("Titel kürzen auf \(prefs.nextEventMaxChars) Zeichen",
                     value: $prefs.nextEventMaxChars, in: 8...60)
                 .onChange(of: prefs.nextEventMaxChars) { label.update() }
-            Text("Laufende Termine erscheinen hier nie — nur der nächste, der noch "
+            Text("Liegt der nächste Termin weiter weg, bleibt die Leiste schmal. "
+                 + "Laufende Termine erscheinen hier nie — nur der nächste, der noch "
                  + "nicht begonnen hat. Ist er nicht heute, steht der Tag davor.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
