@@ -40,13 +40,13 @@ struct MonthGrid: View {
             GridRow {
                 if showWeekNumbers {
                     Text("KW")
-                        .font(.caption2)
+                        .font(Theme.font(Theme.Size.weekNumber, scale))
                         .foregroundStyle(.tertiary)
                         .frame(width: weekW)
                 }
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
-                        .font(.caption.weight(.medium))
+                        .font(Theme.font(Theme.Size.weekday, scale, weight: .medium))
                         .foregroundStyle(.secondary)
                         .frame(width: cellW)
                 }
@@ -56,7 +56,8 @@ struct MonthGrid: View {
                 GridRow {
                     if showWeekNumbers, let first = week.first {
                         Text("\(calendar.component(.weekOfYear, from: first))")
-                            .font(.caption2.monospacedDigit())
+                            .font(Theme.font(Theme.Size.weekNumber, scale))
+                            .monospacedDigit()
                             .foregroundStyle(.tertiary)
                             .frame(width: weekW)
                     }
@@ -92,10 +93,8 @@ private struct DayCell: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("\(dayNumber)")
-                // Feste Punktgroessen ignorieren dynamicTypeSize — deshalb hier
-                // derselbe Faktor wie fuer die Zellen. Sonst waechst die Zelle
-                // und die Zahl darin bleibt stehen.
-                .font(.system(size: 15 * scale, weight: isToday ? .semibold : .regular))
+                                .font(Theme.font(Theme.Size.dayNumber, scale,
+                                 weight: isToday ? .semibold : .regular))
                 .monospacedDigit()
             // Kräftiger als zuvor: bei 3 pt und .quaternary war kaum zu sehen,
             // an welchen Tagen etwas steht.

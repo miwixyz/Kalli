@@ -78,10 +78,10 @@ final class Preferences {
     /// Ohne ihn waechst die Schrift und das Raster bleibt stehen.
     var layoutScale: Double {
         switch textSizeStep {
-        case 0: 0.86
-        case 1: 0.93
-        case 3: 1.10
-        case 4: 1.22
+        case 0: 0.80
+        case 1: 0.90
+        case 3: 1.18
+        case 4: 1.40
         default: 1.0
         }
     }

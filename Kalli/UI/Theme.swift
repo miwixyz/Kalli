@@ -27,6 +27,36 @@ enum Theme {
     /// harten Schlagschatten zu setzen.
     static let accentGlow = accent.opacity(0.38)
 
+    // MARK: - Schrift
+
+    /// Schriftgrößen als Punktwerte, damit sie sich skalieren lassen.
+    ///
+    /// **Warum nicht `.callout`, `.caption` & Co. mit `dynamicTypeSize`:**
+    /// Dynamic Type ist ein iOS-Mechanismus. Auf macOS haben die semantischen
+    /// Textstile feste Größen und reagieren nicht darauf — der Modifier läuft
+    /// wirkungslos durch. Gemessen am 2026-09-21: Die Fensterbreite wuchs
+    /// (eigener Faktor), die Schrift blieb stehen.
+    ///
+    /// Deshalb hier feste Basiswerte, die überall mit demselben Faktor
+    /// multipliziert werden. Eine Stelle, ein Faktor, keine Drift.
+    enum Size {
+        static let monthTitle: CGFloat = 15
+        static let dayNumber: CGFloat = 15
+        static let weekday: CGFloat = 11
+        static let weekNumber: CGFloat = 10
+        static let groupTitle: CGFloat = 10
+        static let dayHeader: CGFloat = 12
+        static let itemTitle: CGFloat = 13
+        static let itemTime: CGFloat = 11
+        static let hint: CGFloat = 10
+        static let bannerTitle: CGFloat = 13
+    }
+
+    static func font(_ size: CGFloat, _ scale: Double,
+                     weight: Font.Weight = .regular) -> Font {
+        .system(size: size * scale, weight: weight)
+    }
+
     /// Radius für Karten und Hinweisflächen. Großzügiger als der macOS-Standard,
     /// weil Liquid Glass weichere Formen verlangt.
     static let cardRadius: CGFloat = 11

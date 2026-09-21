@@ -14,17 +14,6 @@ struct PopoverView: View {
     /// sichtbar wird, bevor der Filter sie entfernt.
     @State private var justCompleted: Set<String> = []
 
-    /// Stufe 2 ist `.large` — Apples Standardgroesse.
-    private var dynamicSize: DynamicTypeSize {
-        switch prefs.textSizeStep {
-        case 0: .xSmall
-        case 1: .small
-        case 3: .xLarge
-        case 4: .xxLarge
-        default: .large
-        }
-    }
-
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
         c.locale = Locale(identifier: "de_DE")
@@ -60,7 +49,8 @@ struct PopoverView: View {
                 accessHint
             } else {
                 if prefs.showUpcomingBanner, let banner = bannerItem {
-                    UpcomingBanner(item: banner, showProgress: prefs.showRunningProgress)
+                    UpcomingBanner(item: banner, showProgress: prefs.showRunningProgress,
+                                   scale: prefs.layoutScale)
                 }
                 MonthGrid(
                     month: visibleMonth,
@@ -78,7 +68,7 @@ struct PopoverView: View {
         }
         .padding(12)
         .frame(width: (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
-        .dynamicTypeSize(dynamicSize)
+
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
@@ -96,7 +86,7 @@ struct PopoverView: View {
             Text(showingSettings
                  ? "Einstellungen"
                  : monthFormatter.string(from: visibleMonth).capitalized)
-                .font(.headline)
+                .font(Theme.font(Theme.Size.monthTitle, prefs.layoutScale, weight: .semibold))
                 .contentTransition(.numericText())
             Spacer()
             if !showingSettings {
@@ -106,7 +96,7 @@ struct PopoverView: View {
                     visibleMonth = Date()
                     selection = Date()
                 } label: {
-                    Text("Heute").font(.caption)
+                    Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
                 }
                 .help("Zurück zum heutigen Tag")
                 Button { step(1) } label: { Image(systemName: "chevron.right") }
@@ -119,13 +109,13 @@ struct PopoverView: View {
     private var agenda: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(dayFormatter.string(from: selection))
-                .font(.subheadline.weight(.semibold))
+                .font(Theme.font(Theme.Size.dayHeader, prefs.layoutScale, weight: .semibold))
                 .foregroundStyle(.secondary)
 
             let items = visibleItems
             if items.isEmpty {
                 Text(hiddenPastCount > 0 ? "Heute ist nichts mehr offen." : "Nichts geplant.")
-                    .font(.caption)
+                    .font(Theme.font(Theme.Size.itemTitle, prefs.layoutScale))
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 6)
@@ -144,13 +134,14 @@ struct PopoverView: View {
                                 title: group.title,
                                 items: group.items,
                                 showProgress: prefs.showRunningProgress,
+                                scale: prefs.layoutScale,
                                 justCompleted: justCompleted,
                                 onToggle: { item in toggle(item) }
                             )
                         }
                         if let toggleError {
                             Label(toggleError, systemImage: "exclamationmark.triangle")
-                                .font(.caption2)
+                                .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
                                 .foregroundStyle(.orange)
                         }
                         if hiddenPastCount > 0 {
@@ -160,7 +151,7 @@ struct PopoverView: View {
                                 Text(hiddenPastCount == 1
                                      ? "1 vergangener Termin ausgeblendet"
                                      : "\(hiddenPastCount) vergangene Termine ausgeblendet")
-                                    .font(.caption2)
+                                    .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
                                     .foregroundStyle(.tertiary)
                             }
                             .buttonStyle(.plain)
@@ -228,16 +219,17 @@ struct PopoverView: View {
 
     private var accessHint: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Kein Zugriff auf Kalender").font(.callout.weight(.semibold))
+            Text("Kein Zugriff auf Kalender")
+                .font(Theme.font(Theme.Size.itemTitle, prefs.layoutScale, weight: .semibold))
             Text("→ ZU TUN: Systemeinstellungen → Datenschutz & Sicherheit → "
                  + "Kalender bzw. Erinnerungen → Kalli aktivieren.")
-                .font(.caption)
+                .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
                 .foregroundStyle(.secondary)
             Button("Systemeinstellungen öffnen") {
                 let url = "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
                 if let u = URL(string: url) { NSWorkspace.shared.open(u) }
             }
-            .font(.caption)
+            .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)
@@ -253,7 +245,7 @@ struct PopoverView: View {
             .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
             Spacer()
             Button("Beenden") { NSApplication.shared.terminate(nil) }
-                .font(.caption)
+                .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
         }
         .buttonStyle(.accessoryBar)
     }
@@ -324,13 +316,14 @@ private struct AgendaGroup: View {
     let title: String
     let items: [AgendaItem]
     let showProgress: Bool
+    var scale: Double = 1.0
     var justCompleted: Set<String> = []
     var onToggle: ((AgendaItem) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .font(.caption2.weight(.semibold))
+                .font(Theme.font(Theme.Size.groupTitle, scale, weight: .semibold))
                 .tracking(0.8)
                 .foregroundStyle(.tertiary)
                 .padding(.bottom, 5)
@@ -339,7 +332,7 @@ private struct AgendaGroup: View {
                 if index > 0 {
                     Divider().opacity(0.22).padding(.leading, 18)
                 }
-                AgendaRow(item: item, showProgress: showProgress,
+                AgendaRow(item: item, showProgress: showProgress, scale: scale,
                           isFading: justCompleted.contains(item.id),
                           onToggle: { onToggle?(item) })
                     .padding(.vertical, 5)
@@ -352,6 +345,7 @@ private struct AgendaGroup: View {
 private struct UpcomingBanner: View {
     let item: AgendaItem
     let showProgress: Bool
+    var scale: Double = 1.0
 
     var body: some View {
         let progress = item.progress()
@@ -361,13 +355,13 @@ private struct UpcomingBanner: View {
                     .fill(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
                     .frame(width: 8, height: 8)
                 Text(item.title)
-                    .font(.callout.weight(.semibold))
+                    .font(Theme.font(Theme.Size.bannerTitle, scale, weight: .semibold))
                     .lineLimit(1)
                 Spacer(minLength: 4)
                 Text(progress != nil
                      ? (item.remainingLabel() ?? "läuft")
                      : (item.startsInLabel() ?? ""))
-                    .font(.caption.weight(.medium))
+                    .font(Theme.font(Theme.Size.itemTime, scale, weight: .medium))
                     .foregroundStyle(progress != nil ? .primary : .secondary)
             }
             if showProgress, let progress {
@@ -394,6 +388,7 @@ private struct UpcomingBanner: View {
 private struct AgendaRow: View {
     let item: AgendaItem
     let showProgress: Bool
+    var scale: Double = 1.0
     var isFading: Bool = false
     var onToggle: (() -> Void)? = nil
 
@@ -418,7 +413,7 @@ private struct AgendaRow: View {
                         onToggle?()
                     } label: {
                         Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 12))
+                            .font(.system(size: 12 * scale))
                             .symbolEffect(.bounce, value: item.isCompleted)
                             .contentShape(Rectangle())
                     }
@@ -439,16 +434,18 @@ private struct AgendaRow: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(item.title)
-                    .font(.callout)
+                    .font(Theme.font(Theme.Size.itemTitle, scale))
                     .strikethrough(item.isCompleted)
                     .foregroundStyle(item.isCompleted ? .secondary : .primary)
                 let time = item.timeLabel(using: timeFormatter)
                 if !time.isEmpty {
                     HStack(spacing: 6) {
-                        Text(time).font(.caption).foregroundStyle(.secondary)
+                        Text(time)
+                            .font(Theme.font(Theme.Size.itemTime, scale))
+                            .foregroundStyle(.secondary)
                         if let remaining = item.remainingLabel() {
                             Text(remaining)
-                                .font(.caption2.weight(.medium))
+                                .font(Theme.font(Theme.Size.hint, scale, weight: .medium))
                                 .foregroundStyle(Theme.accent)
                         }
                     }
@@ -466,7 +463,7 @@ private struct AgendaRow: View {
             // bleibt der Kreis selbst der Schalter.
             if isFading {
                 Button("Rückgängig") { onToggle?() }
-                    .font(.caption2.weight(.medium))
+                    .font(Theme.font(Theme.Size.hint, scale, weight: .medium))
                     .buttonStyle(.plain)
                     .foregroundStyle(Theme.accent)
             }
