@@ -5,10 +5,10 @@ struct PopoverView: View {
     @Environment(Preferences.self) private var prefs
     @Environment(CalendarStore.self) private var store
     @Environment(MenuBarLabel.self) private var label
-    @Environment(\.openSettings) private var openSettings
 
     @State private var visibleMonth = Date()
     @State private var selection = Date()
+    @State private var showingSettings = false
 
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
@@ -36,9 +36,17 @@ struct PopoverView: View {
             header
             Divider()
 
-            if case .denied = store.access {
+            if showingSettings {
+                SettingsView()
+                    .environment(prefs)
+                    .environment(store)
+                    .environment(label)
+            } else if case .denied = store.access {
                 accessHint
             } else {
+                if prefs.showUpcomingBanner, let banner = bannerItem {
+                    UpcomingBanner(item: banner, showProgress: prefs.showRunningProgress)
+                }
                 MonthGrid(
                     month: visibleMonth,
                     selection: $selection,
@@ -68,20 +76,24 @@ struct PopoverView: View {
 
     private var header: some View {
         HStack {
-            Text(monthFormatter.string(from: visibleMonth).capitalized)
+            Text(showingSettings
+                 ? "Einstellungen"
+                 : monthFormatter.string(from: visibleMonth).capitalized)
                 .font(.headline)
             Spacer()
-            Button { step(-1) } label: { Image(systemName: "chevron.left") }
-                .help("Vorheriger Monat")
-            Button {
-                visibleMonth = Date()
-                selection = Date()
-            } label: {
-                Text("Heute").font(.caption)
+            if !showingSettings {
+                Button { step(-1) } label: { Image(systemName: "chevron.left") }
+                    .help("Vorheriger Monat")
+                Button {
+                    visibleMonth = Date()
+                    selection = Date()
+                } label: {
+                    Text("Heute").font(.caption)
+                }
+                .help("Zurück zum heutigen Tag")
+                Button { step(1) } label: { Image(systemName: "chevron.right") }
+                    .help("Nächster Monat")
             }
-            .help("Zurück zum heutigen Tag")
-            Button { step(1) } label: { Image(systemName: "chevron.right") }
-                .help("Nächster Monat")
         }
         .buttonStyle(.accessoryBar)
     }
@@ -104,18 +116,36 @@ struct PopoverView: View {
                 // Höhe und schrumpft im VStack sonst auf eine einzige Zeile,
                 // egal wie viele Einträge drinstehen.
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 5) {
-                        ForEach(items) { AgendaRow(item: $0) }
+                    // Trennlinien statt nur Abstand: bei fünf gleich
+                    // aussehenden Zeilen verschwimmt sonst, wo ein Eintrag
+                    // aufhört und der nächste anfängt.
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                            if index > 0 {
+                                Divider().opacity(0.4).padding(.leading, 17)
+                            }
+                            AgendaRow(item: item, showProgress: prefs.showRunningProgress)
+                                .padding(.vertical, 6)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.trailing, 2)
                 }
                 .scrollIndicators(.automatic)
-                .frame(minHeight: min(CGFloat(items.count) * 36 + 8, 150),
-                       maxHeight: 300)
+                .frame(minHeight: min(CGFloat(items.count) * 44 + 8, 260),
+                       maxHeight: 440)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Was oben hervorgehoben wird: der laufende Termin hat Vorrang vor dem
+    /// nächsten — was gerade passiert, ist dringender als was kommt.
+    private var bannerItem: AgendaItem? {
+        if let running = store.runningEvent { return running }
+        guard let next = store.nextEvent, let start = next.start else { return nil }
+        let lead = TimeInterval(prefs.upcomingLeadMinutes * 60)
+        return start.timeIntervalSinceNow <= lead ? next : nil
     }
 
     /// Termine zuerst, Erinnerungen darunter — sie haben oft keine Uhrzeit und
@@ -146,11 +176,11 @@ struct PopoverView: View {
     private var footer: some View {
         HStack {
             Button {
-                openSettings()
+                withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
             } label: {
-                Image(systemName: "gearshape")
+                Image(systemName: showingSettings ? "chevron.left" : "gearshape")
             }
-            .help("Einstellungen")
+            .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
             Spacer()
             Button("Beenden") { NSApplication.shared.terminate(nil) }
                 .font(.caption)
@@ -165,8 +195,44 @@ struct PopoverView: View {
     }
 }
 
+/// Auffälliger Hinweis oben im Popover: was gerade läuft oder gleich beginnt.
+private struct UpcomingBanner: View {
+    let item: AgendaItem
+    let showProgress: Bool
+
+    var body: some View {
+        let progress = item.progress()
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
+                    .frame(width: 8, height: 8)
+                Text(item.title)
+                    .font(.callout.weight(.semibold))
+                    .lineLimit(1)
+                Spacer(minLength: 4)
+                Text(progress != nil
+                     ? (item.remainingLabel() ?? "läuft")
+                     : (item.startsInLabel() ?? ""))
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(progress != nil ? .primary : .secondary)
+            }
+            if showProgress, let progress {
+                ProgressView(value: progress)
+                    .progressViewStyle(.linear)
+                    .tint(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(.quaternary.opacity(0.5)))
+    }
+}
+
 private struct AgendaRow: View {
     let item: AgendaItem
+    let showProgress: Bool
 
     private let timeFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -197,7 +263,20 @@ private struct AgendaRow: View {
                     .foregroundStyle(item.isCompleted ? .secondary : .primary)
                 let time = item.timeLabel(using: timeFormatter)
                 if !time.isEmpty {
-                    Text(time).font(.caption).foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Text(time).font(.caption).foregroundStyle(.secondary)
+                        if let remaining = item.remainingLabel() {
+                            Text(remaining)
+                                .font(.caption2.weight(.medium))
+                                .foregroundStyle(.tint)
+                        }
+                    }
+                }
+                if showProgress, let progress = item.progress() {
+                    ProgressView(value: progress)
+                        .progressViewStyle(.linear)
+                        .tint(Color(red: item.color.r, green: item.color.g, blue: item.color.b))
+                        .frame(height: 2)
                 }
             }
             Spacer(minLength: 0)

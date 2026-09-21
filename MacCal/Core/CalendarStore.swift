@@ -20,6 +20,11 @@ final class CalendarStore {
     private(set) var items: [AgendaItem] = []
     /// Der nächste noch nicht begonnene Termin (keine Erinnerung, nicht ganztägig).
     private(set) var nextEvent: AgendaItem?
+    /// Der Termin, der gerade läuft. Für die Fortschrittsanzeige.
+    private(set) var runningEvent: AgendaItem?
+
+    /// Längste Dauer, für die ein Fortschritt sinnvoll ist.
+    private static let maxRunningHours: Double = 12
 
     private let store = EKEventStore()
     private var observer: NSObjectProtocol?
@@ -249,6 +254,25 @@ final class CalendarStore {
         nextEvent = items.first { item in
             guard case .event = item.kind, !item.isAllDay, let start = item.start else { return false }
             return start > now
+        }
+        // Ganztägige laufen per Definition den ganzen Tag — ein Fortschritt
+        // daran wäre die Uhrzeit, keine Information über den Termin.
+        //
+        // Zwei weitere Einschränkungen, beide aus dem Befund vom 2026-09-21,
+        // dass ein Termin von *gestern* als laufend angezeigt wurde:
+        //   1. Der Termin muss heute begonnen haben. `start <= now && end > now`
+        //      ist formal richtig, trifft aber auch mehrtägige Termine, deren
+        //      Ende zufällig in der Zukunft liegt. Ein Fortschrittsbalken über
+        //      zwei Tage sagt nichts.
+        //   2. Termine über MAX_RUNNING_HOURS sind eher Zustände als Termine
+        //      (Urlaub, Bereitschaft) — ein Prozentwert darauf ist Rauschen.
+        let calendar = Calendar.current
+        runningEvent = items.first { item in
+            guard case .event = item.kind, !item.isAllDay,
+                  let start = item.start, let end = item.end else { return false }
+            guard start <= now, end > now else { return false }
+            guard calendar.isDateInToday(start) else { return false }
+            return end.timeIntervalSince(start) <= Self.maxRunningHours * 3600
         }
     }
 

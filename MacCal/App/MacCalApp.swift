@@ -42,12 +42,5 @@ struct MacCalApp: App {
             }
         }
         .menuBarExtraStyle(.window)
-
-        Settings {
-            SettingsView()
-                .environment(prefs)
-                .environment(store)
-                .environment(label)
-        }
     }
 }

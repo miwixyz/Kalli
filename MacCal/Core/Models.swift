@@ -60,6 +60,31 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
         return false
     }
 
+    /// Anteil der bereits vergangenen Zeit, 0…1. `nil`, wenn der Termin nicht
+    /// gerade läuft oder keine Dauer hat.
+    func progress(at now: Date = Date()) -> Double? {
+        guard !isAllDay, let start, let end, end > start,
+              start <= now, end > now else { return nil }
+        return (now.timeIntervalSince(start)) / (end.timeIntervalSince(start))
+    }
+
+    /// Verbleibende Zeit als „noch 1:45" bzw. „noch 12 Min.".
+    func remainingLabel(at now: Date = Date()) -> String? {
+        guard let end, end > now, progress(at: now) != nil else { return nil }
+        let minutes = Int(end.timeIntervalSince(now) / 60)
+        if minutes < 60 { return "noch \(minutes) Min." }
+        return "noch \(minutes / 60):\(String(format: "%02d", minutes % 60)) Std."
+    }
+
+    /// „in 15 Min." · „in 2:30 Std." — für den Hinweis auf Bevorstehendes.
+    func startsInLabel(at now: Date = Date()) -> String? {
+        guard let start, start > now else { return nil }
+        let minutes = Int(start.timeIntervalSince(now) / 60)
+        if minutes < 1 { return "gleich" }
+        if minutes < 60 { return "in \(minutes) Min." }
+        return "in \(minutes / 60):\(String(format: "%02d", minutes % 60)) Std."
+    }
+
     /// „14:30" · „14:30–15:00" · „ganztägig" · „" (Erinnerung ohne Uhrzeit)
     func timeLabel(using formatter: DateFormatter) -> String {
         if isAllDay { return "ganztägig" }

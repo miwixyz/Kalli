@@ -78,7 +78,12 @@ final class MenuBarLabel {
             dateFormatter.dateFormat = prefs.menuBarDateFormat
             parts.append(dateFormatter.string(from: now))
         }
-        if prefs.showNextEventInMenuBar, let next = store.nextEvent, let start = next.start {
+        // Laufender Termin hat Vorrang: was jetzt passiert, schlaegt was kommt.
+        if prefs.showRunningProgress, let running = store.runningEvent,
+           let remaining = running.remainingLabel() {
+            let sep = parts.isEmpty ? "" : "· "
+            parts.append("\(sep)\(shorten(running.title)) \(remaining)")
+        } else if prefs.showNextEventInMenuBar, let next = store.nextEvent, let start = next.start {
             let sep = parts.isEmpty ? "" : "· "
             // Tag voranstellen, wenn der Termin nicht heute ist. Ohne das liest
             // sich "08:00 Praxis" um 15 Uhr wie ein laufender Termin, obwohl es

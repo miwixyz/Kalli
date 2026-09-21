@@ -91,25 +91,38 @@ private struct DayCell: View {
                 .frame(width: 4, height: 4)
                 .opacity(hasItems ? 0.85 : 0)
         }
-        .foregroundStyle(foreground)
+        .foregroundStyle(todayStyle)
         .frame(width: 36, height: 36)
         .background {
-            if isSelected {
-                RoundedRectangle(cornerRadius: 8).fill(.tint.opacity(0.25))
-            } else if isToday {
-                RoundedRectangle(cornerRadius: 8).fill(.tint.opacity(0.14))
+            // Heute = gefüllt in der Akzentfarbe, wie in Apples Kalender.
+            // Markiert = nur ein Ring, deutlich andere Gestalt.
+            //
+            // Vorher waren beide dieselbe Farbe in zwei Deckkraftstufen
+            // (0.25 und 0.14) und dadurch praktisch nicht zu unterscheiden.
+            // Zwei Zustände, die sich nur in der Helligkeit unterscheiden,
+            // sind keine zwei Zustände.
+            if isToday {
+                RoundedRectangle(cornerRadius: 8).fill(.tint)
+            } else if isSelected {
+                RoundedRectangle(cornerRadius: 8).fill(.secondary.opacity(0.18))
             }
         }
         .overlay {
-            if isToday {
-                RoundedRectangle(cornerRadius: 8).strokeBorder(.tint, lineWidth: 1)
+            if isSelected {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(isToday ? AnyShapeStyle(.white.opacity(0.9))
+                                          : AnyShapeStyle(.secondary),
+                                  lineWidth: 1.5)
             }
         }
         .contentShape(Rectangle())
     }
 
-    /// Tage aus Nachbarmonaten bleiben sichtbar, treten aber zurück.
-    private var foreground: HierarchicalShapeStyle {
-        isInMonth ? .primary : .quaternary
+    /// Auf gefülltem Akzenthintergrund muss der Text weiß sein, sonst steht
+    /// Blau auf Blau.
+    private var todayStyle: AnyShapeStyle {
+        if isToday { return AnyShapeStyle(.white) }
+        return AnyShapeStyle(isInMonth ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
     }
+
 }
