@@ -172,7 +172,7 @@ struct PopoverView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Kein Zugriff auf Kalender").font(.callout.weight(.semibold))
             Text("→ ZU TUN: Systemeinstellungen → Datenschutz & Sicherheit → "
-                 + "Kalender bzw. Erinnerungen → MacCal aktivieren.")
+                 + "Kalender bzw. Erinnerungen → Kalli aktivieren.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Button("Systemeinstellungen öffnen") {

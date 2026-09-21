@@ -1,6 +1,6 @@
 import AppKit
 
-/// Zeichnet MacCals Menüleisten-Symbol: ein Kalenderblatt mit der heutigen Zahl.
+/// Zeichnet Kallis Menüleisten-Symbol: ein Kalenderblatt mit der heutigen Zahl.
 ///
 /// Warum gezeichnet statt SF Symbol: `calendar` sieht aus wie jede andere
 /// Kalender-App. Die Tageszahl im Blatt macht das Symbol unverwechselbar **und**

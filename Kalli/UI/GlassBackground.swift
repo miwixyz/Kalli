@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// Eine Stelle entscheidet, wie MacCals schwebende Flächen gefüllt werden.
+/// Eine Stelle entscheidet, wie Kallis schwebende Flächen gefüllt werden.
 ///
 /// Ab macOS 26 ist das Liquid Glass (`glassEffect`). Das Deployment-Target ist
 /// 26.0, ein Fallback wäre also toter Code — deshalb gibt es keinen.
 ///
 /// **Geltungsbereich (Apples HIG):** Liquid Glass gehört in die *funktionale*
-/// Schicht — Bedienelemente, Navigation, kurzlebige Oberflächen. Bei MacCal ist
+/// Schicht — Bedienelemente, Navigation, kurzlebige Oberflächen. Bei Kalli ist
 /// das genau ein Ort: das Popover am Menüleisten-Icon. Ein Popover ist per
 /// Definition eine schwebende Fläche, also ist es hier richtig platziert.
 ///
@@ -17,7 +17,7 @@ import SwiftUI
 /// Der Austausch von `glassEffect` gegen `.regularMaterial` ändert daran
 /// nichts, weil nicht das Material das Problem ist, sondern die Transluzenz
 /// selbst. Finder, Mail und Notizen machen es umgekehrt: fester Fensterkörper,
-/// transluzent nur die Seitenleiste. Das Einstellungsfenster von MacCal behält
+/// transluzent nur die Seitenleiste. Das Einstellungsfenster von Kalli behält
 /// deshalb seinen Standardhintergrund.
 struct GlassBackground<S: Shape>: ViewModifier {
     let shape: S

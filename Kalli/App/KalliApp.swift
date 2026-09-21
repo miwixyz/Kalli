@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct MacCalApp: App {
+struct KalliApp: App {
 
     @State private var prefs: Preferences
     @State private var store: CalendarStore

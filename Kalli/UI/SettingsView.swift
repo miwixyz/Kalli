@@ -122,7 +122,7 @@ private struct MenuBarSection: View {
             .onChange(of: prefs.showDateInMenuBar) { label.update() }
 
         if prefs.menuBarWouldBeEmpty {
-            Label("Ohne Symbol und ohne Datum wäre der Eintrag leer — MacCal wäre "
+            Label("Ohne Symbol und ohne Datum wäre der Eintrag leer — Kalli wäre "
                   + "in der Leiste nicht mehr auffindbar. Das Symbol bleibt deshalb.",
                   systemImage: "exclamationmark.triangle")
                 .font(.caption2)
@@ -225,7 +225,7 @@ private struct LoginItemToggle: View {
             }
         case .unavailable:
             Text("Autostart ist fuer diesen Build nicht verfuegbar. Er verlangt eine "
-                 + "App an einem festen Ort — 'make install' legt MacCal nach "
+                 + "App an einem festen Ort — 'make install' legt Kalli nach "
                  + "/Applications.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)

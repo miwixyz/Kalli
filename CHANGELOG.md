@@ -1,6 +1,6 @@
 # Changelog
 
-Alle nennenswerten Änderungen an MacCal.
+Alle nennenswerten Änderungen an Kalli.
 
 ## [0.1.0] — 2026-09-21
 
@@ -18,7 +18,7 @@ Erste Fassung, in einer Sitzung gebaut.
 - Klare Anleitung statt leerer Liste, wenn die Berechtigung fehlt
 
 ### Bewusst nicht enthalten
-Termine anlegen/ändern (MacCal liest nur), Natural-Language-Eingabe, Weltzeituhren,
+Termine anlegen/ändern (Kalli liest nur), Natural-Language-Eingabe, Weltzeituhren,
 Zeitzonen-Schieberegler, Videokonferenz-Erkennung, Datumsrechner, Shortcuts.
 
 ### Technische Entscheidungen

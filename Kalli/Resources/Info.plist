@@ -28,8 +28,8 @@
 	<!-- Ohne diese beiden Texte schlägt der Zugriff STILL fehl (macOS 14+).
 	     Der Nutzer sieht dann keinen Dialog, und die Liste bleibt einfach leer. -->
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>MacCal zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — MacCal ändert nichts in deinen Kalendern.</string>
+	<string>Kalli zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts in deinen Kalendern.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>MacCal zeigt deine Erinnerungen neben den Terminen an. Der Zugriff ist ausschließlich lesend — MacCal ändert nichts an deinen Erinnerungen.</string>
+	<string>Kalli zeigt deine Erinnerungen neben den Terminen an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts an deinen Erinnerungen.</string>
 </dict>
 </plist>

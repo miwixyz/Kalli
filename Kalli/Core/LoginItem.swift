@@ -6,7 +6,7 @@ import ServiceManagement
 /// **Bewusst ohne eigene Einstellung in `Preferences`.** Der wahre Zustand liegt
 /// bei macOS (`SMAppService`), nicht bei uns. Ein gespiegeltes `Bool` in den
 /// UserDefaults würde beim ersten Eingriff von außen falsch — der Nutzer kann
-/// den Eintrag jederzeit in den Systemeinstellungen abschalten, ohne dass MacCal
+/// den Eintrag jederzeit in den Systemeinstellungen abschalten, ohne dass Kalli
 /// davon erfährt. Dann stünde in unserem Schalter „an", während nichts startet.
 ///
 /// Deshalb wird der Status bei jedem Lesen frisch erfragt.

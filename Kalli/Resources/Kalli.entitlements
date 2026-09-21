@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Bewusst ohne App Sandbox: MacCal wird direkt verteilt, nicht über den
+	<!-- Bewusst ohne App Sandbox: Kalli wird direkt verteilt, nicht über den
 	     App Store. Hardened Runtime (in project.yml) genügt für die Notarisierung.
 	     Kommt später ein App-Store-Build dazu, gehören hier
 	     com.apple.security.app-sandbox sowie

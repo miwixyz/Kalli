@@ -1,4 +1,4 @@
-# MacCal
+# Kalli
 
 Menüleisten-Kalender für macOS. Bewusst klein.
 
@@ -11,7 +11,7 @@ Es gibt gute Menüleisten-Kalender. [Calendr](https://github.com/pakerwreah/Cale
 sind beide besser gepflegt als dieses Projekt es je sein wird — wer ihre Funktionen
 braucht, sollte sie nehmen.
 
-MacCal existiert für den umgekehrten Fall: Beide werden mit jedem Release *voller*,
+Kalli existiert für den umgekehrten Fall: Beide werden mit jedem Release *voller*,
 nie leerer. Natural-Language-Eingabe, Zeitzonen-Schieberegler, 50+ Videokonferenz-Dienste,
 Datumsrechner, Weltzeituhren. Wer nur wissen will, welcher Tag heute ist und was
 ansteht, bezahlt das mit Oberfläche.
@@ -31,7 +31,7 @@ ansteht, bezahlt das mit Oberfläche.
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Start bei der Anmeldung**, abschaltbar
 
-Ausdrücklich nicht enthalten: Termine anlegen oder ändern (MacCal liest nur),
+Ausdrücklich nicht enthalten: Termine anlegen oder ändern (Kalli liest nur),
 Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
 
 ## Bauen
@@ -53,7 +53,7 @@ Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 ## Berechtigungen
 
 Beim ersten Öffnen des Popovers fragt macOS nach Zugriff auf Kalender und
-Erinnerungen. Beides ist **lesend** — MacCal schreibt nie zurück.
+Erinnerungen. Beides ist **lesend** — Kalli schreibt nie zurück.
 
 Wird der Dialog abgelehnt, bleibt die Liste leer. Die App zeigt dann eine
 Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
@@ -65,8 +65,8 @@ Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
 ## Aufbau
 
 ```
-MacCal/
-  App/     MacCalApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
+Kalli/
+  App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
   Core/    CalendarStore (EventKit, nur lesend), Preferences, Models
   UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
 ```

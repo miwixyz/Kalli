@@ -1,6 +1,6 @@
 .PHONY: gen build run install clean
 
-APP = MacCal
+APP = Kalli
 CONFIG ?= Debug
 DERIVED = build
 DEST = /Applications/$(APP).app
@@ -28,7 +28,7 @@ install: build
 	cp -R $(DERIVED)/Build/Products/$(CONFIG)/$(APP).app /Applications/
 	codesign --force --deep --sign - "$(DEST)"
 	open "$(DEST)"
-	@echo "→ MacCal läuft jetzt aus /Applications. Autostart ist dort stabil."
+	@echo "→ Kalli läuft jetzt aus /Applications. Autostart ist dort stabil."
 
 clean:
 	rm -rf $(DERIVED) $(APP).xcodeproj

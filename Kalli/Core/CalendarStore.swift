@@ -2,7 +2,7 @@ import EventKit
 import Foundation
 import Observation
 
-/// Liest Termine und Erinnerungen. Ausschließlich lesend — MacCal schreibt nie
+/// Liest Termine und Erinnerungen. Ausschließlich lesend — Kalli schreibt nie
 /// in EventKit zurück.
 @MainActor
 @Observable

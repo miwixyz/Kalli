@@ -1,6 +1,6 @@
-name: MacCal
+name: Kalli
 options:
-  bundleIdPrefix: com.maccal
+  bundleIdPrefix: com.kalli
   deploymentTarget:
     macOS: "26.0"
   developmentLanguage: de
@@ -17,16 +17,16 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
 
 targets:
-  MacCal:
+  Kalli:
     type: application
     platform: macOS
     sources:
-      - path: MacCal
+      - path: Kalli
     settings:
       base:
-        INFOPLIST_FILE: MacCal/Resources/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.maccal.app
-        CODE_SIGN_ENTITLEMENTS: MacCal/Resources/MacCal.entitlements
+        INFOPLIST_FILE: Kalli/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.kalli.app
+        CODE_SIGN_ENTITLEMENTS: Kalli/Resources/Kalli.entitlements
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_STYLE: Automatic
         COMBINE_HIDPI_IMAGES: YES
