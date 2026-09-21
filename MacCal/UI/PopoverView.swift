@@ -53,7 +53,7 @@ struct PopoverView: View {
             footer
         }
         .padding(12)
-        .frame(width: prefs.showWeekNumbers ? 288 : 262)
+        .frame(width: prefs.showWeekNumbers ? 338 : 306)
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
@@ -89,7 +89,7 @@ struct PopoverView: View {
     private var agenda: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(dayFormatter.string(from: selection))
-                .font(.caption.weight(.semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.secondary)
 
             let items = visibleItems
@@ -100,12 +100,19 @@ struct PopoverView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 6)
             } else {
+                // minHeight ist der Punkt: eine ScrollView hat keine eigene
+                // Höhe und schrumpft im VStack sonst auf eine einzige Zeile,
+                // egal wie viele Einträge drinstehen.
                 ScrollView {
                     VStack(alignment: .leading, spacing: 5) {
                         ForEach(items) { AgendaRow(item: $0) }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.trailing, 2)
                 }
-                .frame(maxHeight: 190)
+                .scrollIndicators(.automatic)
+                .frame(minHeight: min(CGFloat(items.count) * 36 + 8, 150),
+                       maxHeight: 300)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -185,12 +192,12 @@ private struct AgendaRow: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(item.title)
-                    .font(.caption)
+                    .font(.callout)
                     .strikethrough(item.isCompleted)
                     .foregroundStyle(item.isCompleted ? .secondary : .primary)
                 let time = item.timeLabel(using: timeFormatter)
                 if !time.isEmpty {
-                    Text(time).font(.caption2).foregroundStyle(.secondary)
+                    Text(time).font(.caption).foregroundStyle(.secondary)
                 }
             }
             Spacer(minLength: 0)

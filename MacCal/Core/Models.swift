@@ -42,6 +42,10 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     let start: Date?
     let end: Date?
     let isAllDay: Bool
+    /// Ob `start` eine echte Uhrzeit trägt. Eine Erinnerung, die nur auf einen
+    /// Tag fällig ist, liefert Mitternacht — das ist keine Uhrzeit, sondern die
+    /// Abwesenheit einer. Ungeprüft steht dann überall „00:00".
+    let hasTime: Bool
     let kind: Kind
     let sourceID: String
     let color: RGBA
@@ -59,7 +63,7 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     /// „14:30" · „14:30–15:00" · „ganztägig" · „" (Erinnerung ohne Uhrzeit)
     func timeLabel(using formatter: DateFormatter) -> String {
         if isAllDay { return "ganztägig" }
-        guard let start else { return "" }
+        guard hasTime, let start else { return "" }
         let from = formatter.string(from: start)
         guard let end, end > start, !isReminder else { return from }
         return "\(from)–\(formatter.string(from: end))"

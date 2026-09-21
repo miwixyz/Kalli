@@ -31,7 +31,15 @@ struct MacCalApp: App {
                     }
                 }
         } label: {
-            Text(label.text)
+            // Symbol IMMER zeichnen. Ein reines Text-Label verschwindet
+            // spurlos, sobald der Text leer ist -- die App laeuft dann, ist
+            // aber unsichtbar und wirkt wie nicht gestartet.
+            if label.showIcon {
+                Image(nsImage: label.icon)
+            }
+            if !label.text.isEmpty {
+                Text(label.text)
+            }
         }
         .menuBarExtraStyle(.window)
 

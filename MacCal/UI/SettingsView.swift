@@ -78,7 +78,14 @@ private struct AppearanceTab: View {
 
         Form {
             Section("Menüleiste") {
+                Toggle("Kalenderblatt-Symbol anzeigen", isOn: $prefs.showIconInMenuBar)
+                    .onChange(of: prefs.showIconInMenuBar) { label.update() }
+
+                Toggle("Datum als Text anzeigen", isOn: $prefs.showDateInMenuBar)
+                    .onChange(of: prefs.showDateInMenuBar) { label.update() }
+
                 TextField("Datumsformat", text: $prefs.menuBarDateFormat)
+                    .disabled(!prefs.showDateInMenuBar)
                     .onChange(of: prefs.menuBarDateFormat) { label.update() }
                 Text("Muster wie bei Apple: `EEE d. MMM` → Mo 21. Sep · `d.M.yy` → 21.9.26")
                     .font(.caption2)
@@ -87,13 +94,25 @@ private struct AppearanceTab: View {
                 Toggle("Nächsten Termin anzeigen", isOn: $prefs.showNextEventInMenuBar)
                     .onChange(of: prefs.showNextEventInMenuBar) { label.update() }
 
+                if prefs.menuBarWouldBeEmpty {
+                    Label("Ohne Symbol und ohne Datum bliebe der Eintrag leer — "
+                          + "das Symbol wird dann trotzdem gezeigt, sonst wäre "
+                          + "MacCal in der Leiste nicht mehr auffindbar.",
+                          systemImage: "exclamationmark.triangle")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                }
+
                 if prefs.showNextEventInMenuBar {
                     Stepper(
                         "Titel kürzen auf \(prefs.nextEventMaxChars) Zeichen",
                         value: $prefs.nextEventMaxChars, in: 8...60
                     )
                     .onChange(of: prefs.nextEventMaxChars) { label.update() }
-                    Text("Ohne feste Länge springt die Breite der Menüleiste bei jedem Terminwechsel.")
+                    Text("Ohne feste Länge springt die Breite der Menüleiste bei jedem "
+                         + "Terminwechsel. Laufende Termine werden nie angezeigt — nur der "
+                         + "nächste, der noch nicht begonnen hat. Ist er nicht heute, steht "
+                         + "der Tag davor.")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }

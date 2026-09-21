@@ -8,6 +8,8 @@ final class Preferences {
 
     private enum Key {
         static let hidden = "hiddenSourceIDs"
+        static let showIcon = "showIconInMenuBar"
+        static let showDate = "showDateInMenuBar"
         static let showNextEvent = "showNextEventInMenuBar"
         static let nextEventWidth = "nextEventMaxChars"
         static let dateFormat = "menuBarDateFormat"
@@ -20,6 +22,18 @@ final class Preferences {
     /// IDs ausgeblendeter Kalender und Erinnerungslisten.
     var hiddenSourceIDs: Set<String> {
         didSet { defaults.set(Array(hiddenSourceIDs), forKey: Key.hidden) }
+    }
+
+    /// Kalenderblatt-Symbol in der Leiste. Neben dem Datumstext ist es
+    /// redundant — die Zahl steht dann zweimal da.
+    var showIconInMenuBar: Bool {
+        didSet { defaults.set(showIconInMenuBar, forKey: Key.showIcon) }
+    }
+
+    /// Datumstext neben dem Symbol. Aus = nur das Kalenderblatt mit der Tageszahl,
+    /// das schmalste sinnvolle Erscheinungsbild.
+    var showDateInMenuBar: Bool {
+        didSet { defaults.set(showDateInMenuBar, forKey: Key.showDate) }
     }
 
     var showNextEventInMenuBar: Bool {
@@ -47,12 +61,19 @@ final class Preferences {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
+        showIconInMenuBar = defaults.object(forKey: Key.showIcon) as? Bool ?? false
+        showDateInMenuBar = defaults.object(forKey: Key.showDate) as? Bool ?? true
         showNextEventInMenuBar = defaults.object(forKey: Key.showNextEvent) as? Bool ?? true
         nextEventMaxChars = defaults.object(forKey: Key.nextEventWidth) as? Int ?? 22
         menuBarDateFormat = defaults.string(forKey: Key.dateFormat) ?? "EEE d. MMM"
         showWeekNumbers = defaults.object(forKey: Key.showWeekNumbers) as? Bool ?? true
         showCompletedReminders = defaults.object(forKey: Key.showCompleted) as? Bool ?? false
     }
+
+    /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.
+    /// Die App liefe weiter, wäre aber nicht mehr auffindbar. Genau das ist am
+    /// 2026-09-21 passiert, bevor es das Symbol gab.
+    var menuBarWouldBeEmpty: Bool { !showIconInMenuBar && !showDateInMenuBar }
 
     func isHidden(_ id: String) -> Bool { hiddenSourceIDs.contains(id) }
 

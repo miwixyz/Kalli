@@ -37,13 +37,13 @@ struct MonthGrid: View {
                     Text("KW")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
-                        .frame(width: 22)
+                        .frame(width: 26)
                 }
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
-                        .font(.caption2.weight(.medium))
+                        .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
-                        .frame(width: 30)
+                        .frame(width: 36)
                 }
             }
 
@@ -53,7 +53,7 @@ struct MonthGrid: View {
                         Text("\(calendar.component(.weekOfYear, from: first))")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.tertiary)
-                            .frame(width: 22)
+                            .frame(width: 26)
                     }
                     ForEach(week, id: \.self) { day in
                         DayCell(
@@ -83,24 +83,26 @@ private struct DayCell: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("\(dayNumber)")
-                .font(.system(size: 12, weight: isToday ? .bold : .regular))
+                .font(.system(size: 14, weight: isToday ? .bold : .regular))
                 .monospacedDigit()
+            // Kräftiger als zuvor: bei 3 pt und .quaternary war kaum zu sehen,
+            // an welchen Tagen etwas steht.
             Circle()
-                .frame(width: 3, height: 3)
-                .opacity(hasItems ? 1 : 0)
+                .frame(width: 4, height: 4)
+                .opacity(hasItems ? 0.85 : 0)
         }
         .foregroundStyle(foreground)
-        .frame(width: 30, height: 30)
+        .frame(width: 36, height: 36)
         .background {
             if isSelected {
-                RoundedRectangle(cornerRadius: 7).fill(.tint.opacity(0.25))
+                RoundedRectangle(cornerRadius: 8).fill(.tint.opacity(0.25))
             } else if isToday {
-                RoundedRectangle(cornerRadius: 7).fill(.tint.opacity(0.14))
+                RoundedRectangle(cornerRadius: 8).fill(.tint.opacity(0.14))
             }
         }
         .overlay {
             if isToday {
-                RoundedRectangle(cornerRadius: 7).strokeBorder(.tint, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 8).strokeBorder(.tint, lineWidth: 1)
             }
         }
         .contentShape(Rectangle())
