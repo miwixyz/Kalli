@@ -33,7 +33,9 @@ ansteht, bezahlt das mit Oberfläche.
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Start bei der Anmeldung**, abschaltbar
 
-Ausdrücklich nicht enthalten: Termine anlegen oder ändern (Kalli liest nur),
+**Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen in der Erinnerungen-App.
+
+Ausdrücklich nicht enthalten: Termine anlegen oder ändern, Aufgaben anlegen oder löschen,
 Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
 
 ## Bauen
@@ -55,7 +57,9 @@ Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 ## Berechtigungen
 
 Beim ersten Öffnen des Popovers fragt macOS nach Zugriff auf Kalender und
-Erinnerungen. Beides ist **lesend** — Kalli schreibt nie zurück.
+Erinnerungen. Kalender werden **nur gelesen**. Bei Erinnerungen schreibt Kalli
+ausschließlich das **Erledigt-Kennzeichen**, und nur auf Klick — nichts wird
+angelegt, umbenannt oder gelöscht.
 
 Wird der Dialog abgelehnt, bleibt die Liste leer. Die App zeigt dann eine
 Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
@@ -69,7 +73,7 @@ Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
 ```
 Kalli/
   App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
-  Core/    CalendarStore (EventKit, nur lesend), Preferences, Models
+  Core/    CalendarStore (EventKit; schreibend nur das Erledigt-Kennzeichen), Preferences, Models
   UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
 ```
 
@@ -150,5 +154,6 @@ MIT — siehe [LICENSE](LICENSE). Rechtliche Hinweise und Datenschutz stehen in
 Rechtliches.
 
 **Kurz zum Datenschutz:** Kalli sendet nichts. Kein Server, keine Analyse, keine
-Kennungen. Gelesen werden Kalender und Erinnerungen — ausschließlich lesend.
-Gespeichert werden nur die eigenen Einstellungen, keine Termininhalte.
+Kennungen. Kalender werden nur gelesen; bei Erinnerungen wird ausschließlich das
+Erledigt-Kennzeichen gesetzt. Gespeichert werden nur die eigenen Einstellungen,
+keine Termininhalte.

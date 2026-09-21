@@ -2,8 +2,12 @@ import EventKit
 import Foundation
 import Observation
 
-/// Liest Termine und Erinnerungen. Ausschließlich lesend — Kalli schreibt nie
-/// in EventKit zurück.
+/// Liest Termine und Erinnerungen.
+///
+/// **Schreibend nur an genau einer Stelle:** `setCompleted(_:for:)` setzt das
+/// Erledigt-Kennzeichen einer Erinnerung. Sonst nichts — keine Termine anlegen,
+/// keine Titel ändern, nichts löschen. Die Einschränkung ist Absicht und in
+/// `RECHTLICHES.md` zugesagt; wer sie erweitert, muss dort nachziehen.
 @MainActor
 @Observable
 final class CalendarStore {
@@ -224,6 +228,33 @@ final class CalendarStore {
                 color: rem.calendar.map(rgba) ?? .fallback
             )
         }
+    }
+
+    // MARK: - Schreiben (nur Erledigt-Kennzeichen)
+
+    /// Hakt eine Erinnerung ab oder nimmt das Häkchen zurück.
+    ///
+    /// Gibt eine Fehlermeldung zurück, statt sie zu schlucken: Ein Häkchen, das
+    /// sichtbar gesetzt wird und in Wahrheit nicht ankommt, ist schlimmer als
+    /// eine Fehlermeldung — man verlässt sich darauf.
+    @discardableResult
+    func setCompleted(_ completed: Bool, for item: AgendaItem) async -> String? {
+        guard item.isReminder else { return nil }
+
+        // Frisch aus EventKit holen. Das AgendaItem ist eine Momentaufnahme;
+        // dazwischen kann die Erinnerung anderswo geändert worden sein.
+        guard let reminder = store.calendarItem(withIdentifier: item.id) as? EKReminder else {
+            return "Diese Erinnerung gibt es nicht mehr."
+        }
+
+        reminder.isCompleted = completed
+        do {
+            try store.save(reminder, commit: true)
+        } catch {
+            return error.localizedDescription
+        }
+        await reload()
+        return nil
     }
 
     // MARK: - Abfragen

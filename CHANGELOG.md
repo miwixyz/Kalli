@@ -23,6 +23,15 @@ Erste Fassung, in einer Sitzung gebaut.
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste;
   nur für Termine, die heute begannen und unter 12 Stunden dauern
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
+- **Aufgaben direkt abhaken** — ein Klick auf den Kreis setzt das
+  Erledigt-Kennzeichen in der Erinnerungen-App, ein weiterer nimmt es zurück.
+  Der Marker ist zugleich der Schalter; ein separater Knopf wäre eine zweite
+  Stelle für dieselbe Information. Fehler werden angezeigt statt geschluckt —
+  ein Häkchen, das sichtbar gesetzt wird und nicht ankommt, ist schlimmer als
+  eine Fehlermeldung.
+  **Damit gilt „Kalli schreibt nie" nicht mehr.** Geschrieben wird ausschließlich
+  dieses eine Kennzeichen; Info.plist, RECHTLICHES, HILFE und README sind
+  entsprechend nachgezogen.
 - **Vergangene Termine ausblendbar** — nur für den heutigen Tag, ganztägige
   Termine und Aufgaben bleiben sichtbar. Ein Hinweis unter der Liste nennt die
   Zahl der verborgenen Einträge und zeigt sie auf Klick wieder
@@ -39,7 +48,7 @@ Erste Fassung, in einer Sitzung gebaut.
 - Klare Anleitung statt leerer Liste, wenn die Berechtigung fehlt
 
 ### Bewusst nicht enthalten
-Termine anlegen/ändern (Kalli liest nur), Natural-Language-Eingabe, Weltzeituhren,
+Termine anlegen/ändern, Aufgaben anlegen/umbenennen/löschen, Natural-Language-Eingabe, Weltzeituhren,
 Zeitzonen-Schieberegler, Videokonferenz-Erkennung, Datumsrechner, Shortcuts.
 
 ### Behoben während der Entwicklung

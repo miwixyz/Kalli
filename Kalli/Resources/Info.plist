@@ -32,6 +32,6 @@
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Kalli zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts in deinen Kalendern.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>Kalli zeigt deine Erinnerungen neben den Terminen an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts an deinen Erinnerungen.</string>
+	<string>Kalli zeigt deine Erinnerungen neben den Terminen an und lässt dich sie dort abhaken. Geändert wird ausschließlich das Erledigt-Kennzeichen — nichts wird angelegt, umbenannt oder gelöscht.</string>
 </dict>
 </plist>

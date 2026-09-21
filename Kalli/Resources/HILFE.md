@@ -1,6 +1,6 @@
 # Kalli — Hilfe
 
-Kalli zeigt deinen Kalender im Menübalken. Nur lesen, nie schreiben.
+Kalli zeigt deinen Kalender im Menübalken. Termine werden nur gelesen; Aufgaben lassen sich direkt abhaken.
 
 ## Menüleiste
 
@@ -37,7 +37,9 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
 - **Tagesliste** in drei Gruppen:
   - **Ganztägig** (Balken-Marker)
   - **Termine** mit Uhrzeit (Kreis)
-  - **Aufgaben** aus der Erinnerungen-App (Kreisumriss, abgehakt = durchgestrichen)
+  - **Aufgaben** aus der Erinnerungen-App (Kreisumriss, abgehakt = durchgestrichen).
+    **Ein Klick auf den Kreis hakt die Aufgabe ab** — die Änderung landet sofort in
+    der Erinnerungen-App. Nochmal klicken nimmt das Häkchen zurück.
 
 **Vergangene Termine ausblenden** (Einstellungen → Ansicht) räumt die Liste im
 Lauf des Tages auf. Der Filter gilt **nur für heute** — an anderen Tagen wäre
@@ -77,14 +79,19 @@ an einem festen Ort. `make install` legt die App nach `/Applications`.
 ## Berechtigungen
 
 Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und
-**Erinnerungen**. Beides wird ausschließlich **gelesen**.
+**Erinnerungen**.
+
+Kalender werden ausschließlich **gelesen**. Bei Erinnerungen schreibt Kalli
+genau eine Sache: das **Erledigt-Kennzeichen**, wenn du ein Häkchen setzt. Nichts
+wird angelegt, umbenannt oder gelöscht.
 
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
 Hinweis mit Direktlink in die Systemeinstellungen.
 
 ## Was Kalli nicht kann — und nicht können soll
 
-Termine anlegen oder ändern · Eingabe in natürlicher Sprache · Weltzeituhren ·
+Termine anlegen oder ändern · Aufgaben anlegen, umbenennen oder löschen ·
+Eingabe in natürlicher Sprache · Weltzeituhren ·
 Zeitzonen-Umrechnung · Erkennung von Videokonferenz-Links · Datumsrechner ·
 Benachrichtigungen.
 
@@ -100,5 +107,8 @@ beide sind ausgereifter und werden gepflegt.
 - **Liste bleibt leer** → Berechtigung prüfen, oder alle Kalender sind unter
   „Kalender" abgewählt.
 - **Termin fehlt** → Gehört er zu einem abgewählten Kalender?
-- **Ein Termin sieht falsch aus** → Kalli liest nur; die Quelle ist die
-  Kalender- oder Erinnerungen-App.
+- **Ein Termin sieht falsch aus** → Termine werden nur gelesen; die Quelle ist
+  die Kalender-App. Dort korrigieren, Kalli zieht automatisch nach.
+- **Ein Häkchen kommt nicht an** → Kalli meldet den Fehler unter der Liste.
+  Bleibt er bestehen, fehlt vermutlich die Schreibberechtigung für Erinnerungen
+  (Systemeinstellungen → Datenschutz & Sicherheit → Erinnerungen).

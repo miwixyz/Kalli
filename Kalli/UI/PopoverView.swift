@@ -9,6 +9,7 @@ struct PopoverView: View {
     @State private var visibleMonth = Date()
     @State private var selection = Date()
     @State private var showingSettings = false
+    @State private var toggleError: String?
 
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
@@ -125,8 +126,23 @@ struct PopoverView: View {
                             AgendaGroup(
                                 title: group.title,
                                 items: group.items,
-                                showProgress: prefs.showRunningProgress
+                                showProgress: prefs.showRunningProgress,
+                                onToggle: { item in
+                                    Task {
+                                        if let error = await store.setCompleted(
+                                            !item.isCompleted, for: item) {
+                                            toggleError = error
+                                        } else {
+                                            toggleError = nil
+                                        }
+                                    }
+                                }
                             )
+                        }
+                        if let toggleError {
+                            Label(toggleError, systemImage: "exclamationmark.triangle")
+                                .font(.caption2)
+                                .foregroundStyle(.orange)
                         }
                         if hiddenPastCount > 0 {
                             Button {
@@ -241,6 +257,7 @@ private struct AgendaGroup: View {
     let title: String
     let items: [AgendaItem]
     let showProgress: Bool
+    var onToggle: ((AgendaItem) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -254,7 +271,8 @@ private struct AgendaGroup: View {
                 if index > 0 {
                     Divider().opacity(0.35).padding(.leading, 17)
                 }
-                AgendaRow(item: item, showProgress: showProgress)
+                AgendaRow(item: item, showProgress: showProgress,
+                          onToggle: { onToggle?(item) })
                     .padding(.vertical, 5)
             }
         }
@@ -299,6 +317,7 @@ private struct UpcomingBanner: View {
 private struct AgendaRow: View {
     let item: AgendaItem
     let showProgress: Bool
+    var onToggle: (() -> Void)? = nil
 
     private let timeFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -314,8 +333,18 @@ private struct AgendaRow: View {
             // zufällig ähnlich eingefärbt sind.
             Group {
                 if item.isReminder {
-                    Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 9))
+                    // Der Marker ist hier zugleich der Schalter. Ein separater
+                    // Knopf daneben waere eine zweite Stelle fuer dieselbe
+                    // Information -- das Haekchen IST die Handlung.
+                    Button {
+                        onToggle?()
+                    } label: {
+                        Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 11))
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(item.isCompleted ? "Häkchen zurücknehmen" : "Als erledigt markieren")
                 } else if item.isAllDay {
                     // Balken = gilt über die ganze Breite des Tages.
                     RoundedRectangle(cornerRadius: 1.5)

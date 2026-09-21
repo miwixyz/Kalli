@@ -24,7 +24,12 @@ Was Kalli liest:
 | Quelle | Zugriff | Zweck |
 |---|---|---|
 | Kalender (EventKit) | **nur lesen** | Termine im Raster und in der Tagesliste anzeigen |
-| Erinnerungen (EventKit) | **nur lesen** | Aufgaben in der Tagesliste anzeigen |
+| Erinnerungen (EventKit) | lesen **und** Erledigt-Kennzeichen setzen | Aufgaben anzeigen und abhaken |
+
+**Was geschrieben wird — vollständig:** ausschließlich das Erledigt-Kennzeichen
+einer Erinnerung, und nur wenn du das Häkchen anklickst. Kalli legt nichts an,
+benennt nichts um, verschiebt nichts und **löscht nichts** — weder Termine noch
+Erinnerungen noch Kalender.
 
 Was Kalli speichert: ausschließlich die eigenen Einstellungen in den macOS-
 UserDefaults unter `com.kalli.app` — welche Kalender ausgeblendet sind, das
@@ -40,8 +45,9 @@ Kalli ist ein privates Werkzeug, kein Produkt mit Supportzusage. Es kann Fehler
 enthalten, Termine falsch darstellen oder unerwartet beenden.
 
 **Verlasse dich für wichtige Termine nicht allein auf Kalli.** Maßgeblich sind
-immer die Kalender- und die Erinnerungen-App von Apple — Kalli ist nur eine
-Ansicht darauf und ändert dort nichts.
+immer die Kalender- und die Erinnerungen-App von Apple. Kalli ist im
+Wesentlichen eine Ansicht darauf; die einzige Änderung, die es vornimmt, ist das
+Abhaken einer Erinnerung auf deinen Klick hin.
 
 ## Verwendete Fremdsoftware
 
