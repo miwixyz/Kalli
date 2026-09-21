@@ -10,6 +10,9 @@ struct PopoverView: View {
     @State private var selection = Date()
     @State private var showingSettings = false
     @State private var toggleError: String?
+    /// Gerade abgehakte Aufgaben. Sie bleiben kurz stehen, damit das Abhaken
+    /// sichtbar wird, bevor der Filter sie entfernt.
+    @State private var justCompleted: Set<String> = []
 
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
@@ -127,16 +130,8 @@ struct PopoverView: View {
                                 title: group.title,
                                 items: group.items,
                                 showProgress: prefs.showRunningProgress,
-                                onToggle: { item in
-                                    Task {
-                                        if let error = await store.setCompleted(
-                                            !item.isCompleted, for: item) {
-                                            toggleError = error
-                                        } else {
-                                            toggleError = nil
-                                        }
-                                    }
-                                }
+                                justCompleted: justCompleted,
+                                onToggle: { item in toggle(item) }
                             )
                         }
                         if let toggleError {
@@ -184,7 +179,11 @@ struct PopoverView: View {
         // komplett leeren und sähe aus wie ein Fehler.
         let filterPast = prefs.hidePastEvents && calendar.isDateInToday(selection)
         return store.items(on: selection, calendar: calendar)
-            .filter { prefs.showCompletedReminders || !$0.isCompleted }
+            // Gerade Abgehaktes ueberlebt den Filter fuer ein paar Sekunden.
+            // Ohne das verschwindet die Zeile im selben Moment wie der Klick,
+            // und der Nutzer sieht nicht, ob er getroffen hat oder danebenlag.
+            .filter { prefs.showCompletedReminders || !$0.isCompleted
+                      || justCompleted.contains($0.id) }
             .filter { !filterPast || !$0.isOver() }
     }
 
@@ -244,6 +243,33 @@ struct PopoverView: View {
         .buttonStyle(.accessoryBar)
     }
 
+    /// Hakt ab oder nimmt zurueck — mit sichtbarem Nachleuchten.
+    private func toggle(_ item: AgendaItem) {
+        let wasCompleted = item.isCompleted
+        Task {
+            if let error = await store.setCompleted(!wasCompleted, for: item) {
+                toggleError = error
+                return
+            }
+            toggleError = nil
+
+            if wasCompleted {
+                // Haekchen zurueckgenommen: Zeile bleibt ohnehin stehen.
+                withAnimation { _ = justCompleted.remove(item.id) }
+                return
+            }
+
+            // Abgehakt: kurz sichtbar lassen, dann ausblenden.
+            withAnimation(.easeOut(duration: 0.2)) {
+                _ = justCompleted.insert(item.id)
+            }
+            try? await Task.sleep(for: .seconds(3))
+            withAnimation(.easeInOut(duration: 0.35)) {
+                _ = justCompleted.remove(item.id)
+            }
+        }
+    }
+
     private func step(_ months: Int) {
         guard let next = calendar.date(byAdding: .month, value: months, to: visibleMonth)
         else { return }
@@ -257,6 +283,7 @@ private struct AgendaGroup: View {
     let title: String
     let items: [AgendaItem]
     let showProgress: Bool
+    var justCompleted: Set<String> = []
     var onToggle: ((AgendaItem) -> Void)? = nil
 
     var body: some View {
@@ -272,6 +299,7 @@ private struct AgendaGroup: View {
                     Divider().opacity(0.35).padding(.leading, 17)
                 }
                 AgendaRow(item: item, showProgress: showProgress,
+                          isFading: justCompleted.contains(item.id),
                           onToggle: { onToggle?(item) })
                     .padding(.vertical, 5)
             }
@@ -317,6 +345,7 @@ private struct UpcomingBanner: View {
 private struct AgendaRow: View {
     let item: AgendaItem
     let showProgress: Bool
+    var isFading: Bool = false
     var onToggle: (() -> Void)? = nil
 
     private let timeFormatter: DateFormatter = {
@@ -382,6 +411,24 @@ private struct AgendaRow: View {
                 }
             }
             Spacer(minLength: 0)
+
+            // Nur solange die Zeile nachleuchtet: ein Weg zurueck. Danach
+            // bleibt der Kreis selbst der Schalter.
+            if isFading {
+                Button("Rückgängig") { onToggle?() }
+                    .font(.caption2)
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.tint)
+            }
         }
+        .opacity(isFading ? 0.55 : 1)
+        .background {
+            if isFading {
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(.tint.opacity(0.10))
+                    .padding(.horizontal, -4)
+            }
+        }
+        .transition(.opacity.combined(with: .move(edge: .leading)))
     }
 }

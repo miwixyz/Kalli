@@ -39,7 +39,15 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
   - **Termine** mit Uhrzeit (Kreis)
   - **Aufgaben** aus der Erinnerungen-App (Kreisumriss, abgehakt = durchgestrichen).
     **Ein Klick auf den Kreis hakt die Aufgabe ab** — die Änderung landet sofort in
-    der Erinnerungen-App. Nochmal klicken nimmt das Häkchen zurück.
+    der Erinnerungen-App.
+
+    Die Zeile bleibt danach **drei Sekunden lang sichtbar**: durchgestrichen,
+    abgedunkelt und mit einem **Rückgängig**-Knopf. Erst dann blendet sie aus.
+    Ohne dieses Nachleuchten verschwände sie im selben Moment wie der Klick —
+    und ein Versehen wäre von einer Absicht nicht zu unterscheiden.
+
+    Sind erledigte Erinnerungen eingeblendet (Einstellungen → Ansicht), bleibt
+    die Zeile ohnehin stehen; ein weiterer Klick nimmt das Häkchen zurück.
 
 **Vergangene Termine ausblenden** (Einstellungen → Ansicht) räumt die Liste im
 Lauf des Tages auf. Der Filter gilt **nur für heute** — an anderen Tagen wäre

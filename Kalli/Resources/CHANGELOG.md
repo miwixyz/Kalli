@@ -32,6 +32,10 @@ Erste Fassung, in einer Sitzung gebaut.
   **Damit gilt „Kalli schreibt nie" nicht mehr.** Geschrieben wird ausschließlich
   dieses eine Kennzeichen; Info.plist, RECHTLICHES, HILFE und README sind
   entsprechend nachgezogen.
+- **Nachleuchten beim Abhaken** — die erledigte Aufgabe bleibt drei Sekunden
+  sichtbar (durchgestrichen, abgedunkelt, mit Rückgängig-Knopf) und blendet
+  dann aus. Vorher verschwand sie im selben Moment wie der Klick, womit ein
+  Versehen von einer Absicht nicht zu unterscheiden war
 - **Vergangene Termine ausblendbar** — nur für den heutigen Tag, ganztägige
   Termine und Aufgaben bleiben sichtbar. Ein Hinweis unter der Liste nennt die
   Zahl der verborgenen Einträge und zeigt sie auf Klick wieder
