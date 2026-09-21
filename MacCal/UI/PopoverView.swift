@@ -116,16 +116,17 @@ struct PopoverView: View {
                 // Höhe und schrumpft im VStack sonst auf eine einzige Zeile,
                 // egal wie viele Einträge drinstehen.
                 ScrollView {
-                    // Trennlinien statt nur Abstand: bei fünf gleich
-                    // aussehenden Zeilen verschwimmt sonst, wo ein Eintrag
-                    // aufhört und der nächste anfängt.
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                            if index > 0 {
-                                Divider().opacity(0.4).padding(.leading, 17)
-                            }
-                            AgendaRow(item: item, showProgress: prefs.showRunningProgress)
-                                .padding(.vertical, 6)
+                    // Drei Arten, drei Gruppen. Ganztägiges, Termine mit
+                    // Uhrzeit und Aufgaben beantworten verschiedene Fragen —
+                    // in einer durchlaufenden Liste sehen sie gleich aus und
+                    // man muss jede Zeile einzeln einordnen.
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(groups, id: \.title) { group in
+                            AgendaGroup(
+                                title: group.title,
+                                items: group.items,
+                                showProgress: prefs.showRunningProgress
+                            )
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -148,12 +149,23 @@ struct PopoverView: View {
         return start.timeIntervalSinceNow <= lead ? next : nil
     }
 
-    /// Termine zuerst, Erinnerungen darunter — sie haben oft keine Uhrzeit und
-    /// würden die Zeitachse sonst durchbrechen.
     private var visibleItems: [AgendaItem] {
-        let all = store.items(on: selection, calendar: calendar)
+        store.items(on: selection, calendar: calendar)
             .filter { prefs.showCompletedReminders || !$0.isCompleted }
-        return all.filter { !$0.isReminder } + all.filter(\.isReminder)
+    }
+
+    /// Reihenfolge der Gruppen: erst was den ganzen Tag gilt (der Rahmen),
+    /// dann was zu einer Uhrzeit passiert, zuletzt was ohne feste Zeit zu tun ist.
+    private var groups: [(title: String, items: [AgendaItem])] {
+        let all = visibleItems
+        let allDay = all.filter { $0.isAllDay && !$0.isReminder }
+        let timed = all.filter { !$0.isAllDay && !$0.isReminder }
+        let tasks = all.filter(\.isReminder)
+        return [
+            ("Ganztägig", allDay),
+            ("Termine", timed),
+            ("Aufgaben", tasks),
+        ].filter { !$0.1.isEmpty }
     }
 
     private var accessHint: some View {
@@ -192,6 +204,32 @@ struct PopoverView: View {
         guard let next = calendar.date(byAdding: .month, value: months, to: visibleMonth)
         else { return }
         visibleMonth = next
+    }
+}
+
+/// Eine Gruppe mit Überschrift. Trennlinien nur innerhalb der Gruppe — die
+/// Gruppen selbst trennt der Abstand plus die Überschrift.
+private struct AgendaGroup: View {
+    let title: String
+    let items: [AgendaItem]
+    let showProgress: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title.uppercased())
+                .font(.system(size: 9, weight: .semibold))
+                .tracking(0.6)
+                .foregroundStyle(.tertiary)
+                .padding(.bottom, 3)
+
+            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                if index > 0 {
+                    Divider().opacity(0.35).padding(.leading, 17)
+                }
+                AgendaRow(item: item, showProgress: showProgress)
+                    .padding(.vertical, 5)
+            }
+        }
     }
 }
 
@@ -243,10 +281,17 @@ private struct AgendaRow: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 7) {
+            // Drei Arten, drei Formen — nicht dieselbe Form in drei Farben.
+            // Die Form trägt die Bedeutung auch dann, wenn zwei Kalender
+            // zufällig ähnlich eingefärbt sind.
             Group {
                 if item.isReminder {
                     Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 9))
+                } else if item.isAllDay {
+                    // Balken = gilt über die ganze Breite des Tages.
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .frame(width: 9, height: 4)
                 } else {
                     Circle().frame(width: 7, height: 7)
                 }
