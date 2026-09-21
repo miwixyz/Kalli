@@ -30,19 +30,27 @@ struct SettingsView: View {
             .pickerStyle(.segmented)
             .labelsHidden()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    switch tab {
-                    case .sources: SourcesSection()
-                    case .menuBar: MenuBarSection()
-                    case .popover: PopoverSection()
-                    case .help: HelpView()
+            // Die Hilfe bringt ihren eigenen Scrollbereich mit (sie rendert
+            // lange Dokumente). Zwei ineinander verschachtelte ScrollViews
+            // fangen sich gegenseitig die Scroll-Gesten ab — deshalb bekommt
+            // nur der Einstellungsteil hier einen.
+            if tab == .help {
+                HelpView()
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        switch tab {
+                        case .sources: SourcesSection()
+                        case .menuBar: MenuBarSection()
+                        case .popover: PopoverSection()
+                        case .help: EmptyView()
+                        }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.trailing, 2)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.trailing, 2)
+                .frame(height: 400)
             }
-            .frame(height: 330)
         }
     }
 }

@@ -61,7 +61,7 @@ struct PopoverView: View {
             footer
         }
         .padding(12)
-        .frame(width: prefs.showWeekNumbers ? 338 : 306)
+        .frame(width: prefs.showWeekNumbers ? 396 : 360)
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
@@ -133,8 +133,8 @@ struct PopoverView: View {
                     .padding(.trailing, 2)
                 }
                 .scrollIndicators(.automatic)
-                .frame(minHeight: min(CGFloat(items.count) * 44 + 8, 260),
-                       maxHeight: 440)
+                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(items.count) * 46, 380),
+                       maxHeight: 560)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

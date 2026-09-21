@@ -37,13 +37,13 @@ struct MonthGrid: View {
                     Text("KW")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
-                        .frame(width: 26)
+                        .frame(width: 30)
                 }
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
-                        .frame(width: 36)
+                        .frame(width: 44)
                 }
             }
 
@@ -53,7 +53,7 @@ struct MonthGrid: View {
                         Text("\(calendar.component(.weekOfYear, from: first))")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.tertiary)
-                            .frame(width: 26)
+                            .frame(width: 30)
                     }
                     ForEach(week, id: \.self) { day in
                         DayCell(
@@ -83,7 +83,7 @@ private struct DayCell: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("\(dayNumber)")
-                .font(.system(size: 14, weight: isToday ? .bold : .regular))
+                .font(.system(size: 15, weight: isToday ? .bold : .regular))
                 .monospacedDigit()
             // Kräftiger als zuvor: bei 3 pt und .quaternary war kaum zu sehen,
             // an welchen Tagen etwas steht.
@@ -92,7 +92,7 @@ private struct DayCell: View {
                 .opacity(hasItems ? 0.85 : 0)
         }
         .foregroundStyle(todayStyle)
-        .frame(width: 36, height: 36)
+        .frame(width: 44, height: 40)
         .background {
             // Heute = gefüllt in der Akzentfarbe, wie in Apples Kalender.
             // Markiert = nur ein Ring, deutlich andere Gestalt.
@@ -102,14 +102,14 @@ private struct DayCell: View {
             // Zwei Zustände, die sich nur in der Helligkeit unterscheiden,
             // sind keine zwei Zustände.
             if isToday {
-                RoundedRectangle(cornerRadius: 8).fill(.tint)
+                RoundedRectangle(cornerRadius: 9).fill(.tint)
             } else if isSelected {
-                RoundedRectangle(cornerRadius: 8).fill(.secondary.opacity(0.18))
+                RoundedRectangle(cornerRadius: 9).fill(.secondary.opacity(0.18))
             }
         }
         .overlay {
             if isSelected {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 9)
                     .strokeBorder(isToday ? AnyShapeStyle(.white.opacity(0.9))
                                           : AnyShapeStyle(.secondary),
                                   lineWidth: 1.5)

@@ -46,13 +46,11 @@ struct HelpView: View {
             .labelsHidden()
 
             ScrollView {
-                Text(markdown(for: doc))
-                    .font(.callout)
+                MarkdownView(source: text(for: doc))
                     .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.trailing, 2)
+                    .padding(.trailing, 4)
             }
-            .frame(height: 300)
+            .frame(height: 380)
 
             Text(version)
                 .font(.caption2)
@@ -60,24 +58,17 @@ struct HelpView: View {
         }
     }
 
-    /// Liest die Datei aus dem Bundle und wandelt sie in `AttributedString`.
+    /// Liest die Datei aus dem Bundle.
     ///
-    /// Fehlt die Datei, steht das sichtbar da — statt einer leeren Fläche, die
-    /// wie „keine Änderungen" aussieht. Ein fehlendes Dokument ist ein
-    /// Build-Fehler, kein Anzeigezustand.
-    private func markdown(for doc: Doc) -> AttributedString {
+    /// Fehlt sie, steht das sichtbar da — statt einer leeren Fläche, die wie
+    /// „keine Änderungen" aussieht. Ein fehlendes Dokument ist ein Build-Fehler,
+    /// kein Anzeigezustand.
+    private func text(for doc: Doc) -> String {
         guard let url = Bundle.main.url(forResource: doc.resource, withExtension: "md"),
               let raw = try? String(contentsOf: url, encoding: .utf8) else {
-            return AttributedString(
-                "„\(doc.resource).md" + "\" fehlt im App-Bundle. "
-                + "Das ist ein Fehler beim Bauen, keine leere Datei."
-            )
+            return "## Dokument fehlt\n\n`\(doc.resource).md` liegt nicht im "
+                 + "App-Bundle. Das ist ein Fehler beim Bauen, keine leere Datei."
         }
-        let options = AttributedString.MarkdownParsingOptions(
-            interpretedSyntax: .full,
-            failurePolicy: .returnPartiallyParsedIfPossible
-        )
-        return (try? AttributedString(markdown: raw, options: options))
-            ?? AttributedString(raw)
+        return raw
     }
 }
