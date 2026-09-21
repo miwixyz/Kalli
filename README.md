@@ -25,6 +25,11 @@ ansteht, bezahlt das mit Oberfläche.
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
 - **Hell/Dunkel** folgt dem System
 - **Liquid Glass** auf dem Popover (macOS 26+)
+- **Tagesliste nach Art gruppiert:** Ganztägig, Termine, Aufgaben — je mit
+  eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
+- **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste
+- **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
+- **Start bei der Anmeldung**, abschaltbar
 
 Ausdrücklich nicht enthalten: Termine anlegen oder ändern (MacCal liest nur),
 Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
@@ -33,8 +38,15 @@ Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
 
 ```bash
 make build     # xcodegen + xcodebuild
-make run       # bauen und starten
+make run       # bauen und aus dem build-Ordner starten
+make install   # nach /Applications legen und starten
 ```
+
+**`make install` ist nicht optional, wenn du den Autostart willst.**
+`SMAppService` verlangt eine App an einem festen Ort mit stabiler Signatur.
+Aus `build/` heraus vergisst macOS die Registrierung beim nächsten Build —
+der Schalter zeigt das dann ehrlich als „nicht verfügbar" an, statt Erfolg
+zu behaupten.
 
 Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 
@@ -69,7 +81,13 @@ Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für dies
 2. **Ganztägige Termine haben keine Zeitzone.** EventKit liefert sie in GMT.
    Mit lokaler Zeitzone verglichen rutschen sie auf den Vortag — deshalb wird
    bei ihnen nur das Kalenderdatum verglichen.
-3. **Liquid Glass nur auf dem Popover.** Vollflächige Transluzenz mittelt das
+3. **Der Autostart-Schalter liest den Systemzustand, statt ihn zu spiegeln.**
+   Ein `Bool` in den UserDefaults würde falsch, sobald jemand den Eintrag in den
+   Systemeinstellungen abschaltet — dann stünde „an", während nichts startet.
+   `SMAppService.mainApp.status` wird bei jedem Anzeigen frisch erfragt, und
+   nach dem Umschalten wird der *tatsächliche* Zustand übernommen, nicht der
+   gewünschte.
+4. **Liquid Glass nur auf dem Popover.** Vollflächige Transluzenz mittelt das
    Hintergrundbild auf seine Durchschnittsfarbe; auf buntem Schreibtisch werden
    Fenster zu farbigem Nebel. Das Einstellungsfenster bleibt deshalb solide —
    so wie Finder, Mail und Notizen es auch halten.

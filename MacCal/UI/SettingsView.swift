@@ -186,5 +186,55 @@ private struct PopoverSection: View {
             Stepper("Ab \(prefs.upcomingLeadMinutes) Min. vorher",
                     value: $prefs.upcomingLeadMinutes, in: 5...240, step: 5)
         }
+
+        Divider()
+
+        LoginItemToggle()
+    }
+}
+
+// MARK: - Start bei der Anmeldung
+
+/// Eigene View, weil der Zustand nicht aus den Einstellungen kommt, sondern
+/// bei jedem Erscheinen frisch vom System erfragt wird.
+private struct LoginItemToggle: View {
+    @State private var state: LoginItem.State = .off
+    @State private var failure: String?
+
+    var body: some View {
+        Toggle("Bei der Anmeldung starten", isOn: Binding(
+            get: { state == .on },
+            set: { wanted in
+                failure = LoginItem.set(wanted)?.localizedDescription
+                // Nicht den gewuenschten Wert uebernehmen, sondern den, der
+                // danach tatsaechlich gilt. Ein Schalter, der "an" zeigt,
+                // waehrend nichts registriert ist, ist schlimmer als keiner.
+                state = LoginItem.state
+            }
+        ))
+        .onAppear { state = LoginItem.state }
+
+        switch state {
+        case .needsApproval:
+            VStack(alignment: .leading, spacing: 4) {
+                Label("macOS wartet auf deine Freigabe.", systemImage: "exclamationmark.triangle")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Button("Systemeinstellungen oeffnen") { LoginItem.openSystemSettings() }
+                    .font(.caption2)
+            }
+        case .unavailable:
+            Text("Autostart ist fuer diesen Build nicht verfuegbar. Er verlangt eine "
+                 + "App an einem festen Ort — 'make install' legt MacCal nach "
+                 + "/Applications.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        default:
+            EmptyView()
+        }
+
+        if let failure {
+            Text(failure).font(.caption2).foregroundStyle(.red)
+        }
     }
 }
