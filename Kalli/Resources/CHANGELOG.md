@@ -19,6 +19,9 @@ Erste Fassung, in einer Sitzung gebaut.
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste;
   nur für Termine, die heute begannen und unter 12 Stunden dauern
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
+- **Vergangene Termine ausblendbar** — nur für den heutigen Tag, ganztägige
+  Termine und Aufgaben bleiben sichtbar. Ein Hinweis unter der Liste nennt die
+  Zahl der verborgenen Einträge und zeigt sie auf Klick wieder
 - **Tagesliste in drei Gruppen** — Ganztägig, Termine, Aufgaben, je mit eigener
   Markerform
 - Menüleiste: Datum in frei wählbarem Format; optional der nächste Termin,

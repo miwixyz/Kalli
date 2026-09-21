@@ -55,9 +55,21 @@ fi
 # --- 3) Bewegte sich der Code, ohne dass die Doku mitging? ------------------
 # Gemessen wird gegen den letzten Commit, der die Doku angefasst hat.
 if git rev-parse --git-dir >/dev/null 2>&1; then
+    # Ungesicherte Doku-Aenderungen im Arbeitsverzeichnis zaehlen als
+    # "angefasst". Sonst blockiert das Gate den Normalfall: Code und Doku
+    # zusammen aendern und VOR dem Commit bauen. Ein Gate, das den
+    # gewoehnlichen Arbeitsablauf blockiert, wird umgangen statt befolgt --
+    # und ein umgangenes Gate ist wertlos.
+    DOC_DIRTY=0
+    if ! git diff --quiet -- CHANGELOG.md README.md Kalli/Resources/HILFE.md \
+                             Kalli/Resources/RECHTLICHES.md 2>/dev/null; then
+        DOC_DIRTY=1
+        note "✓ Doku ist im Arbeitsverzeichnis geaendert (noch nicht committet)"
+    fi
+
     LAST_DOC=$(git log -1 --format=%H -- CHANGELOG.md Kalli/Resources/HILFE.md \
                    Kalli/Resources/RECHTLICHES.md README.md 2>/dev/null)
-    if [ -n "$LAST_DOC" ]; then
+    if [ -n "$LAST_DOC" ] && [ "$DOC_DIRTY" -eq 0 ]; then
         CHANGED=$(git diff --name-only "$LAST_DOC"..HEAD -- '*.swift' 2>/dev/null | wc -l | tr -d ' ')
         if [ "$CHANGED" -gt 0 ]; then
             note "❌ $CHANGED Swift-Datei(en) geändert, seit die Doku zuletzt angefasst wurde"
@@ -70,10 +82,6 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
         fi
     fi
 
-    # Ungesicherte Doku-Änderungen fallen sonst beim nächsten Build hinten runter
-    if ! git diff --quiet -- '*.md' 2>/dev/null; then
-        note "⚠ Doku-Änderungen sind noch nicht committet (nicht blockierend)"
-    fi
 fi
 
 # --- 4) Spiegelt das Bundle-CHANGELOG das echte? ---------------------------

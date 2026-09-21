@@ -28,7 +28,9 @@ run: build
 
 # Autostart (SMAppService) verlangt einen festen Ort und eine stabile Signatur.
 # Aus dem build-Ordner heraus vergisst macOS die Registrierung beim nächsten Build.
-check-docs:
+# Reihenfolge ist wesentlich: Erst spiegeln, dann pruefen. Andersherum prueft
+# das Gate gegen einen Zustand, den es selbst noch nicht hergestellt hat.
+check-docs: docs
 	@bash scripts/docs-gate.sh
 
 install: check-docs build
