@@ -11,10 +11,11 @@
 #      einer stabilen Developer-ID-Signatur fragt es einmal — auf jedem Mac.
 #   2. Der zweite Mac bräuchte volles Xcode, nur um eine App zu installieren.
 #
-# Bewusst **kein Sparkle und kein Appcast**: Kalli liegt in einem privaten
-# Repo, ein öffentlicher Appcast geht damit nicht (entschieden 2026-09-21).
-# Ein Release-Asset geht trotzdem — `gh release download` läuft mit der
-# Anmeldung des Besitzers.
+# **Noch kein Sparkle und kein Appcast.** Bis zum 2026-09-22 sprach dagegen, dass
+# das Repo privat war: Ein Appcast braucht eine öffentlich erreichbare
+# Download-URL. Mit der Veröffentlichung ist dieser Grund entfallen — Sparkle
+# ist der nächste Schritt, und dieses Skript wird ihn dann mitbedienen
+# (Appcast erzeugen und mit dem EdDSA-Schlüssel signieren).
 #
 # Bewusst **ZIP statt DMG**: Ein DMG lohnt sich, wenn ein Installationsfenster
 # mit Hintergrundbild etwas erklären muss. Hier zieht einer eine App nach
@@ -273,7 +274,7 @@ echo ""
 echo "✅ ${APP} ${VERSION} released."
 echo ""
 echo "→ ZU TUN auf dem anderen Mac:"
-echo "     gh release download ${TAG} --repo miwixyz/Kalli --pattern '*.zip'"
+echo "     gh release download --repo miwixyz/Kalli --pattern '*.zip'   # ohne Tag = neuestes"
 echo "     ditto -x -k ${APP}-${VERSION}.zip . && mv ${BUNDLE} /Applications/ && open /Applications/${BUNDLE}"
 echo ""
 echo "   WICHTIG: ditto, nicht unzip. unzip zerstoert die Bundle-Metadaten"

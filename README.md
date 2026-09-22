@@ -188,12 +188,23 @@ beim Umbenennen des Projekts verloren gegangen war.
 
 ## Installieren auf einem zweiten Mac
 
-Ohne Xcode, über das Release-Asset:
+Ohne Xcode, ohne Anmeldung, ohne geklontes Repo.
+
+**Im Browser:** [neuestes Release](https://github.com/miwixyz/Kalli/releases/latest)
+→ ZIP laden → doppelklicken → `Kalli.app` nach *Programme* ziehen.
+
+**Auf der Kommandozeile:**
 
 ```bash
-gh release download v0.2.3 --repo miwixyz/Kalli --pattern '*.zip'
-ditto -x -k Kalli-0.2.3.zip . && mv Kalli.app /Applications/ && open /Applications/Kalli.app
+gh release download --repo miwixyz/Kalli --pattern '*.zip'   # ohne Tag = neuestes
+ditto -x -k Kalli-*.zip . && mv Kalli.app /Applications/ && open /Applications/Kalli.app
 ```
+
+> **Hier steht bewusst keine Versionsnummer.** Sie stand hier, und sie war nach
+> drei Releases falsch — obwohl die Hausregel „README im selben Commit wie das
+> Release" existiert. Eine Anleitung, die bei jedem Release von Hand
+> nachgezogen werden muss, wird irgendwann nicht nachgezogen. `gh release
+> download` ohne Tag nimmt das neueste; `Kalli-*.zip` passt auf jede Version.
 
 > **`ditto`, nicht `unzip`.** `unzip` zerstört die Bundle-Metadaten eines
 > signierten `.app`; Gatekeeper meldet danach „a sealed resource is missing or
@@ -206,7 +217,8 @@ ohne Rechtsklick-Umweg starten. macOS fragt einmal nach Kalender- und
 Erinnerungszugriff, danach nicht mehr: TCC bindet die Zustimmung an die
 Code-Signatur, und die bleibt über Releases hinweg stabil.
 
-Das Repo ist privat, `gh release download` läuft mit der eigenen Anmeldung.
+Das Asset ist **ohne Anmeldung** ladbar — gegengeprüft mit `curl` ohne Token
+gegen das anonym geladene Bundle: `accepted · source=Notarized Developer ID`.
 
 ## Release bauen
 
@@ -230,8 +242,12 @@ darüber, was veröffentlicht ist.
 
 ## Aktualisieren
 
-Kalli hat **kein Sparkle**. Automatische Updates brauchen einen öffentlich
-erreichbaren Appcast, und das Repo ist privat.
+Kalli hat **noch kein Sparkle**. Der Grund, der bis zum 2026-09-22 dagegen
+sprach, ist mit der Veröffentlichung entfallen: Ein Appcast braucht eine
+öffentlich erreichbare Download-URL, und die gibt es jetzt. Sparkle ist damit
+der nächste Schritt und kein Hindernis mehr.
+
+Bis dahin:
 
 - **Auf dem Entwicklungs-Mac:** `cd ~/Coding/Kalli && git pull && make install`
 - **Auf jedem anderen Mac:** neues Release herunterladen (siehe oben)
