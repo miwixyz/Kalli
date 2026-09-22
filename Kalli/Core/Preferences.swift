@@ -21,6 +21,9 @@ final class Preferences {
         static let showUpcoming = "showUpcomingBanner"
         static let upcomingLead = "upcomingLeadMinutes"
         static let menuBarLead = "menuBarLeadMinutes"
+        static let notifyNext = "notifyBeforeNextEvent"
+        static let flashNext = "flashNextEventInMenuBar"
+        static let alertLead = "alertLeadMinutes"
     }
 
     private let defaults: UserDefaults
@@ -117,6 +120,30 @@ final class Preferences {
         didSet { defaults.set(upcomingLeadMinutes, forKey: Key.upcomingLead) }
     }
 
+    /// Systemmitteilung vor dem nächsten Termin.
+    ///
+    /// **Ab Werk aus.** Eine Mitteilung ist eine Unterbrechung — die erteilt
+    /// man, die erbt man nicht. Gleiche Haltung wie bei Tippis Bildschirm-OCR:
+    /// Was von sich aus in den Tag hineinredet, wird eingeschaltet, nicht
+    /// vorausgesetzt.
+    var notifyBeforeNextEvent: Bool {
+        didSet { defaults.set(notifyBeforeNextEvent, forKey: Key.notifyNext) }
+    }
+
+    /// Puls in der Menüleiste vor dem nächsten Termin. Ab Werk aus.
+    var flashNextEventInMenuBar: Bool {
+        didSet { defaults.set(flashNextEventInMenuBar, forKey: Key.flashNext) }
+    }
+
+    /// Vorlauf für **beide** prominenten Hinweise — Mitteilung und Puls.
+    ///
+    /// Bewusst EIN Wert für beide: Zwei Vorlaufzeiten für dieselbe Frage
+    /// („wann soll ich Bescheid bekommen?") wären zwei Zahlen, die
+    /// auseinanderlaufen. Getrennt sind die Kanäle, nicht der Zeitpunkt.
+    var alertLeadMinutes: Int {
+        didSet { defaults.set(alertLeadMinutes, forKey: Key.alertLead) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
@@ -133,6 +160,9 @@ final class Preferences {
         showUpcomingBanner = defaults.object(forKey: Key.showUpcoming) as? Bool ?? true
         upcomingLeadMinutes = defaults.object(forKey: Key.upcomingLead) as? Int ?? 60
         menuBarLeadMinutes = defaults.object(forKey: Key.menuBarLead) as? Int ?? 60
+        notifyBeforeNextEvent = defaults.object(forKey: Key.notifyNext) as? Bool ?? false
+        flashNextEventInMenuBar = defaults.object(forKey: Key.flashNext) as? Bool ?? false
+        alertLeadMinutes = defaults.object(forKey: Key.alertLead) as? Int ?? 10
     }
 
     /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.

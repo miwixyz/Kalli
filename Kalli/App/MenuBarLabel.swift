@@ -72,7 +72,10 @@ final class MenuBarLabel {
     // Nötig ist es auch nicht: Diese Instanz lebt so lange wie die App. Der
     // Timer hält `self` schwach, läuft also selbst im theoretischen Fall einer
     // Freigabe ins Leere statt auf ein totes Objekt.
-    func stop() { timer?.invalidate(); timer = nil }
+    func stop() {
+        timer?.invalidate(); timer = nil
+        pulseTimer?.invalidate(); pulseTimer = nil
+    }
 
     func update() {
         let now = Date()
@@ -101,7 +104,10 @@ final class MenuBarLabel {
             let sep = parts.isEmpty ? "" : "· "
             parts.append("\(sep)\(part)")
         }
-        text = parts.joined(separator: " ")
+        // Der Puls steht ganz vorn, damit er auch bei ausgeschaltetem Datum
+        // und ausgeschaltetem Termintext noch sichtbar ist.
+        text = pulseMarker() + parts.joined(separator: " ")
+        syncPulseTimer()
     }
 
     /// Der naechste Termin, aber erst ab der eingestellten Vorlaufzeit.
@@ -147,6 +153,59 @@ final class MenuBarLabel {
               let remaining = running.remainingLabel()
         else { return nil }
         return "\(shorten(running.title)) \(remaining)"
+    }
+
+    // MARK: - Puls vor dem nächsten Termin
+
+    /// Ob der Puls gerade „an" ist. Wechselt im Sekundentakt.
+    private var pulseOn = false
+    private var pulseTimer: Timer?
+
+    /// Liegt der nächste Termin im Vorlauffenster des prominenten Hinweises?
+    ///
+    /// Bewusst unabhaengig von `showNextEventInMenuBar`: Der Puls ist ein
+    /// eigener Kanal. Wer den Termintext abgeschaltet hat, aber gewarnt werden
+    /// will, bekommt den Punkt trotzdem.
+    private var isInAlertWindow: Bool {
+        guard prefs.flashNextEventInMenuBar,
+              let start = store.nextEvent?.start else { return false }
+        let remaining = start.timeIntervalSinceNow
+        return remaining > 0 && remaining <= Double(prefs.alertLeadMinutes) * 60
+    }
+
+    /// „● " bzw. „○ " im Wechsel — oder nichts außerhalb des Fensters.
+    ///
+    /// **Gleiche Laufweite fuer beide Zeichen.** Ein Wechsel zwischen „Zeichen"
+    /// und „kein Zeichen" liesse die Breite der Leiste im Sekundentakt springen,
+    /// und alle Symbole rechts davon huepften mit — dieselbe Falle, gegen die
+    /// `shorten(_:)` den Titel deckelt.
+    private func pulseMarker() -> String {
+        guard isInAlertWindow else { return "" }
+        return pulseOn ? "● " : "○ "
+    }
+
+    /// Startet den Sekundentakt nur im Vorlauffenster und raeumt ihn danach ab.
+    ///
+    /// Ein dauerhaft laufender Sekundentimer waere Strom fuer nichts — der
+    /// Minutentimer reicht fuer alles ausserhalb dieses Fensters.
+    private func syncPulseTimer() {
+        if isInAlertWindow {
+            guard pulseTimer == nil else { return }
+            let t = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    self.pulseOn.toggle()
+                    self.update()
+                }
+            }
+            t.tolerance = 0.1
+            RunLoop.main.add(t, forMode: .common)
+            pulseTimer = t
+        } else if pulseTimer != nil {
+            pulseTimer?.invalidate()
+            pulseTimer = nil
+            pulseOn = false
+        }
     }
 
     /// Damit das Symbol nur beim echten Tageswechsel neu gezeichnet wird und

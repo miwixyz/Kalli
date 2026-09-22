@@ -33,7 +33,7 @@ final class CalendarStore {
 
     /// Messpunkt fuer das Abhaken. Von aussen lesbar mit:
     ///
-    ///     log show --last 15m --predicate 'subsystem == "com.kalli.app"'
+    ///     log show --last 15m --predicate 'subsystem == "com.kalli.app"' --info
     ///
     /// Gebaut am 2026-09-22, nachdem Michael meldete, dass abgehakte Aufgaben
     /// nicht in Apple Erinnerungen ankommen. Die App hatte dazu nichts zu
@@ -43,6 +43,7 @@ final class CalendarStore {
     private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
 
     private let store = EKEventStore()
+    private let alerts = EventAlerts()
     private var observer: NSObjectProtocol?
     private var loadedRange: DateInterval?
 
@@ -157,6 +158,25 @@ final class CalendarStore {
             (lhs.start ?? .distantFuture) < (rhs.start ?? .distantFuture)
         }
         recomputeNextEvent()
+        await syncAlerts()
+    }
+
+    // MARK: - Mitteilungen
+
+    /// Bringt die geplanten Systemmitteilungen auf den Stand der Termine.
+    /// Idempotent — darf jederzeit doppelt laufen.
+    func syncAlerts() async {
+        await alerts.sync(
+            items: items,
+            enabled: prefs.notifyBeforeNextEvent,
+            leadMinutes: prefs.alertLeadMinutes
+        )
+    }
+
+    /// Fragt die Mitteilungs-Berechtigung an. Gibt zurück, ob sie **danach
+    /// tatsächlich vorliegt** — nicht, ob der Aufruf durchlief.
+    func requestNotificationPermission() async -> Bool {
+        await alerts.requestPermission()
     }
 
     private func fetchEvents(in range: DateInterval) async -> [AgendaItem] {
@@ -179,7 +199,8 @@ final class CalendarStore {
                 hasTime: !ev.isAllDay,
                 kind: .event,
                 sourceID: ev.calendar?.calendarIdentifier ?? "",
-                color: ev.calendar.map(Self.rgba) ?? .fallback
+                color: ev.calendar.map(Self.rgba) ?? .fallback,
+                hasAlarms: ev.hasAlarms
             )
         }
     }
@@ -237,7 +258,8 @@ final class CalendarStore {
                 hasTime: hasClockTime,
                 kind: .reminder(completed: rem.isCompleted),
                 sourceID: rem.calendar?.calendarIdentifier ?? "",
-                color: rem.calendar.map(rgba) ?? .fallback
+                color: rem.calendar.map(rgba) ?? .fallback,
+                hasAlarms: rem.hasAlarms
             )
         }
     }

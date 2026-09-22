@@ -35,6 +35,9 @@ ansteht, bezahlt das mit Oberfläche.
   ein Tagesblock würde sonst stundenlang alles verdecken, was dazwischen liegt.
   Laufen mehrere gleichzeitig, steht der dort, der **zuerst endet**
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
+- **Prominenter Hinweis vor dem Termin** — Systemmitteilung und/oder pulsierender
+  Punkt in der Leiste, beide **ab Werk aus** und einzeln schaltbar, Vorlauf 5/10/30 Min.
+  Kalli meldet nur Termine **ohne eigenen Kalender-Alarm** — sonst klingelte es zweimal
 - **Start bei der Anmeldung**, abschaltbar
 
 **Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen
@@ -70,6 +73,11 @@ angelegt, umbenannt oder gelöscht.
 Wird der Dialog abgelehnt, bleibt die Liste leer. Die App zeigt dann eine
 Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
 
+**Mitteilungen** sind eine dritte, unabhängige Berechtigung. Sie wird
+ausschließlich beim Einschalten von „Systemmitteilung vor dem Termin" erfragt,
+nie beim Start. Verweigert macOS sie, springt der Schalter zurück und die App
+sagt es — ein Schalter, der „an" zeigt und nichts tut, wäre eine Behauptung.
+
 > **Hinweis für Entwicklungs-Builds:** TCC (der Berechtigungsdienst) bindet die
 > Zustimmung an die Code-Signatur. Ein unsignierter Build bekommt keinen Zugriff.
 > `make run` signiert deshalb ad-hoc; nach einem Signatur-Wechsel fragt macOS erneut.
@@ -79,7 +87,8 @@ Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
 ```
 Kalli/
   App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
-  Core/    CalendarStore (EventKit; schreibend nur das Erledigt-Kennzeichen), Preferences, Models
+  Core/    CalendarStore (EventKit; schreibend nur das Erledigt-Kennzeichen), Preferences, Models,
+           EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm)
   UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
 ```
 

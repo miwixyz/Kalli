@@ -121,6 +121,12 @@ private struct SourcesSection: View {
 private struct MenuBarSection: View {
     @Environment(Preferences.self) private var prefs
     @Environment(MenuBarLabel.self) private var label
+    @Environment(CalendarStore.self) private var store
+
+    /// Wird gesetzt, wenn die Mitteilungs-Berechtigung fehlt. Der Schalter
+    /// springt dann zurueck — ein Schalter, der „an" zeigt und nichts tut,
+    /// waere eine Behauptung.
+    @State private var notificationDenied = false
 
     var body: some View {
         @Bindable var prefs = prefs
@@ -168,8 +174,63 @@ private struct MenuBarSection: View {
                     value: $prefs.nextEventMaxChars, in: 8...60)
                 .onChange(of: prefs.nextEventMaxChars) { label.update() }
             Text("Liegt der nächste Termin weiter weg, bleibt die Leiste schmal. "
-                 + "Laufende Termine erscheinen hier nie — nur der nächste, der noch "
-                 + "nicht begonnen hat. Ist er nicht heute, steht der Tag davor.")
+                 + "Steht nichts an, zeigt die Leiste den laufenden Termin mit Restzeit "
+                 + "— und zwar den, der zuerst endet. Ist der nächste Termin nicht heute, "
+                 + "steht der Tag davor.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+
+        Divider()
+
+        Text("Prominenter Hinweis")
+            .font(.headline)
+
+        Toggle("Systemmitteilung vor dem Termin", isOn: $prefs.notifyBeforeNextEvent)
+            .onChange(of: prefs.notifyBeforeNextEvent) { _, isOn in
+                Task {
+                    guard isOn else {
+                        await store.syncAlerts()   // raeumt geplante Mitteilungen ab
+                        return
+                    }
+                    // Berechtigung ERST beim Einschalten erfragen — nicht beim
+                    // Start. Und das Ergebnis messen, nicht annehmen.
+                    if await store.requestNotificationPermission() {
+                        notificationDenied = false
+                        await store.syncAlerts()
+                    } else {
+                        prefs.notifyBeforeNextEvent = false
+                        notificationDenied = true
+                    }
+                }
+            }
+
+        if notificationDenied {
+            Label("Mitteilungen sind für Kalli nicht erlaubt. "
+                  + "→ Systemeinstellungen › Mitteilungen › Kalli",
+                  systemImage: "exclamationmark.triangle")
+                .font(.caption2)
+                .foregroundStyle(.orange)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+
+        Toggle("Punkt in der Leiste pulsieren lassen", isOn: $prefs.flashNextEventInMenuBar)
+            .onChange(of: prefs.flashNextEventInMenuBar) { label.update() }
+
+        if prefs.notifyBeforeNextEvent || prefs.flashNextEventInMenuBar {
+            Picker("Vorlauf", selection: $prefs.alertLeadMinutes) {
+                Text("5 Min. vorher").tag(5)
+                Text("10 Min. vorher").tag(10)
+                Text("30 Min. vorher").tag(30)
+            }
+            .onChange(of: prefs.alertLeadMinutes) {
+                label.update()
+                Task { await store.syncAlerts() }
+            }
+
+            Text("Gilt für beide Kanäle. Kalli meldet nur Termine, die im "
+                 + "Kalender keinen eigenen Alarm tragen — sonst klingelte es "
+                 + "zweimal für denselben Termin.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }

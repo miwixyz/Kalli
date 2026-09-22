@@ -49,6 +49,11 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     let kind: Kind
     let sourceID: String
     let color: RGBA
+    /// Traegt der Termin im Kalender schon einen eigenen Alarm?
+    ///
+    /// Kalli meldet dann nicht zusaetzlich. Zwei Klingeln fuer denselben Termin
+    /// sind kein doppelter Hinweis, sondern einer, dem man nicht mehr glaubt.
+    let hasAlarms: Bool
 
     var isReminder: Bool {
         if case .reminder = kind { return true }

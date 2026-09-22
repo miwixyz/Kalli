@@ -15,9 +15,11 @@ ein willkommener Zufall. Daneben lassen sich
 einblenden:
 
 - **Datum als Text** — Format frei wählbar (`EEE d. MMM` → Mo 21. Sep)
-- **Nächster Termin** — Uhrzeit und Titel, gekürzt auf eine feste Länge, damit
-  die Breite der Leiste nicht bei jedem Terminwechsel springt.
-  Ist der Termin nicht heute, steht der Tag davor („morgen 08:00 Praxis").
+- **Nächster Termin** — Uhrzeit, Titel und Countdown („10:00 P&O in 13 Min."),
+  gekürzt auf eine feste Länge, damit die Breite der Leiste nicht bei jedem
+  Terminwechsel springt.
+  Ist der Termin nicht heute, steht der Tag davor („morgen 08:00 Praxis") — dann
+  ohne Countdown, weil der Tagesname die Angabe schon trägt.
 
   **Er erscheint erst kurz vorher** — wählbar 15 Min., 30 Min., 1 Stunde oder
   2 Stunden (Einstellungen → Menüleiste). Davor bleibt die Leiste schmal. Ein
@@ -26,11 +28,42 @@ einblenden:
 
   Die Vorlaufzeit ist bewusst **getrennt** von der des Popover-Hinweises: Das
   Popover sieht man nur, wenn man es öffnet — dort darf früher gewarnt werden.
-- **Restzeit des laufenden Termins** — verdrängt den nächsten Termin, solange
-  etwas läuft. Was gerade passiert, ist dringender als was kommt.
+- **Restzeit des laufenden Termins** — erscheint, solange **kein** Termin in
+  Vorlaufzeit ansteht. Was kommt, schlägt was läuft: Bei „Praxis 08:00–16:00"
+  würde die Praxis sonst acht Stunden lang alles verdecken, was dazwischen
+  liegt.
+
+  Laufen mehrere Termine gleichzeitig, steht der in der Leiste, der **zuerst
+  endet** — nicht der, der zuerst begann. Wer wissen will, wann er wieder frei
+  ist, meint den nächsten Endzeitpunkt. Die Leiste wandert damit von innen nach
+  außen: erst der 30-Minuten-Termin, dann der zweistündige, dann der Tagesblock.
 
 Schaltest du Symbol *und* Datum ab, bliebe der Eintrag leer und Kalli wäre in
 der Leiste nicht mehr auffindbar. Das Symbol bleibt in dem Fall sichtbar.
+
+### Prominenter Hinweis vor dem Termin
+
+Zwei Kanäle, **beide ab Werk aus** und einzeln schaltbar (Einstellungen →
+Menüleiste). Eine Unterbrechung erteilt man, man erbt sie nicht.
+
+- **Systemmitteilung** — erscheint oben rechts mit Titel, Uhrzeit und Dauer,
+  auch im Vollbild und auch dann, wenn du gerade nicht in die Leiste schaust.
+  Die Berechtigung wird **erst beim Einschalten** erfragt. Verweigert macOS sie,
+  springt der Schalter zurück und Kalli sagt es — ein Schalter, der „an" zeigt
+  und nichts tut, wäre eine Behauptung.
+- **Pulsierender Punkt in der Leiste** — wechselt im Sekundentakt zwischen `●`
+  und `○`. Bewusst zwei Zeichen gleicher Breite: ein Wechsel zwischen Zeichen
+  und Nichts ließe die Leiste im Sekundentakt springen. Der Takt läuft nur
+  innerhalb der Vorlaufzeit, nicht dauerhaft.
+
+Der **Vorlauf** gilt für beide Kanäle gemeinsam: 5, 10 oder 30 Minuten. Zwei
+getrennte Zeiten für dieselbe Frage („wann will ich Bescheid?") wären zwei
+Zahlen, die auseinanderlaufen.
+
+**Kalli meldet nur Termine ohne eigenen Alarm.** Trägt der Termin im Kalender
+schon eine Erinnerung, meldet Apple Kalender selbst — Kalli hält dann still.
+Zwei Klingeln für denselben Termin sind kein doppelter Hinweis, sondern einer,
+dem man nicht mehr glaubt.
 
 Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
 taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
@@ -106,6 +139,10 @@ wird angelegt, umbenannt oder gelöscht.
 
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
 Hinweis mit Direktlink in die Systemeinstellungen.
+
+**Mitteilungen** sind eine dritte, davon unabhängige Berechtigung. Sie wird
+ausschließlich dann erfragt, wenn du „Systemmitteilung vor dem Termin"
+einschaltest — nie beim Start.
 
 ## Was Kalli nicht kann — und nicht können soll
 

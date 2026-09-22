@@ -2,6 +2,38 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.2.0] — 2026-09-22
+
+### Neu
+
+- **Prominenter Hinweis vor dem nächsten Termin** — zwei Kanäle, **beide ab
+  Werk aus** und einzeln schaltbar. Eine Unterbrechung erteilt man, man erbt
+  sie nicht.
+  - **Systemmitteilung** mit Titel, Uhrzeit und Dauer. Die Berechtigung wird
+    erst beim Einschalten erfragt, nie beim Start. Verweigert macOS sie,
+    springt der Schalter zurück und Kalli sagt es — ein Schalter, der „an"
+    zeigt und nichts tut, wäre eine Behauptung.
+  - **Pulsierender Punkt in der Leiste**, Wechsel zwischen `●` und `○`.
+    Bewusst zwei Zeichen **gleicher Breite**: ein Wechsel zwischen Zeichen und
+    Nichts ließe die Leiste im Sekundentakt springen. Der Sekundentakt läuft
+    nur innerhalb der Vorlaufzeit und wird danach abgeräumt.
+- **Vorlauf 5, 10 oder 30 Minuten** — gemeinsam für beide Kanäle. Zwei
+  getrennte Zeiten für dieselbe Frage wären zwei Zahlen, die auseinanderlaufen.
+- **Kein Doppel-Alarm:** Kalli meldet nur Termine, die im Kalender keinen
+  eigenen Alarm tragen. Sonst klingelt es zweimal für denselben Termin — und
+  dann glaubt man keinem von beiden.
+
+### Behoben
+
+- **Mitteilungen wären bei offenem Popover stillschweigend unterdrückt worden.**
+  macOS zeigt sie nicht, wenn die App vordergründig ist — also genau dann, wenn
+  man in den Kalender schaut. Ein `UNUserNotificationCenterDelegate` erzwingt
+  die Anzeige.
+- **Doku-Drift aus 0.1.1 nachgezogen.** Sowohl die In-App-Hilfe als auch der
+  Erklärtext in den Einstellungen behaupteten noch, ein laufender Termin
+  verdränge den nächsten und „laufende Termine erscheinen hier nie". Beides war
+  seit 0.1.1 falsch.
+
 ## [0.1.3] — 2026-09-22
 
 ### Behoben
