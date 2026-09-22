@@ -62,6 +62,25 @@ private struct SourcesSection: View {
     @Environment(CalendarStore.self) private var store
     @Environment(MenuBarLabel.self) private var label
 
+    /// Frisch gelesen, aber **in beobachtbaren Zustand hinein** — genau das
+    /// Muster von `LoginItemToggle`.
+    ///
+    /// In 0.4.3 las die Ansicht `store.eventPermission` direkt im `body`. Das
+    /// ist eine `nonisolated var`, die `EKEventStore.authorizationStatus`
+    /// aufruft — **kein Teil des Observation-Graphen**. SwiftUI hatte damit
+    /// keinen Grund, nach einer Berechtigungsanfrage neu zu zeichnen: Die
+    /// Anfrage konnte gelingen, und die Anzeige blieb gleich. Michael: „Abfrage
+    /// ist da, es geschieht nach Klick aber nichts."
+    @State private var eventState: CalendarStore.Permission = .notDetermined
+    @State private var reminderState: CalendarStore.Permission = .notDetermined
+    /// Gesetzt, wenn eine Anfrage lief und sich **nichts** geändert hat.
+    @State private var promptHadNoEffect = false
+
+    private func refreshPermissions() {
+        eventState = store.eventPermission
+        reminderState = store.reminderPermission
+    }
+
     var body: some View {
         permissions
 
@@ -96,14 +115,20 @@ private struct SourcesSection: View {
     private var permissions: some View {
         Text("Berechtigungen")
             .font(.headline)
+            // Bei jedem Erscheinen frisch von macOS lesen. Der Nutzer kann den
+            // Zugriff zwischendurch in den Systemeinstellungen geaendert haben,
+            // ohne dass Kalli davon erfaehrt.
+            .onAppear { refreshPermissions() }
 
-        permissionRow("Kalender", store.eventPermission, reminders: false)
-        permissionRow("Erinnerungen", store.reminderPermission, reminders: true)
+        permissionRow("Kalender", eventState, reminders: false)
+        permissionRow("Erinnerungen", reminderState, reminders: true)
 
-        if store.canPrompt {
+        if eventState == .notDetermined || reminderState == .notDetermined {
             Button("Fehlende Berechtigung anfragen") {
                 Task {
-                    await store.requestAccess()
+                    let changed = await store.requestAccess()
+                    refreshPermissions()
+                    promptHadNoEffect = !changed
                     label.update()
                 }
             }
@@ -111,6 +136,27 @@ private struct SourcesSection: View {
                  + "hilft ausschließlich der Weg über die Systemeinstellungen.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+        }
+
+        // Ein Knopf, der nichts sichtbar tut, sieht wie ein kaputter Knopf aus.
+        // Wenn macOS keinen Dialog gezeigt hat, sagt Kalli das jetzt — statt
+        // unverändert dazustehen.
+        if promptHadNoEffect {
+            VStack(alignment: .leading, spacing: 4) {
+                Label("macOS hat keinen Dialog gezeigt.", systemImage: "exclamationmark.triangle")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Text("Das passiert, wenn die Entscheidung schon einmal getroffen "
+                     + "wurde. → ZU TUN: Systemeinstellungen → Datenschutz & "
+                     + "Sicherheit → Kalender → Kalli aktivieren.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Button("Systemeinstellungen öffnen") {
+                    CalendarStore.openPrivacySettings()
+                }
+                .font(.caption2)
+            }
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 

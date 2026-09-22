@@ -2,6 +2,38 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.4] — 2026-09-22
+
+### Behoben
+
+- **Der Knopf „Fehlende Berechtigung anfragen" tat sichtbar nichts.** Michael:
+  „Abfrage ist da, es geschieht nach Klick aber nichts."
+
+  Ursache, im Nachbarcode gefunden: Die Ansicht las `store.eventPermission`
+  **direkt im `body`**. Das ist eine `nonisolated var`, die
+  `EKEventStore.authorizationStatus` aufruft — und damit **kein Teil des
+  Observation-Graphen**. SwiftUI hatte keinen Grund, nach der Anfrage neu zu
+  zeichnen. Die Anfrage konnte also gelingen, und die Anzeige blieb gleich.
+
+  `LoginItemToggle` macht es im gleichen Datei seit Tag eins richtig:
+  `@State` + `.onAppear`-Neulesen. Genau das Muster hätte ich nehmen müssen —
+  „frisch lesen" heißt **in beobachtbaren Zustand hinein**, nicht mitten im
+  `body`. Jetzt: `@State` für beide Berechtigungen, frisch gelesen beim
+  Erscheinen und nach jeder Anfrage.
+
+- **Wirkungslosigkeit ist jetzt sichtbar.** `requestAccess()` gibt zurück, ob
+  sich **überhaupt etwas geändert** hat (Status vorher/nachher verglichen).
+  Wenn nicht, sagt die App: „macOS hat keinen Dialog gezeigt" — samt Grund
+  (die Entscheidung fiel schon einmal) und dem Knopf, der dann allein hilft.
+  Ein Knopf, der nichts sichtbar tut, sieht wie ein kaputter Knopf aus.
+
+- **Messpunkt für die Anfrage.** Status vor und nach dem Aufruf plus die
+  Rückgabewerte landen im Protokoll:
+  `log show --last 10m --predicate 'subsystem == "com.kalli.app"'`.
+  Ob macOS keinen Dialog zeigt, ob die Anfrage fehlschlägt oder ob nur die
+  Anzeige nicht nachzieht, war von außen nicht unterscheidbar — und Raten hat
+  an diesem Tag mehrfach nicht funktioniert.
+
 ## [0.4.3] — 2026-09-22
 
 ### Behoben

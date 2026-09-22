@@ -153,10 +153,33 @@ final class CalendarStore {
         }
     }
 
-    func requestAccess() async {
+    /// Fragt die Berechtigungen an — und **protokolliert, was tatsächlich
+    /// passiert ist**.
+    ///
+    /// Messpunkt gebaut am 2026-09-22, nachdem Michael meldete: „Abfrage ist da,
+    /// es geschieht nach Klick aber nichts." Ob macOS keinen Dialog zeigt, ob
+    /// die Anfrage fehlschlägt oder ob nur die Anzeige nicht nachzieht, ist von
+    /// außen nicht unterscheidbar — und Raten hat heute mehrfach nicht
+    /// funktioniert. Lesbar mit:
+    ///
+    ///     log show --last 10m --predicate 'subsystem == "com.kalli.app"'
+    ///
+    /// Der Rückgabewert sagt, ob sich **überhaupt etwas geändert** hat. Die
+    /// Oberfläche kann damit „macOS hat keinen Dialog gezeigt" anzeigen statt
+    /// stumm gleich auszusehen.
+    @discardableResult
+    func requestAccess() async -> Bool {
+        let beforeEvents = eventPermission
+        let beforeReminders = reminderPermission
+        Self.log.notice("Anfrage startet — Kalender \(beforeEvents.label, privacy: .public), Erinnerungen \(beforeReminders.label, privacy: .public)")
+
         async let eventsOK = requestEvents()
         async let remindersOK = requestReminders()
         let (e, r) = await (eventsOK, remindersOK)
+
+        let afterEvents = eventPermission
+        let afterReminders = reminderPermission
+        Self.log.notice("Anfrage beendet — Rueckgabe Kalender \(e, privacy: .public)/Erinnerungen \(r, privacy: .public), Status jetzt Kalender \(afterEvents.label, privacy: .public), Erinnerungen \(afterReminders.label, privacy: .public)")
 
         access = switch (e, r) {
         case (true, true): .granted
@@ -168,6 +191,10 @@ final class CalendarStore {
             loadSources()
             await reload()
         }
+
+        let changed = afterEvents != beforeEvents || afterReminders != beforeReminders
+        if !changed { Self.log.error("Nichts hat sich geaendert. Entweder hat macOS keinen Dialog gezeigt, oder er wurde weggeklickt.") }
+        return changed
     }
 
     private func requestEvents() async -> Bool {
