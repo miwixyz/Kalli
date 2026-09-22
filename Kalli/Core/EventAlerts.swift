@@ -100,13 +100,7 @@ final class EventAlerts {
         let now = Date()
         let lead = TimeInterval(leadMinutes * 60)
 
-        // Kandidaten: echte Termine, nicht ganztaegig, ohne eigenen Alarm,
-        // deren Hinweiszeitpunkt noch in der Zukunft liegt.
-        let candidates = horizon.filter { item in
-            guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
-                  let start = item.start else { return false }
-            return start.addingTimeInterval(-lead) > now
-        }
+        let candidates = Self.candidates(in: horizon, now: now, lead: lead)
 
         // Aufräumen gegen den Horizont: Was dort nicht mehr vorkommt, gibt es
         // nicht mehr (abgesagt, verschoben, Kalender ausgeblendet) oder hat
@@ -127,6 +121,24 @@ final class EventAlerts {
         }
 
         Self.log.notice("Geplant: \(candidates.count, privacy: .public) Mitteilung(en), Vorlauf \(leadMinutes, privacy: .public) Min., Horizont \(horizon.count, privacy: .public) Termin(e)")
+    }
+
+    /// Welche Termine eine Mitteilung bekommen.
+    ///
+    /// Reine Funktion mit übergebenem `now`, damit die Regel ohne Uhr und ohne
+    /// Mitteilungszentrale prüfbar ist. Drei Ausschlüsse, jeder mit Grund:
+    ///   - **ganztägig** — „beginnt in 10 Minuten" ist dort bedeutungslos
+    ///   - **eigener Kalender-Alarm** — sonst klingelt es zweimal für denselben
+    ///     Termin, und dann glaubt man keinem von beiden
+    ///   - **Hinweiszeitpunkt liegt in der Vergangenheit** — eine Mitteilung mit
+    ///     Auslöser in der Vergangenheit erscheint nie
+    nonisolated static func candidates(in horizon: [AgendaItem], now: Date,
+                                       lead: TimeInterval) -> [AgendaItem] {
+        horizon.filter { item in
+            guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
+                  let start = item.start else { return false }
+            return start.addingTimeInterval(-lead) > now
+        }
     }
 
     private func schedule(item: AgendaItem, fireAt: Date, leadMinutes: Int) async {

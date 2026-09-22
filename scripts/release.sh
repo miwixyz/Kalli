@@ -54,7 +54,7 @@ step() { echo ""; echo "▶ $*"; }
 # ---------------------------------------------------------------------------
 # 0. Vorbedingungen. Alle messen, keine annehmen.
 # ---------------------------------------------------------------------------
-step "[0/8] Vorbedingungen"
+step "[0/9] Vorbedingungen"
 
 command -v gh >/dev/null || fail "gh fehlt — brew install gh"
 command -v xcodegen >/dev/null || fail "xcodegen fehlt — brew install xcodegen"
@@ -102,11 +102,25 @@ echo "  ✓ notarytool-Profil: ${NOTARY_PROFILE}"
 # ---------------------------------------------------------------------------
 # 1. Doku-Gate — derselbe Prüfer wie bei `make install`
 # ---------------------------------------------------------------------------
-step "[1/8] Doku-Gate"
+step "[1/9] Doku-Gate"
 bash scripts/docs-gate.sh
 
 # ---------------------------------------------------------------------------
-# 2. Bauen: archive + exportArchive, NICHT `build`
+# 2. Tests
+# ---------------------------------------------------------------------------
+# Ein Release, das die Tests nicht laeuft, ist ein Release ohne Abnahme. Sie
+# brauchen unter einer Sekunde — es gibt keinen Grund, sie zu ueberspringen.
+step "[2/9] Tests"
+xcodebuild -project "${APP}.xcodeproj" -scheme "${APP}" \
+    -destination 'platform=macOS' \
+    -derivedDataPath ./build \
+    CODE_SIGNING_ALLOWED=NO \
+    test >/dev/null 2>&1 \
+    || fail "Tests fehlgeschlagen. Ursache mit 'make test' ansehen."
+echo "  ✓ alle Tests bestanden"
+
+# ---------------------------------------------------------------------------
+# 3. Bauen: archive + exportArchive, NICHT `build`
 # ---------------------------------------------------------------------------
 # Lehre aus Tippi v2.3.0: Manuelles Signieren ohne Profil-Angabe bettet gar
 # kein Provisioning-Profil ein. Das bleibt unsichtbar, solange die App keine
@@ -119,7 +133,7 @@ bash scripts/docs-gate.sh
 # also gering. Der richtige Weg kostet hier aber nichts und trägt, sobald
 # jemand eine Berechtigung ergänzt.
 BUILD_NUMBER="$(git rev-list --count HEAD)"
-step "[2/8] Release-Build, Hardened Runtime (Build ${BUILD_NUMBER})"
+step "[3/9] Release-Build, Hardened Runtime (Build ${BUILD_NUMBER})"
 
 rm -rf build/Kalli.xcarchive build/export "${DIST}"
 mkdir -p "${DIST}"
@@ -148,7 +162,7 @@ APP_PATH="build/export/${BUNDLE}"
 # ---------------------------------------------------------------------------
 # 3. Signatur prüfen — messen, nicht glauben
 # ---------------------------------------------------------------------------
-step "[3/8] Signatur prüfen"
+step "[4/9] Signatur prüfen"
 SIGN_INFO="$(codesign -dv --verbose=4 "${APP_PATH}" 2>&1)"
 echo "${SIGN_INFO}" | grep -q "Authority=Developer ID Application" \
     || fail "Nicht mit Developer ID signiert. Ein ad-hoc signiertes Release würde auf dem anderen Mac scheitern."
@@ -162,7 +176,7 @@ echo "  ✓ Developer ID + Hardened Runtime bestätigt"
 # Notarisiert wird ein ZIP, geheftet wird an die .app: Ein Ticket lässt sich
 # nicht an ein ZIP heften. Deshalb zweimal packen — einmal zum Einreichen,
 # einmal danach mit Ticket.
-step "[4/8] Bei Apple einreichen (dauert meist 1–3 Minuten)"
+step "[5/9] Bei Apple einreichen (dauert meist 1–3 Minuten)"
 ditto -c -k --keepParent "${APP_PATH}" "${DIST}/notarize.zip"
 
 xcrun notarytool submit "${DIST}/notarize.zip" \
@@ -180,7 +194,7 @@ echo "  ✓ Notarisierung angenommen"
 # ---------------------------------------------------------------------------
 # 5. Ticket anheften und unabhängig gegenprüfen
 # ---------------------------------------------------------------------------
-step "[5/8] Ticket anheften"
+step "[6/9] Ticket anheften"
 xcrun stapler staple "${APP_PATH}" >/dev/null
 xcrun stapler validate "${APP_PATH}" >/dev/null || fail "Ticket ist nicht angeheftet"
 
@@ -194,7 +208,7 @@ echo "  ✓ Gatekeeper akzeptiert (source: $(echo "${SPCTL}" | awk -F'=' '/sourc
 # ---------------------------------------------------------------------------
 # 6. Endgültiges ZIP
 # ---------------------------------------------------------------------------
-step "[6/8] ZIP packen und ALS AUSGELIEFERTES ARTEFAKT pruefen"
+step "[7/9] ZIP packen und ALS AUSGELIEFERTES ARTEFAKT pruefen"
 ZIP="${DIST}/${APP}-${VERSION}.zip"
 ditto -c -k --keepParent "${APP_PATH}" "${ZIP}"
 rm -f "${DIST}/notarize.zip"
@@ -229,7 +243,7 @@ fi
 # ---------------------------------------------------------------------------
 # 7. GitHub-Release
 # ---------------------------------------------------------------------------
-step "[7/8] GitHub-Release ${TAG}"
+step "[8/9] GitHub-Release ${TAG}"
 # Release-Notizen aus dem CHANGELOG-Abschnitt dieser Version — eine Quelle,
 # nicht zwei, die auseinanderlaufen.
 awk -v v="[${VERSION}]" '
@@ -250,7 +264,7 @@ gh release create "${TAG}" "${ZIP}" \
 # ---------------------------------------------------------------------------
 # Ein lokal erfolgreicher Ablauf sagt nichts darüber, was tatsächlich
 # veröffentlicht ist. Gefragt wird deshalb GitHub.
-step "[8/8] Veröffentlichung am Remote prüfen"
+step "[9/9] Veröffentlichung am Remote prüfen"
 ASSET="$(gh release view "${TAG}" --json assets --jq '.assets[].name' 2>/dev/null || true)"
 [ -n "${ASSET}" ] || fail "Release ${TAG} hat auf GitHub kein Asset"
 echo "  ✓ ${TAG} veröffentlicht, Asset: ${ASSET}"

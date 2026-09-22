@@ -53,6 +53,7 @@ Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
 
 ```bash
 make build     # xcodegen + xcodebuild
+make test      # 43 Tests, unter einer Sekunde
 make run       # bauen und aus dem build-Ordner starten
 make install   # nach /Applications legen und starten
 ```
@@ -97,9 +98,34 @@ Kalli/
   Core/    CalendarStore (EventKit; schreibend nur das Erledigt-Kennzeichen), Preferences, Models,
            EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm)
   UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
+KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
 ```
 
 Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für diese Größe.
+
+## Tests
+
+```bash
+make test
+```
+
+43 Tests, `KalliTests/`. Sie prüfen **ausschließlich reine Entscheidungslogik** —
+welcher Termin in die Leiste kommt, welcher eine Mitteilung bekommt, wie
+Beschriftungen und Kennungen gebildet werden. Kein EventKit, keine
+Berechtigungen, keine Systemuhr: Jede geprüfte Funktion bekommt `now`
+übergeben. Ein Test, der die Uhr befragt, schlägt irgendwann nachts fehl und
+wird dann ignoriert statt gelesen.
+
+Die Tests sind rückwirkend zu echten Fehlern geschrieben, nicht zu Zeilen. Jeder
+prüft eine Regel, die einmal falsch war — mit dem Befund im Kommentar.
+
+**Sie wurden per Mutationsprobe gegengeprüft:** Die behobenen Fehler wurden
+absichtlich wieder eingebaut, um zu sehen, ob die Tests sie fangen. Dabei fiel
+auf, dass einer aus dem **falschen Grund** grün war: Die Tagesgrenzen-Regel war
+in seinem Aufbau von der Dauergrenze verdeckt, weil `now` mittags lag. Er ist
+repariert und schreibt seine eigenen Vorbedingungen jetzt mit fest. Ein Test,
+der nicht fehlschlagen kann, ist Dekoration — das prüft man einmal, oder man
+weiß es nicht.
 
 ## Vier Entscheidungen, die nicht offensichtlich sind
 
@@ -195,8 +221,8 @@ Schlüsselbund und ein `notarytool`-Profil (Standard `tippi-notary`, anders übe
 `NOTARY_PROFILE=...`). Anlegen mit `xcrun notarytool store-credentials`.
 
 Das Skript prüft **vor** dem Bauen, ob Zertifikat und Profil vorhanden sind, ob
-der Baum sauber ist und ob das CHANGELOG die Version kennt — und **nach** dem
-Bauen, ob wirklich mit Developer ID signiert wurde, ob das Hardened Runtime
+der Baum sauber ist, ob das CHANGELOG die Version kennt und ob **alle Tests
+bestehen** — und **nach** dem Bauen, ob wirklich mit Developer ID signiert wurde, ob das Hardened Runtime
 aktiv ist, ob Apple die Notarisierung angenommen hat, ob das Ticket angeheftet
 ist und ob Gatekeeper die App akzeptiert. Zum Schluss fragt es GitHub, ob das
 Asset tatsächlich dort liegt. Ein lokal erfolgreicher Ablauf sagt nichts

@@ -2,6 +2,43 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.3.1] — 2026-09-22
+
+### Neu
+
+- **43 automatisierte Tests** (`make test`, unter einer Sekunde). Sie prüfen
+  ausschließlich reine Entscheidungslogik: welcher Termin in die Leiste kommt,
+  welcher eine Mitteilung bekommt, wie Beschriftungen und Kennungen gebildet
+  werden. Kein EventKit, keine Berechtigungen, **keine Systemuhr** — jede
+  geprüfte Funktion bekommt `now` übergeben.
+
+  Die Tests sind rückwirkend zu **echten Fehlern** geschrieben, nicht zu Zeilen:
+  der Termin von gestern, der als „läuft gerade" galt · der Tagesblock, der acht
+  Stunden alles Kommende verdeckte · die Serien-Kennung, die Mitteilungen
+  gegenseitig ersetzte · „00:00" bei Erinnerungen ohne Uhrzeit · die überfällige
+  Aufgabe, die der Vergangenheitsfilter nicht verstecken darf.
+
+- **Mutationsprobe als Abnahme der Tests.** Die behobenen Fehler wurden
+  absichtlich wieder eingebaut, um zu prüfen, ob die Tests sie fangen. Sechs von
+  sieben Regeln wurden sofort gefangen — **eine nicht**: Der Test zur
+  Tagesgrenze war grün, obwohl die Prüfung im Code fehlte. Sein Aufbau benutzte
+  einen 21-Stunden-Termin bei `now` = 12:00, und damit schloss ihn schon die
+  Dauergrenze aus; die Tagesgrenze wurde nie befragt. Mit `now` = 12:00 ist die
+  Regel sogar mathematisch verdeckt — sie greift nur am frühen Morgen. Der Test
+  arbeitet jetzt mit 06:00 und einem Termin über Nacht und schreibt seine
+  eigenen Vorbedingungen mit fest.
+
+### Geändert
+
+- **`make release` läuft jetzt die Tests**, als Schritt 2 von 9, vor dem Bauen.
+  Ein Release ohne Abnahme ist ein Release ohne Abnahme; die Tests brauchen
+  unter einer Sekunde.
+- **Auswahl- und Kandidatenlogik als reine Funktionen** (`CalendarStore.nextEvent`,
+  `.runningEvent`, `.eventID`, `EventAlerts.candidates`). Vorher lasen sie
+  `Date()` selbst und waren damit nicht prüfbar. Verhalten unverändert; die eine
+  inhaltliche Änderung ist `isDateInToday(start)` → `isDate(start, inSameDayAs: now)`
+  — in der Anwendung identisch, aber ohne Griff zur Systemuhr.
+
 ## [0.3.0] — 2026-09-22
 
 Ergebnis eines vollständigen Code-Audits vor der geplanten Veröffentlichung.

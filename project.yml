@@ -13,7 +13,7 @@ settings:
     ARCHS: arm64
     ONLY_ACTIVE_ARCH: YES
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "0.3.0"
+    MARKETING_VERSION: "0.3.1"
     CURRENT_PROJECT_VERSION: "6"
 
 targets:
@@ -38,3 +38,20 @@ targets:
         CODE_SIGN_STYLE: Automatic
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+
+  # Prüft ausschliesslich REINE Entscheidungslogik — keine EventKit-Zugriffe,
+  # keine Berechtigungen, keine Uhr. Alle geprüften Funktionen bekommen `now`
+  # übergeben; ein Test, der von der Systemuhr abhängt, schlägt irgendwann
+  # nachts fehl und wird dann ignoriert statt gelesen.
+  KalliTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: KalliTests
+    dependencies:
+      - target: Kalli
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        ENABLE_TESTABILITY: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.kalli.app.tests

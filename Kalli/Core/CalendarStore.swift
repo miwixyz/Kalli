@@ -232,9 +232,17 @@ final class CalendarStore {
     }
 
     nonisolated private static func eventID(_ ev: EKEvent) -> String {
-        let base = ev.eventIdentifier ?? UUID().uuidString
-        guard let start = ev.startDate else { return base }
-        return "\(base)|\(Int(start.timeIntervalSince1970))"
+        eventID(base: ev.eventIdentifier, start: ev.startDate)
+    }
+
+    /// Reine Fassung — ohne `EKEvent`, damit sie prüfbar ist. Ein unsaved
+    /// `EKEvent` hat keine setzbare `eventIdentifier`; der interessante Fall
+    /// (gleiche ID, verschiedene Startzeit) wäre über EventKit nicht
+    /// konstruierbar.
+    nonisolated static func eventID(base: String?, start: Date?) -> String {
+        let id = base ?? UUID().uuidString
+        guard let start else { return id }
+        return "\(id)|\(Int(start.timeIntervalSince1970))"
     }
 
     /// Termine der nächsten 24 Stunden — **unabhängig vom geladenen Monat**.
@@ -395,10 +403,22 @@ final class CalendarStore {
 
     private func recomputeNextEvent() {
         let now = Date()
-        // Bei gleicher Startzeit gewinnt der kuerzere Termin: "P&O 10:00-10:30"
-        // ist konkreter als "Abfrage 10:00-12:00". Ein `items.first` haette hier
-        // genommen, was EventKit zufaellig zuerst liefert.
-        nextEvent = items
+        nextEvent = Self.nextEvent(in: items, now: now)
+        runningEvent = Self.runningEvent(in: items, now: now,
+                                         calendar: .current,
+                                         maxHours: Self.maxRunningHours)
+    }
+
+    /// Der nächste noch nicht begonnene Termin.
+    ///
+    /// Bei gleicher Startzeit gewinnt der **kürzere**: „P&O 10:00–10:30" ist
+    /// konkreter als „Abfrage 10:00–12:00". Ein `items.first` nahm hier, was
+    /// EventKit zufällig zuerst lieferte.
+    ///
+    /// `now` wird übergeben statt intern gelesen, damit die Entscheidung ohne
+    /// Uhr und ohne EventKit prüfbar ist.
+    nonisolated static func nextEvent(in items: [AgendaItem], now: Date) -> AgendaItem? {
+        items
             .filter { item in
                 guard case .event = item.kind, !item.isAllDay,
                       let start = item.start else { return false }
@@ -410,32 +430,37 @@ final class CalendarStore {
                 if ls != rs { return ls < rs }
                 return (lhs.end ?? .distantFuture) < (rhs.end ?? .distantFuture)
             }
-        // Ganztägige laufen per Definition den ganzen Tag — ein Fortschritt
-        // daran wäre die Uhrzeit, keine Information über den Termin.
-        //
-        // Drei weitere Einschränkungen. Die ersten zwei aus dem Befund vom
-        // 2026-09-21, dass ein Termin von *gestern* als laufend angezeigt
-        // wurde; die dritte vom 2026-09-22:
-        //   1. Der Termin muss heute begonnen haben. `start <= now && end > now`
-        //      ist formal richtig, trifft aber auch mehrtägige Termine, deren
-        //      Ende zufällig in der Zukunft liegt. Ein Fortschrittsbalken über
-        //      zwei Tage sagt nichts.
-        //   2. Termine über MAX_RUNNING_HOURS sind eher Zustände als Termine
-        //      (Urlaub, Bereitschaft) — ein Prozentwert darauf ist Rauschen.
-        //   3. Laufen MEHRERE gleichzeitig, gewinnt der, der ZUERST ENDET.
-        //      `items.first` nahm den mit dem fruehesten Start — und damit bei
-        //      "Praxis 08:00-16:00" acht Stunden lang die Praxis, obwohl um
-        //      10:00 ein 30-Minuten-Termin darin lag. Wer wissen will, wann er
-        //      wieder frei ist, meint den naechsten Endzeitpunkt, nicht den
-        //      aeltesten Anfang. (Befund von Michael, 2026-09-22.)
-        let calendar = Calendar.current
-        runningEvent = items
+    }
+
+    /// Der laufende Termin für die Fortschrittsanzeige.
+    ///
+    /// Vier Einschränkungen, jede aus einem echten Befund:
+    ///   1. Ganztägige laufen per Definition den ganzen Tag — ein Fortschritt
+    ///      daran wäre die Uhrzeit, keine Information über den Termin.
+    ///   2. Der Termin muss **am selben Tag wie `now`** begonnen haben.
+    ///      `start <= now && end > now` ist formal richtig, trifft aber auch
+    ///      mehrtägige Termine, deren Ende zufällig in der Zukunft liegt
+    ///      (Befund 2026-09-21: ein Termin von *gestern* galt als laufend).
+    ///   3. Termine über `maxHours` sind eher Zustände als Termine (Urlaub,
+    ///      Bereitschaft) — ein Prozentwert darauf ist Rauschen.
+    ///   4. Laufen **mehrere** gleichzeitig, gewinnt der, der **zuerst endet**.
+    ///      `items.first` nahm den frühesten Start — und damit bei
+    ///      „Praxis 08:00–16:00" acht Stunden lang die Praxis, obwohl um 10:00
+    ///      ein 30-Minuten-Termin darin lag (Befund 2026-09-22). Wer wissen
+    ///      will, wann er wieder frei ist, meint den nächsten Endzeitpunkt.
+    ///
+    /// Zu 2.: Der Vergleich läuft gegen `now`, nicht gegen `isDateInToday`.
+    /// Letzteres fragt die Systemuhr und wäre in einem Test mit fest gesetztem
+    /// `now` nicht prüfbar — in der Anwendung sind beide identisch.
+    nonisolated static func runningEvent(in items: [AgendaItem], now: Date,
+                                         calendar: Calendar, maxHours: Double) -> AgendaItem? {
+        items
             .filter { item in
                 guard case .event = item.kind, !item.isAllDay,
                       let start = item.start, let end = item.end else { return false }
                 guard start <= now, end > now else { return false }
-                guard calendar.isDateInToday(start) else { return false }
-                return end.timeIntervalSince(start) <= Self.maxRunningHours * 3600
+                guard calendar.isDate(start, inSameDayAs: now) else { return false }
+                return end.timeIntervalSince(start) <= maxHours * 3600
             }
             .min { ($0.end ?? .distantFuture) < ($1.end ?? .distantFuture) }
     }

@@ -1,4 +1,4 @@
-.PHONY: docs gen build run install clean check-docs release release-dry-run
+.PHONY: docs gen build run install clean check-docs release release-dry-run test
 
 APP = Kalli
 CONFIG ?= Debug
@@ -44,6 +44,13 @@ install: check-docs build
 # Signiertes, notarisiertes ZIP + GitHub-Release. Braucht Developer-ID-Zertifikat
 # und notarytool-Profil im Schluesselbund. `make release PUBLISH=0` baut alles,
 # veroeffentlicht aber nicht.
+# Nur reine Entscheidungslogik — laeuft ohne Berechtigungen und ohne Uhr.
+test: gen
+	xcodebuild -project $(APP).xcodeproj -scheme $(APP) \
+		-destination 'platform=macOS' \
+		-derivedDataPath $(DERIVED) \
+		CODE_SIGNING_ALLOWED=NO test
+
 release:
 	@bash scripts/release.sh
 
