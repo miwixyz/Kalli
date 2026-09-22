@@ -20,9 +20,11 @@ ansteht, bezahlt das mit Oberfläche.
 
 ## Funktionen
 
-- **Menüleiste:** Datum in frei wählbarem Format, optional der nächste Termin
-  mit Countdown („10:00 P&O in 13 Min.", Titel auf feste Länge gekürzt, damit
-  die Leistenbreite nicht springt)
+- **Menüleiste:** Datum in frei wählbarem Format, optional ein Termin mit
+  Countdown („10:00 P&O in 13 Min.", Titel auf feste Länge gekürzt, damit die
+  Leistenbreite nicht springt). Ein Schalter, drei Zustände sind damit
+  erreichbar: nächster Termin · laufender Termin, wenn nichts ansteht · **gar
+  keiner**
 - **Popover:** Monatsraster mit Kalenderwochen, Punkt an Tagen mit Einträgen,
   Tagesliste mit Terminen und Erinnerungen
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert

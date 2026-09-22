@@ -15,7 +15,7 @@ ein willkommener Zufall. Daneben lassen sich
 einblenden:
 
 - **Datum als Text** — Format frei wählbar (`EEE d. MMM` → Mo 21. Sep)
-- **Nächster Termin** — Uhrzeit, Titel und Countdown („10:00 P&O in 13 Min."),
+- **Termin in der Leiste** — Uhrzeit, Titel und Countdown („10:00 P&O in 13 Min."),
   gekürzt auf eine feste Länge, damit die Breite der Leiste nicht bei jedem
   Terminwechsel springt.
   Ist der Termin nicht heute, steht der Tag davor („morgen 08:00 Praxis") — dann
@@ -34,7 +34,12 @@ einblenden:
   liegt.
 
   Laufen mehrere Termine gleichzeitig, steht der in der Leiste, der **zuerst
-  endet** — nicht der, der zuerst begann. Wer wissen will, wann er wieder frei
+  endet** — nicht der, der zuerst begann.
+
+  **Ganz ohne Termin in der Leiste:** „Termin in der Leiste anzeigen"
+  abschalten. Dann erscheint weder ein kommender noch ein laufender — nur
+  Symbol und Datum. Der Fortschrittsbalken **im Popover** bleibt davon
+  unberührt; der hängt an „Fortschritt laufender Termine". Wer wissen will, wann er wieder frei
   ist, meint den nächsten Endzeitpunkt. Die Leiste wandert damit von innen nach
   außen: erst der 30-Minuten-Termin, dann der zweistündige, dann der Tagesblock.
 

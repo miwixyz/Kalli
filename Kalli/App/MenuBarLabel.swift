@@ -100,7 +100,10 @@ final class MenuBarLabel {
         // Leiste ist knapp; sie muss das Handlungsrelevante zeigen, und das ist
         // der naechste Termin. Der Fortschritt des Laufenden steht weiter im
         // Popover, wo Platz dafuer ist.
-        if let part = nextEventPart() ?? runningEventPart() {
+        if let part = Self.eventPart(showEvent: prefs.showNextEventInMenuBar,
+                                     showProgress: prefs.showRunningProgress,
+                                     next: nextEventPart(),
+                                     running: runningEventPart()) {
             let sep = parts.isEmpty ? "" : "· "
             parts.append("\(sep)\(part)")
         }
@@ -108,6 +111,35 @@ final class MenuBarLabel {
         // und ausgeschaltetem Termintext noch sichtbar ist.
         text = pulseMarker() + parts.joined(separator: " ")
         syncPulseTimer()
+    }
+
+    /// Welcher Termintext gehört in die Leiste — oder **keiner**.
+    ///
+    /// **Der Fund vom 2026-09-22 (Michael):** „Wenn man *Nächsten Termin
+    /// anzeigen* abwählt, wird der aktuelle angezeigt. Es muss aber auswählbar
+    /// sein, dass gar kein Termin angezeigt wird."
+    ///
+    /// Zu Recht, und die Ursache ist meine eigene Änderung aus 0.1.1. Vorher
+    /// hing der laufende Termin allein an `showRunningProgress`, der nächste
+    /// allein an `showNextEventInMenuBar` — mit dem `?? `-Rückfall von 0.1.1
+    /// überlebte der laufende Termin das Abwählen des nächsten. Und
+    /// `showRunningProgress` abzuschalten war kein Ausweg: Das nimmt auch den
+    /// Fortschrittsbalken **im Popover** weg.
+    ///
+    /// Damit war die Beschriftung seit 0.1.1 unwahr — sie sprach vom „nächsten
+    /// Termin" und zeigte auch den laufenden. Der Schalter heißt jetzt
+    /// „Termin in der Leiste anzeigen" und schaltet **beides**.
+    ///
+    /// Regel, hier an einer Stelle und ohne Seiteneffekte prüfbar:
+    ///   1. Schalter aus → **nichts**, egal was läuft.
+    ///   2. Sonst: der nächste Termin, wenn einer in Vorlaufzeit ist.
+    ///   3. Sonst der laufende — aber nur, wenn der Fortschritt eingeschaltet ist.
+    nonisolated static func eventPart(showEvent: Bool, showProgress: Bool,
+                                      next: String?, running: String?) -> String? {
+        guard showEvent else { return nil }
+        if let next { return next }
+        guard showProgress else { return nil }
+        return running
     }
 
     /// Der naechste Termin, aber erst ab der eingestellten Vorlaufzeit.
@@ -146,10 +178,10 @@ final class MenuBarLabel {
         return "\(dayPrefix)\(timeFormatter.string(from: start)) \(shorten(next.title))\(countdown)"
     }
 
-    /// Der laufende Termin mit Restzeit. Nur wenn nichts Naeheres ansteht.
+    /// Der laufende Termin mit Restzeit. Die Schalter-Prüfung liegt bewusst in
+    /// `eventPart(...)` und nicht hier — an einer Stelle, prüfbar.
     private func runningEventPart() -> String? {
-        guard prefs.showRunningProgress,
-              let running = store.runningEvent,
+        guard let running = store.runningEvent,
               let remaining = running.remainingLabel()
         else { return nil }
         return "\(shorten(running.title)) \(remaining)"

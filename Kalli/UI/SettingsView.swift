@@ -262,7 +262,11 @@ private struct MenuBarSection: View {
 
         Divider()
 
-        Toggle("Nächsten Termin anzeigen", isOn: $prefs.showNextEventInMenuBar)
+        // Hieß bis 0.4.7 „Nächsten Termin anzeigen" — und das war seit 0.1.1
+        // unwahr: Der Schalter zeigte auch den LAUFENDEN Termin, und ihn
+        // abzuwählen ließ den laufenden stehen. Michael am 2026-09-22: „Es muss
+        // aber auswählbar sein, dass gar kein Termin angezeigt wird."
+        Toggle("Termin in der Leiste anzeigen", isOn: $prefs.showNextEventInMenuBar)
             .onChange(of: prefs.showNextEventInMenuBar) { label.update() }
 
         if prefs.showNextEventInMenuBar {
@@ -280,7 +284,10 @@ private struct MenuBarSection: View {
             Text("Liegt der nächste Termin weiter weg, bleibt die Leiste schmal. "
                  + "Steht nichts an, zeigt die Leiste den laufenden Termin mit Restzeit "
                  + "— und zwar den, der zuerst endet. Ist der nächste Termin nicht heute, "
-                 + "steht der Tag davor.")
+                 + "steht der Tag davor.\n\n"
+                 + "Abgeschaltet erscheint gar kein Termin in der Leiste, weder ein "
+                 + "kommender noch ein laufender. Der Fortschrittsbalken im Popover "
+                 + "bleibt davon unberührt — der hängt an \u{201E}Fortschritt laufender Termine\u{201C}.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }

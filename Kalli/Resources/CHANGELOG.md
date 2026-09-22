@@ -2,6 +2,39 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.8] — 2026-09-22
+
+### Behoben
+
+- **„Gar kein Termin in der Leiste" war nicht wählbar.** Michael: „Wenn man
+  *Nächsten Termin anzeigen* abwählt, wird der aktuelle angezeigt. Es muss aber
+  auswählbar sein, dass gar kein Termin angezeigt wird."
+
+  Die Ursache ist die eigene Änderung aus 0.1.1. Davor hing der laufende Termin
+  allein an „Fortschritt laufender Termine" und der nächste allein an „Nächsten
+  Termin anzeigen". Mit dem Vorrang-Rückfall aus 0.1.1 (`nächster ?? laufender`)
+  **überlebte der laufende Termin das Abwählen des nächsten** — und
+  „Fortschritt" abzuschalten war kein Ausweg, weil das auch den
+  Fortschrittsbalken **im Popover** wegnimmt.
+
+  Damit war die **Beschriftung seit 0.1.1 unwahr**: Sie sprach vom „nächsten
+  Termin" und zeigte auch den laufenden. Der Schalter heißt jetzt **„Termin in
+  der Leiste anzeigen"** und deckt beides. Abgeschaltet erscheint nichts —
+  weder kommend noch laufend.
+
+  Ein Schalter, drei erreichbare Zustände: nächster Termin · laufender, wenn
+  nichts ansteht · gar keiner. Der Popover-Fortschritt ist davon unabhängig.
+
+### Neu
+
+- **7 Tests auf diese Regel** (55 gesamt), inklusive aller **vier**
+  Schalterstellungen — damit keine Kombination unbeobachtet bleibt. Die
+  Entscheidung ist dafür als reine Funktion herausgezogen
+  (`MenuBarLabel.eventPart`), prüfbar ohne Timer, Einstellungen und EventKit.
+
+  Durch Mutationsprobe abgenommen: Nimmt man die Schalter-Prüfung heraus —
+  also den Zustand von 0.1.1 bis 0.4.7 — fallen **4 von 7** Tests.
+
 ## [0.4.7] — 2026-09-22
 
 ### Behoben
