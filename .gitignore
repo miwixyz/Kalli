@@ -4,3 +4,5 @@ build/
 *.xcuserstate
 xcuserdata/
 dist/
+release.env
+release.env.*

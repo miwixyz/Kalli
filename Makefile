@@ -1,4 +1,4 @@
-.PHONY: docs gen build run install clean check-docs
+.PHONY: docs gen build run install clean check-docs release release-dry-run
 
 APP = Kalli
 CONFIG ?= Debug
@@ -40,6 +40,19 @@ install: check-docs build
 	codesign --force --deep --sign - "$(DEST)"
 	open "$(DEST)"
 	@echo "→ Kalli läuft jetzt aus /Applications. Autostart ist dort stabil."
+
+# Signiertes, notarisiertes ZIP + GitHub-Release. Braucht Developer-ID-Zertifikat
+# und notarytool-Profil im Schluesselbund. `make release PUBLISH=0` baut alles,
+# veroeffentlicht aber nicht.
+release:
+	@bash scripts/release.sh
+
+# Zeigt die Vorbedingungen, ohne etwas zu bauen.
+release-dry-run:
+	@echo "VERSION:        $$(awk -F'\"' '/MARKETING_VERSION:/ { print $$2; exit }' project.yml)"
+	@echo "NOTARY_PROFILE: $${NOTARY_PROFILE:-tippi-notary}"
+	@printf "DEVELOPER_ID:   "; security find-identity -v -p codesigning | awk -F'\"' '/Developer ID Application/ { print $$2; exit }'
+	@git diff --quiet && git diff --cached --quiet && echo "Arbeitsbaum:    sauber" || echo "Arbeitsbaum:    NICHT sauber"
 
 clean:
 	rm -rf $(DERIVED) $(APP).xcodeproj

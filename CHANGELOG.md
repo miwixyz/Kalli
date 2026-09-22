@@ -2,6 +2,38 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.2.2] — 2026-09-22
+
+### Neu
+
+- **`make release`** — signiertes, notarisiertes ZIP und GitHub-Release.
+  Damit läuft Kalli auf einem zweiten Mac **ohne Xcode**: Release herunterladen,
+  nach `/Applications` ziehen, fertig.
+
+  Der eigentliche Gewinn ist ein anderer: **TCC bindet die
+  Kalender-Berechtigung an die Code-Signatur.** `make install` signiert ad-hoc,
+  also bei jedem Build anders — macOS fragt deshalb immer wieder neu. Mit einer
+  stabilen Developer-ID-Signatur fragt es einmal, auf jedem Mac.
+
+  Bewusst **kein Sparkle und kein Appcast** (Entscheidung vom 2026-09-21 gilt
+  weiter): ein öffentlicher Appcast geht bei privatem Repo nicht. Ein
+  Release-Asset geht trotzdem — `gh release download` läuft mit der eigenen
+  Anmeldung. Bewusst **ZIP statt DMG**: Ein DMG lohnt sich, wenn ein
+  Installationsfenster etwas erklären muss; hier zieht einer eine App nach
+  `/Applications`.
+
+  Das Skript prüft **vor** dem Bauen Zertifikat, Notar-Profil, sauberen Baum
+  und CHANGELOG-Abschnitt — und **nach** dem Bauen, ob wirklich mit Developer
+  ID signiert wurde, ob das Hardened Runtime aktiv ist, ob Apple angenommen
+  hat, ob das Ticket angeheftet ist und ob Gatekeeper die App akzeptiert. Zum
+  Schluss fragt es GitHub, ob das Asset dort liegt: Ein lokal erfolgreicher
+  Ablauf sagt nichts darüber, was veröffentlicht ist.
+
+  Übernommen aus Tippis Release-Pfad, nicht neu erfunden: `archive` +
+  `exportArchive` statt `build`. Manuelles Signieren ohne Profil-Angabe bettet
+  gar kein Provisioning-Profil ein — unsichtbar, solange die App keine
+  Entitlements hat, und ein Startabbruch durch `amfid` (-413), sobald doch.
+
 ## [0.2.1] — 2026-09-22
 
 ### Behoben

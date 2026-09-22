@@ -153,14 +153,49 @@ DOCS_WAIVER="nur Formatierung" make install
 Beim allerersten Lauf hat das Gate sofort eine fehlende `LICENSE` gefunden, die
 beim Umbenennen des Projekts verloren gegangen war.
 
+## Installieren auf einem zweiten Mac
+
+Ohne Xcode, über das Release-Asset:
+
+```bash
+gh release download v0.2.2 --repo miwixyz/Kalli --pattern '*.zip'
+unzip -q Kalli-0.2.2.zip && mv Kalli.app /Applications/ && open /Applications/Kalli.app
+```
+
+Das Asset ist mit **Developer ID signiert und notarisiert** — Gatekeeper lässt es
+ohne Rechtsklick-Umweg starten. macOS fragt einmal nach Kalender- und
+Erinnerungszugriff, danach nicht mehr: TCC bindet die Zustimmung an die
+Code-Signatur, und die bleibt über Releases hinweg stabil.
+
+Das Repo ist privat, `gh release download` läuft mit der eigenen Anmeldung.
+
+## Release bauen
+
+```bash
+make release-dry-run    # Vorbedingungen zeigen, nichts bauen
+make release            # signieren, notarisieren, GitHub-Release
+make release PUBLISH=0  # alles außer der Veröffentlichung
+```
+
+Voraussetzungen auf dem Mac, der released: Developer-ID-Zertifikat im
+Schlüsselbund und ein `notarytool`-Profil (Standard `tippi-notary`, anders über
+`NOTARY_PROFILE=...`). Anlegen mit `xcrun notarytool store-credentials`.
+
+Das Skript prüft **vor** dem Bauen, ob Zertifikat und Profil vorhanden sind, ob
+der Baum sauber ist und ob das CHANGELOG die Version kennt — und **nach** dem
+Bauen, ob wirklich mit Developer ID signiert wurde, ob das Hardened Runtime
+aktiv ist, ob Apple die Notarisierung angenommen hat, ob das Ticket angeheftet
+ist und ob Gatekeeper die App akzeptiert. Zum Schluss fragt es GitHub, ob das
+Asset tatsächlich dort liegt. Ein lokal erfolgreicher Ablauf sagt nichts
+darüber, was veröffentlicht ist.
+
 ## Aktualisieren
 
 Kalli hat **kein Sparkle**. Automatische Updates brauchen einen öffentlich
-erreichbaren Appcast, und das Repo ist privat. Der Update-Weg ist:
+erreichbaren Appcast, und das Repo ist privat.
 
-```bash
-cd ~/Coding/Kalli && git pull && make install
-```
+- **Auf dem Entwicklungs-Mac:** `cd ~/Coding/Kalli && git pull && make install`
+- **Auf jedem anderen Mac:** neues Release herunterladen (siehe oben)
 
 ## Lizenz
 
