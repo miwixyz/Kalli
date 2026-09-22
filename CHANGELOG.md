@@ -2,6 +2,49 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.3.0] — 2026-09-22
+
+Ergebnis eines vollständigen Code-Audits vor der geplanten Veröffentlichung.
+Drei Funde, alle behoben, plus einer, der beim Nachprüfen des eigenen Fixes
+auffiel.
+
+### Behoben
+
+- **🔴 Ein Monatswechsel im Popover löschte die geplanten Mitteilungen.** Die
+  Planung leitete „welcher Termin existiert noch?" aus der Liste ab, die die
+  Oberfläche anzeigt — und die enthält nur den geladenen Monat ±7 Tage. Ein
+  Klick auf „nächster Monat" ließ die heutigen Termine daraus verschwinden,
+  worauf sie als *gelöscht* galten und ihre Mitteilungen entfernt wurden. Das
+  Feature schaltete sich still ab, ausgelöst durch eine harmlose Navigation.
+  Der Mitteilungs-Horizont wird jetzt **eigens abgefragt** (24 Stunden ab
+  jetzt), unabhängig vom angezeigten Monat. Nebeneffekt: Ein **verschobener**
+  Termin wird dadurch korrekt neu geplant.
+- **🟠 Die Datenschutz-Zusage stimmte nicht mehr.** Dort stand „Keine
+  Termininhalte", während Systemmitteilungen seit 0.2.0 Titel und Uhrzeit an
+  macOS weitergeben — mit Folgen für Mitteilungszentrale und Sperrbildschirm.
+  Jetzt vollständig offengelegt in `RECHTLICHES.md`, `HILFE.md`, README und
+  README-Fußzeile, samt Hinweis, wie man Titel auf dem Sperrbildschirm
+  abschaltet.
+- **🟡 Serientermine teilten sich eine Kennung.** `eventIdentifier` ist laut
+  EventKit-Vertrag für **alle** Vorkommen einer Serie identisch. Folge: Bei
+  einem Termin, der mehrmals innerhalb von 24 Stunden wiederkehrt, wurde nur
+  **eine** Mitteilung geplant (jede ersetzte die vorige), und `ForEach` bekam
+  doppelte IDs, wenn zwei Vorkommen auf denselben Tag fielen. Die Kennung
+  enthält jetzt zusätzlich die Startzeit. Bei täglichen Serien fiel das nie
+  auf — bei „alle 4 Stunden" sofort.
+- **Überflüssige EventKit-Abfrage** (beim Nachprüfen des eigenen Fixes
+  gefunden): Der 24-Stunden-Horizont wurde bei jeder Kalenderänderung geholt,
+  auch wenn Mitteilungen ausgeschaltet waren — und danach verworfen. Jetzt
+  wird erst geprüft, dann abgefragt.
+
+### Geändert
+
+- **`make release` gibt keinen fremden Projektnamen mehr vor.** Das
+  notarytool-Profil wird in der Reihenfolge `kalli-notary`, `notary`,
+  `tippi-notary` gesucht und das gefundene **gemeldet** — ein stiller Rückfall
+  wäre eine Überraschung beim Debuggen. Eigenes Profil weiter über
+  `NOTARY_PROFILE=…`.
+
 ## [0.2.3] — 2026-09-22
 
 ### Behoben

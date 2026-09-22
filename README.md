@@ -37,7 +37,9 @@ ansteht, bezahlt das mit Oberfläche.
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Prominenter Hinweis vor dem Termin** — Systemmitteilung und/oder pulsierender
   Punkt in der Leiste, beide **ab Werk aus** und einzeln schaltbar, Vorlauf 5/10/30 Min.
-  Kalli meldet nur Termine **ohne eigenen Kalender-Alarm** — sonst klingelte es zweimal
+  Kalli meldet nur Termine **ohne eigenen Kalender-Alarm** — sonst klingelte es zweimal.
+  Die Mitteilung enthält Titel und Uhrzeit; was das für Mitteilungszentrale und
+  Sperrbildschirm bedeutet, steht in `Kalli/Resources/RECHTLICHES.md`
 - **Start bei der Anmeldung**, abschaltbar
 
 **Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen
@@ -77,6 +79,11 @@ Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
 ausschließlich beim Einschalten von „Systemmitteilung vor dem Termin" erfragt,
 nie beim Start. Verweigert macOS sie, springt der Schalter zurück und die App
 sagt es — ein Schalter, der „an" zeigt und nichts tut, wäre eine Behauptung.
+
+Kalli gibt dabei **Titel und Uhrzeit** des Termins an macOS weiter — der einzige
+Fall, in dem ein Termininhalt die App verlässt. Nichts davon geht an einen
+Server. Vollständige Offenlegung inklusive Sperrbildschirm:
+`Kalli/Resources/RECHTLICHES.md`.
 
 > **Hinweis für Entwicklungs-Builds:** TCC (der Berechtigungsdienst) bindet die
 > Zustimmung an die Code-Signatur. Ein unsignierter Build bekommt keinen Zugriff.
@@ -211,5 +218,10 @@ Rechtliches.
 
 **Kurz zum Datenschutz:** Kalli sendet nichts. Kein Server, keine Analyse, keine
 Kennungen. Kalender werden nur gelesen; bei Erinnerungen wird ausschließlich das
-Erledigt-Kennzeichen gesetzt. Gespeichert werden nur die eigenen Einstellungen,
-keine Termininhalte.
+Erledigt-Kennzeichen gesetzt. Gespeichert werden nur die eigenen Einstellungen.
+
+**Eine Ausnahme, benannt statt versteckt:** Sind Systemmitteilungen
+eingeschaltet (ab Werk **aus**), gibt Kalli Titel und Uhrzeit des Termins an
+macOS weiter — und damit an Mitteilungszentrale und möglicherweise den
+Sperrbildschirm. Alles bleibt auf dem Gerät. Vollständig in
+`Kalli/Resources/RECHTLICHES.md`.

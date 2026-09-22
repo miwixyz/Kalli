@@ -26,8 +26,8 @@
 #
 # Voraussetzungen (beide auf dem Mac, der released):
 #   - Developer-ID-Zertifikat im Schlüsselbund
-#   - notarytool-Profil im Schlüsselbund (Standard: tippi-notary)
-#     Anderes Profil: NOTARY_PROFILE=... make release
+#   - notarytool-Profil im Schlüsselbund. Gesucht wird in dieser Reihenfolge:
+#     kalli-notary, notary, tippi-notary. Eigenes: NOTARY_PROFILE=... make release
 #     Neu anlegen:    xcrun notarytool store-credentials
 
 set -euo pipefail
@@ -37,7 +37,11 @@ APP="Kalli"
 BUNDLE="${APP}.app"
 DIST="dist"
 PUBLISH="${PUBLISH:-1}"
-NOTARY_PROFILE="${NOTARY_PROFILE:-tippi-notary}"
+# Bevorzugt ein projekteigenes Profil; faellt auf ein vorhandenes zurueck, damit
+# dieses oeffentliche Script keinen fremden Projektnamen als Pflichtwert vorgibt.
+# Welches genommen wurde, wird gemeldet — ein stiller Rueckfall waere eine
+# Ueberraschung beim Debuggen.
+NOTARY_PROFILE="${NOTARY_PROFILE:-}"
 
 # release.env ist optional und enthält keine Geheimnisse — nur den Namen des
 # Zertifikats und des Schlüsselbund-Profils. Die Zugangsdaten selbst liegen im
@@ -78,8 +82,18 @@ DEVELOPER_ID="${DEVELOPER_ID:-$(security find-identity -v -p codesigning \
     | awk -F'"' '/Developer ID Application/ { print $2; exit }')}"
 [ -n "${DEVELOPER_ID}" ] || fail "Kein 'Developer ID Application'-Zertifikat im Schlüsselbund"
 
-xcrun notarytool history --keychain-profile "${NOTARY_PROFILE}" >/dev/null 2>&1 \
-    || fail "notarytool-Profil '${NOTARY_PROFILE}' antwortet nicht. Anlegen: xcrun notarytool store-credentials"
+if [ -n "${NOTARY_PROFILE}" ]; then
+    xcrun notarytool history --keychain-profile "${NOTARY_PROFILE}" >/dev/null 2>&1 \
+        || fail "notarytool-Profil '${NOTARY_PROFILE}' antwortet nicht. Anlegen: xcrun notarytool store-credentials"
+else
+    for candidate in kalli-notary notary tippi-notary; do
+        if xcrun notarytool history --keychain-profile "${candidate}" >/dev/null 2>&1; then
+            NOTARY_PROFILE="${candidate}"
+            break
+        fi
+    done
+    [ -n "${NOTARY_PROFILE}" ] || fail "Kein notarytool-Profil gefunden (gesucht: kalli-notary, notary, tippi-notary). Anlegen: xcrun notarytool store-credentials, oder NOTARY_PROFILE=... setzen"
+fi
 
 echo "  ✓ Version ${VERSION} · Tag ${TAG} frei · Baum sauber"
 echo "  ✓ Zertifikat: ${DEVELOPER_ID}"

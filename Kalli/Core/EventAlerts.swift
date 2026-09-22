@@ -29,10 +29,6 @@ final class EventAlerts {
     /// Mitteilungen von fremden unterscheiden, ohne eine Liste zu fuehren.
     private static let prefix = "kalli.termin."
 
-    /// Wie weit im Voraus geplant wird. Weiter zu planen bringt nichts: Die App
-    /// laeuft dauerhaft und rechnet minuetlich nach.
-    private static let horizon: TimeInterval = 24 * 3600
-
     private let center = UNUserNotificationCenter.current()
     private let presenter = Presenter()
 
@@ -88,7 +84,14 @@ final class EventAlerts {
     /// Neuplanen mit einem Auslöser in der Vergangenheit hieße, dass sie nie
     /// erscheint. Entfernt wird ausschließlich, was zu einem Termin gehört, den
     /// es nicht mehr gibt.
-    func sync(items: [AgendaItem], enabled: Bool, leadMinutes: Int) async {
+    /// `horizon` muss die Termine der **nächsten 24 Stunden** sein, eigens
+    /// abgefragt — nicht die Liste, die die Oberfläche gerade anzeigt.
+    ///
+    /// Der Unterschied war der schwerste Fund des Audits vom 2026-09-22: Mit der
+    /// Oberflächen-Liste genügte ein Klick auf „nächster Monat", damit die
+    /// heutigen Termine fehlten, als gelöscht galten und ihre bereits geplanten
+    /// Mitteilungen entfernt wurden. Das Feature schaltete sich still ab.
+    func sync(horizon: [AgendaItem], enabled: Bool, leadMinutes: Int) async {
         guard enabled else {
             await removeAll()
             return
@@ -99,25 +102,23 @@ final class EventAlerts {
 
         // Kandidaten: echte Termine, nicht ganztaegig, ohne eigenen Alarm,
         // deren Hinweiszeitpunkt noch in der Zukunft liegt.
-        let candidates = items.filter { item in
+        let candidates = horizon.filter { item in
             guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
                   let start = item.start else { return false }
-            let fire = start.addingTimeInterval(-lead)
-            return fire > now && start.timeIntervalSince(now) < Self.horizon
+            return start.addingTimeInterval(-lead) > now
         }
 
-        let wanted = Set(candidates.map { Self.prefix + $0.id })
-
-        // Aufräumen: nur Mitteilungen zu Terminen, die es nicht mehr gibt.
-        // Alles andere wird gleich ohnehin mit gleicher Kennung ersetzt.
-        let known = Set(items.map { Self.prefix + $0.id })
+        // Aufräumen gegen den Horizont: Was dort nicht mehr vorkommt, gibt es
+        // nicht mehr (abgesagt, verschoben, Kalender ausgeblendet) oder hat
+        // längst begonnen. Beides heißt: die geplante Mitteilung ist gegenstandslos.
+        let known = Set(horizon.map { Self.prefix + $0.id })
         let pending = await center.pendingNotificationRequests()
         let stale = pending
             .map(\.identifier)
             .filter { $0.hasPrefix(Self.prefix) && !known.contains($0) }
         if !stale.isEmpty {
             center.removePendingNotificationRequests(withIdentifiers: stale)
-            Self.log.notice("\(stale.count, privacy: .public) Mitteilung(en) zu entfernten Terminen abgeräumt")
+            Self.log.notice("\(stale.count, privacy: .public) gegenstandslose Mitteilung(en) abgeräumt")
         }
 
         for item in candidates {
@@ -125,10 +126,7 @@ final class EventAlerts {
             await schedule(item: item, fireAt: start.addingTimeInterval(-lead), leadMinutes: leadMinutes)
         }
 
-        Self.log.notice("""
-            Geplant: \(wanted.count, privacy: .public) Mitteilung(en), \
-            Vorlauf \(leadMinutes, privacy: .public) Min.
-            """)
+        Self.log.notice("Geplant: \(candidates.count, privacy: .public) Mitteilung(en), Vorlauf \(leadMinutes, privacy: .public) Min., Horizont \(horizon.count, privacy: .public) Termin(e)")
     }
 
     private func schedule(item: AgendaItem, fireAt: Date, leadMinutes: Int) async {

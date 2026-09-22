@@ -166,9 +166,20 @@ final class CalendarStore {
     /// Bringt die geplanten Systemmitteilungen auf den Stand der Termine.
     /// Idempotent — darf jederzeit doppelt laufen.
     func syncAlerts() async {
+        // Erst prüfen, DANN abfragen. `reload()` läuft bei jeder
+        // EventKit-Änderung und bei jedem Monatswechsel; eine
+        // 24-Stunden-Abfrage, deren Ergebnis anschließend verworfen wird, ist
+        // Arbeit für nichts. (Beim Re-Audit des eigenen Fixes gefunden,
+        // 2026-09-22.)
+        guard prefs.notifyBeforeNextEvent else {
+            await alerts.sync(horizon: [], enabled: false,
+                              leadMinutes: prefs.alertLeadMinutes)
+            return
+        }
+        // Bewusst NICHT `items`: siehe fetchAlertHorizon().
         await alerts.sync(
-            items: items,
-            enabled: prefs.notifyBeforeNextEvent,
+            horizon: await fetchAlertHorizon(),
+            enabled: true,
             leadMinutes: prefs.alertLeadMinutes
         )
     }
@@ -180,30 +191,70 @@ final class CalendarStore {
     }
 
     private func fetchEvents(in range: DateInterval) async -> [AgendaItem] {
+        await fetchEvents(from: range.start, to: range.end)
+    }
+
+    /// Holt Termine in einem Zeitfenster. Eine Stelle für beide Aufrufer —
+    /// Monatsansicht und Mitteilungs-Horizont.
+    private func fetchEvents(from: Date, to: Date) async -> [AgendaItem] {
         let cals = store.calendars(for: .event).filter { !prefs.isHidden($0.calendarIdentifier) }
         guard !cals.isEmpty else { return [] }
 
-        let predicate = store.predicateForEvents(
-            withStart: range.start, end: range.end, calendars: cals
-        )
+        let predicate = store.predicateForEvents(withStart: from, end: to, calendars: cals)
         // Wiederkehrende Termine werden hier NICHT selbst aufgelöst. EventKit
         // expandiert sie inklusive Ausnahmen und verschobener Einzeltermine.
         // Wer das selbst rechnet, baut sich Fehler für Monate ein.
-        return store.events(matching: predicate).map { ev in
-            AgendaItem(
-                id: ev.eventIdentifier ?? UUID().uuidString,
-                title: ev.title ?? "(ohne Titel)",
-                start: ev.startDate,
-                end: ev.endDate,
-                isAllDay: ev.isAllDay,
-                hasTime: !ev.isAllDay,
-                kind: .event,
-                sourceID: ev.calendar?.calendarIdentifier ?? "",
-                color: ev.calendar.map(Self.rgba) ?? .fallback,
-                hasAlarms: ev.hasAlarms
-            )
-        }
+        return store.events(matching: predicate).map(Self.mapEvent)
     }
+
+    /// `EKEvent` → `AgendaItem`. Eine Stelle, damit die Kennung nicht an zwei
+    /// Orten unterschiedlich gebildet wird.
+    nonisolated private static func mapEvent(_ ev: EKEvent) -> AgendaItem {
+        AgendaItem(
+            // **Kennung aus Termin-ID UND Startzeit.** `eventIdentifier` ist bei
+            // Serienterminen laut EventKit-Vertrag für ALLE Vorkommen identisch.
+            // Mit der ID allein kollidieren zwei Vorkommen desselben Termins:
+            // `ForEach` bekäme doppelte IDs (unbestimmtes Rendering), und eine
+            // Mitteilung pro Vorkommen wäre unmöglich, weil jede die vorige mit
+            // gleicher Kennung ersetzt. Fällt bei täglichen Serien nicht auf,
+            // bei "alle 4 Stunden" sofort. (Audit 2026-09-22.)
+            id: Self.eventID(ev),
+            title: ev.title ?? "(ohne Titel)",
+            start: ev.startDate,
+            end: ev.endDate,
+            isAllDay: ev.isAllDay,
+            hasTime: !ev.isAllDay,
+            kind: .event,
+            sourceID: ev.calendar?.calendarIdentifier ?? "",
+            color: ev.calendar.map(rgba) ?? .fallback,
+            hasAlarms: ev.hasAlarms
+        )
+    }
+
+    nonisolated private static func eventID(_ ev: EKEvent) -> String {
+        let base = ev.eventIdentifier ?? UUID().uuidString
+        guard let start = ev.startDate else { return base }
+        return "\(base)|\(Int(start.timeIntervalSince1970))"
+    }
+
+    /// Termine der nächsten 24 Stunden — **unabhängig vom geladenen Monat**.
+    ///
+    /// Grund (Audit 2026-09-22, schwerster Fund): Die Mitteilungs-Planung hing
+    /// vorher an `items`, und `items` enthält nur den geladenen Monat ±7 Tage.
+    /// Ein Klick auf „nächster Monat" im Popover ließ die heutigen Termine aus
+    /// `items` verschwinden — worauf die Planung sie für *gelöscht* hielt und
+    /// die bereits geplanten Mitteilungen entfernte. Das Feature schaltete sich
+    /// damit still ab, ausgelöst durch eine harmlose Navigation.
+    ///
+    /// Der Horizont wird deshalb eigens abgefragt. `items` ist eine Ansicht für
+    /// die Oberfläche, keine Quelle für Terminexistenz.
+    private func fetchAlertHorizon() async -> [AgendaItem] {
+        let now = Date()
+        return await fetchEvents(from: now, to: now.addingTimeInterval(Self.alertHorizon))
+    }
+
+    /// Wie weit voraus Mitteilungen geplant werden.
+    private static let alertHorizon: TimeInterval = 24 * 3600
 
     private func fetchReminders(in range: DateInterval) async -> [AgendaItem] {
         let cals = store.calendars(for: .reminder).filter { !prefs.isHidden($0.calendarIdentifier) }

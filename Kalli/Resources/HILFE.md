@@ -65,6 +65,18 @@ schon eine Erinnerung, meldet Apple Kalender selbst — Kalli hält dann still.
 Zwei Klingeln für denselben Termin sind kein doppelter Hinweis, sondern einer,
 dem man nicht mehr glaubt.
 
+> **Was die Mitteilung enthält:** Titel und Uhrzeit des Termins. macOS speichert
+> sie bis zur Auslieferung, danach steht sie in der Mitteilungszentrale, und je
+> nach deinen Einstellungen erscheint der Titel **auf dem Sperrbildschirm**.
+> Das ist der einzige Fall, in dem ein Termininhalt Kalli verlässt — nichts geht
+> an einen Server. Wer keine Titel auf dem Sperrbildschirm will: macOS-
+> Einstellungen → Mitteilungen → Kalli → *Vorschau anzeigen: Wenn entsperrt*.
+> Details in **Rechtliches**.
+
+Eine Mitteilung kann ausbleiben, wenn der Mac aus ist, schläft oder „Nicht
+stören" aktiv ist. Für Unverzichtbares bleibt der Alarm im Kalender selbst der
+verlässlichere Weg.
+
 Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
 taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
 

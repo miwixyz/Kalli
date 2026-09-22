@@ -50,7 +50,7 @@ release:
 # Zeigt die Vorbedingungen, ohne etwas zu bauen.
 release-dry-run:
 	@echo "VERSION:        $$(awk -F'\"' '/MARKETING_VERSION:/ { print $$2; exit }' project.yml)"
-	@echo "NOTARY_PROFILE: $${NOTARY_PROFILE:-tippi-notary}"
+	@printf "NOTARY_PROFILE: "; for c in $${NOTARY_PROFILE:-} kalli-notary notary tippi-notary; do if [ -n "$$c" ] && xcrun notarytool history --keychain-profile "$$c" >/dev/null 2>&1; then echo "$$c"; break; fi; done
 	@printf "DEVELOPER_ID:   "; security find-identity -v -p codesigning | awk -F'\"' '/Developer ID Application/ { print $$2; exit }'
 	@git diff --quiet && git diff --cached --quiet && echo "Arbeitsbaum:    sauber" || echo "Arbeitsbaum:    NICHT sauber"
 
