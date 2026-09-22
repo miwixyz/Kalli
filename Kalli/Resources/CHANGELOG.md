@@ -2,6 +2,45 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.2] — 2026-09-22
+
+### Behoben
+
+- **Der Update-Knopf war nicht zu verstehen.** In 0.4.0 stand in der Fußzeile
+  allein ein Kreispfeil. Michaels Rückmeldung nach dem ersten echten Update:
+  „Das Reload-Icon allein ist aber nicht zu verstehen." Zu Recht — ein
+  Kreispfeil in einer **Kalender**-App liest sich wie „Termine neu laden".
+
+  Jetzt: Beschriftung **„Updates“** mit einem Pfeil nach unten
+  (`arrow.down.circle`). Das Zahnrad daneben darf symbolfrei bleiben, weil es
+  überall dasselbe bedeutet — dieses hier nicht.
+
+- **Die In-App-Hilfe hatte den Updates-Abschnitt nie bekommen.** Für 0.4.0 war
+  er geschrieben, aber das Skript, das ihn einsetzen sollte, brach an einem
+  Anker ab: Im Text steht „eine dritte, **davon** unabhängige Berechtigung",
+  mein Anker ließ das „davon" weg. Frühere Dateien desselben Laufs waren
+  geschrieben, `HILFE.md` nicht — und die Erfolgsmeldung, auf die ich mich
+  berief, war nie erschienen. Ich hatte nur das Ende der Ausgabe gelesen.
+
+  Nachgeholt: Abschnitt **Updates** (von Hand / automatisch, was übertragen
+  wird, warum ein Update sicher ist) plus ein Hinweis bei den Berechtigungen,
+  dass der Netzzugriff Kallis eigene Frage ist und keine macOS-Berechtigung.
+
+  **Zwei Lehren, beide über diesen Fall hinaus:** Bei einem Skript, das mehrere
+  Dateien anfasst, muss geprüft werden, dass **alle** Erfolgsmeldungen
+  erschienen sind — nicht nur die letzte Zeile. Und Schreiben, Committen,
+  Freigeben gehören **nicht** in eine `&&`-Kette: Scheitert ein früher Schritt,
+  laufen die späteren auf einem falschen Zustand weiter. Genau so entstand der
+  Commit `a890e7a`, dessen Nachricht „0.4.2" behauptete, während die Version
+  noch auf 0.4.1 stand. Diese Version braucht deshalb zwei Commits.
+
+### Belegt
+
+- **Das Update ist einmal echt durchgespielt** (0.4.0 → 0.4.1): angeboten,
+  installiert, bestätigt. Das war das letzte offene Abnahmekriterium aus
+  `docs/AUTO-UPDATE-DESIGN.md` — bei einem Updater lässt sich aus dem Code
+  nicht schließen, dass er wirkt.
+
 ## [0.4.1] — 2026-09-22
 
 ### Behoben
