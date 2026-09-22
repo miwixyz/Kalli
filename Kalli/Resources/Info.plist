@@ -48,6 +48,17 @@
 	     Der Nutzer sieht dann keinen Dialog, und die Liste bleibt einfach leer. -->
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Kalli zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts in deinen Kalendern.</string>
+	<!-- Die ALTEN Schlüssel zusätzlich, obwohl macOS 14+ die FullAccess-Variante
+	     verlangt. Gemessen am 2026-09-22: `requestFullAccessToEvents()` gab
+	     sofort `false` zurück, ohne Dialog und ohne den Status zu ändern —
+	     dreimal, bei frisch zurückgesetztem TCC und mit vorhandener,
+	     befüllter FullAccess-Beschreibung. Das ist das Bild einer Anfrage, die
+	     macOS direkt ablehnt. Diese Schlüssel kosten nichts und sind der
+	     nächste prüfbare Verdacht. -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>Kalli zeigt deine Termine im Menübalken an. Der Zugriff ist ausschließlich lesend — Kalli ändert nichts in deinen Kalendern.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Kalli zeigt deine Erinnerungen neben den Terminen an und lässt dich sie dort abhaken. Geändert wird ausschließlich das Erledigt-Kennzeichen.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Kalli zeigt deine Erinnerungen neben den Terminen an und lässt dich sie dort abhaken. Geändert wird ausschließlich das Erledigt-Kennzeichen — nichts wird angelegt, umbenannt oder gelöscht.</string>
 </dict>

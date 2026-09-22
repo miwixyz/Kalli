@@ -2,6 +2,50 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.6] — 2026-09-22
+
+### Behoben (Verdacht, jetzt prüfbar)
+
+- **`NSCalendarsUsageDescription` und `NSRemindersUsageDescription` ergänzt.**
+
+  Das Diagnose-Release 0.4.5 hat geliefert, was drei Hypothesen nicht konnten —
+  sobald das Protokoll überhaupt lesbar war (siehe unten):
+
+  ```
+  Anfrage startet  — Kalender noch nicht gefragt, Erinnerungen erteilt
+  Anfrage beendet  — Rueckgabe Kalender FALSE, Status weiter: noch nicht gefragt
+  Nichts hat sich geaendert                              (dreimal)
+  START — Rohwerte event=0 reminder=3, canPrompt true
+  ```
+
+  `requestFullAccessToEvents()` gibt **sofort `false`** zurück, ohne Dialog und
+  ohne den Status zu ändern — bei **frisch zurückgesetztem TCC** und mit
+  vorhandener, befüllter `NSCalendarsFullAccessUsageDescription`. Das ist das
+  Bild einer Anfrage, die macOS direkt ablehnt.
+
+  Widerlegt wurde dabei auch die TCC-Verschmutzung durch einen Debug-Testlauf:
+  Der fand **nach** den gescheiterten Versuchen statt.
+
+  Die alten Schlüssel kosten nichts. Ob sie es waren, sagt der nächste Lauf —
+  deshalb stehen sie **allein** in diesem Release.
+
+### Der eigentliche Fehler lag in meinem Messwerkzeug
+
+- **`log` war in der Shell überschattet.** Jeder `log show`-Aufruf lief gegen
+  eine Shell-Funktion, nicht gegen `/usr/bin/log`, und antwortete
+  `too many arguments`. Meine `2>/dev/null` haben genau diese Fehlermeldung
+  verschluckt — das stille Überspringen an einer Systemgrenze.
+
+  Folge: **Jedes „das Protokoll ist leer" von heute war falsch.** Darauf wurden
+  drei Diagnose-Runden gebaut, ein `.info`→`.notice`-Umbau (dessen Begründung
+  damit ebenfalls unbelegt ist) und ein ganzes Diagnose-Release. Die Daten waren
+  die ganze Zeit da.
+
+  Dieselbe Klasse war vorher schon bei `grep` aufgefallen (auf `ugrep`
+  überschattet, lief bei der Appcast-Signatur still leer). **Zweite
+  Wiederholung heißt Mechanismus:** Systemwerkzeuge in Diagnosen nur mit
+  absolutem Pfad, und **kein `2>/dev/null` auf einem Messbefehl**.
+
 ## [0.4.5] — 2026-09-22
 
 Reines **Diagnose-Release**. Keine Verhaltensänderung, kein Lösungsversuch.
