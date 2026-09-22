@@ -2,6 +2,23 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.2.3] — 2026-09-22
+
+### Behoben
+
+- **Die Installationsanleitung hätte die App zerstört.** README und
+  `release.sh` sagten `unzip`. `unzip` zerstört die Bundle-Metadaten eines
+  signierten `.app` — Gatekeeper meldet danach „a sealed resource is missing or
+  invalid", und das sieht nach einem kaputten Release aus, obwohl das Artefakt
+  einwandfrei ist. Jetzt `ditto -x -k`, mit Begründung an beiden Stellen.
+  (Ein Doppelklick im Finder war immer sicher; das Archivierungsprogramm macht
+  es richtig.)
+- **Das Release-Gate prüfte eine Stufe zu früh.** Es fragte Gatekeeper zum
+  Build **vor** dem Packen und meldete „akzeptiert" — während das
+  heruntergeladene ZIP abgelehnt wurde. Jetzt wird das ausgelieferte ZIP
+  ausgepackt und geprüft: Ticket angeheftet, Gatekeeper-Urteil. Geprüft wird,
+  was ankommt, nicht was gebaut wurde.
+
 ## [0.2.2] — 2026-09-22
 
 ### Neu

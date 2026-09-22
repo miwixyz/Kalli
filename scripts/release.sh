@@ -180,11 +180,31 @@ echo "  ✓ Gatekeeper akzeptiert (source: $(echo "${SPCTL}" | awk -F'=' '/sourc
 # ---------------------------------------------------------------------------
 # 6. Endgültiges ZIP
 # ---------------------------------------------------------------------------
-step "[6/8] ZIP packen"
+step "[6/8] ZIP packen und ALS AUSGELIEFERTES ARTEFAKT pruefen"
 ZIP="${DIST}/${APP}-${VERSION}.zip"
 ditto -c -k --keepParent "${APP_PATH}" "${ZIP}"
 rm -f "${DIST}/notarize.zip"
 echo "  ✓ ${ZIP} ($(du -h "${ZIP}" | cut -f1))"
+
+# Der Schritt davor prueft den Build VOR dem Packen — das ist die eigene
+# Behauptung. Was zaehlt, ist das ZIP, das der andere Mac laedt: auspacken und
+# Gatekeeper noch einmal fragen.
+#
+# Warum das hier steht (2026-09-22): Der erste Lauf meldete "Gatekeeper
+# akzeptiert" und das heruntergeladene Bundle wurde trotzdem abgelehnt —
+# "a sealed resource is missing or invalid". Ursache war nicht das Artefakt,
+# sondern die Entpack-Methode in der Anleitung (`unzip` statt `ditto`).
+# Ein Gate, das eine Stufe vor der Auslieferung prueft, findet das nie.
+VERIFY_DIR="$(mktemp -d)"
+ditto -x -k "${ZIP}" "${VERIFY_DIR}/"
+[ -d "${VERIFY_DIR}/${BUNDLE}" ] || fail "Das ZIP enthaelt kein ${BUNDLE}"
+xcrun stapler validate "${VERIFY_DIR}/${BUNDLE}" >/dev/null \
+    || fail "Im ausgelieferten ZIP ist kein Notarisierungs-Ticket angeheftet"
+SHIPPED="$(spctl --assess --type execute -vv "${VERIFY_DIR}/${BUNDLE}" 2>&1 || true)"
+echo "${SHIPPED}" | grep -q "accepted" \
+    || { echo "${SHIPPED}"; fail "Gatekeeper lehnt das ausgelieferte ZIP ab"; }
+rm -rf "${VERIFY_DIR}"
+echo "  ✓ Ausgeliefertes ZIP: $(echo "${SHIPPED}" | awk -F'=' '/source/ { print $2 }')"
 
 if [ "${PUBLISH}" -eq 0 ]; then
     echo ""
@@ -226,7 +246,11 @@ echo "✅ ${APP} ${VERSION} released."
 echo ""
 echo "→ ZU TUN auf dem anderen Mac:"
 echo "     gh release download ${TAG} --repo miwixyz/Kalli --pattern '*.zip'"
-echo "     unzip -q ${APP}-${VERSION}.zip && mv ${BUNDLE} /Applications/ && open /Applications/${BUNDLE}"
+echo "     ditto -x -k ${APP}-${VERSION}.zip . && mv ${BUNDLE} /Applications/ && open /Applications/${BUNDLE}"
+echo ""
+echo "   WICHTIG: ditto, nicht unzip. unzip zerstoert die Bundle-Metadaten"
+echo "   eines signierten .app — Gatekeeper meldet dann 'a sealed resource is"
+echo "   missing or invalid' und die App sieht beschaedigt aus."
 echo ""
 echo "   Kein Xcode nötig. macOS fragt dort einmal nach Kalender- und"
 echo "   Erinnerungszugriff — danach nicht mehr, weil die Signatur stabil bleibt."

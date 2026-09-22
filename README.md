@@ -158,9 +158,15 @@ beim Umbenennen des Projekts verloren gegangen war.
 Ohne Xcode, über das Release-Asset:
 
 ```bash
-gh release download v0.2.2 --repo miwixyz/Kalli --pattern '*.zip'
-unzip -q Kalli-0.2.2.zip && mv Kalli.app /Applications/ && open /Applications/Kalli.app
+gh release download v0.2.3 --repo miwixyz/Kalli --pattern '*.zip'
+ditto -x -k Kalli-0.2.3.zip . && mv Kalli.app /Applications/ && open /Applications/Kalli.app
 ```
+
+> **`ditto`, nicht `unzip`.** `unzip` zerstört die Bundle-Metadaten eines
+> signierten `.app`; Gatekeeper meldet danach „a sealed resource is missing or
+> invalid" und die App sieht beschädigt aus, obwohl das Release einwandfrei ist.
+> Ein Doppelklick im Finder ist ebenfalls sicher — das Archivierungsprogramm
+> macht es richtig.
 
 Das Asset ist mit **Developer ID signiert und notarisiert** — Gatekeeper lässt es
 ohne Rechtsklick-Umweg starten. macOS fragt einmal nach Kalender- und
