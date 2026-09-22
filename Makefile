@@ -60,11 +60,18 @@ install: check-docs build
 # und notarytool-Profil im Schluesselbund. `make release PUBLISH=0` baut alles,
 # veroeffentlicht aber nicht.
 # Nur reine Entscheidungslogik — laeuft ohne Berechtigungen und ohne Uhr.
+#
+# MIT Signatur, bewusst: `xcodebuild test` startet die App als Test-Host. Mit
+# CODE_SIGNING_ALLOWED=NO waere das ein ZWEITES com.kalli.app mit ad-hoc
+# Signatur, also eine zweite TCC-Identitaet neben der ausgelieferten. Genau das
+# hat am 2026-09-22 drei verwaiste Kalender-Eintraege und ein leeres App-Symbol
+# in den Systemeinstellungen hinterlassen. Mit Developer-ID-Signatur ist der
+# Test-Host identisch mit dem Release und hinterlaesst keinen zweiten Eintrag.
 test: gen
 	xcodebuild -project $(APP).xcodeproj -scheme $(APP) \
 		-destination 'platform=macOS' \
 		-derivedDataPath $(DERIVED) \
-		CODE_SIGNING_ALLOWED=NO test
+		-allowProvisioningUpdates test
 
 release:
 	@bash scripts/release.sh

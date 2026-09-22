@@ -112,10 +112,12 @@ bash scripts/docs-gate.sh
 # Ein Release, das die Tests nicht laeuft, ist ein Release ohne Abnahme. Sie
 # brauchen unter einer Sekunde — es gibt keinen Grund, sie zu ueberspringen.
 step "[2/10] Tests"
+# Signiert wie das Release: Ein ad-hoc signierter Test-Host waere eine zweite
+# TCC-Identitaet fuer com.kalli.app. Siehe Makefile-Kommentar am test-Ziel.
 xcodebuild -project "${APP}.xcodeproj" -scheme "${APP}" \
     -destination 'platform=macOS' \
     -derivedDataPath ./build \
-    CODE_SIGNING_ALLOWED=NO \
+    -allowProvisioningUpdates \
     test >/dev/null 2>&1 \
     || fail "Tests fehlgeschlagen. Ursache mit 'make test' ansehen."
 echo "  ✓ alle Tests bestanden"

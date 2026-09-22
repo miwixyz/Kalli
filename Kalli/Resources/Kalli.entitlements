@@ -3,9 +3,28 @@
 <plist version="1.0">
 <dict>
 	<!-- Bewusst ohne App Sandbox: Kalli wird direkt verteilt, nicht über den
-	     App Store. Hardened Runtime (in project.yml) genügt für die Notarisierung.
-	     Kommt später ein App-Store-Build dazu, gehören hier
-	     com.apple.security.app-sandbox sowie
-	     com.apple.security.personal-information.calendars / .reminders hinein. -->
+	     App Store. Für einen App-Store-Build käme hier
+	     com.apple.security.app-sandbox hinzu.
+
+	     ABER: Die Resource-Access-Entitlements sind NICHT nur eine
+	     App-Store-Sache. **Hardened Runtime verlangt sie ebenfalls.** Bis zum
+	     2026-09-22 stand hier, sie gehörten "später bei einem App-Store-Build"
+	     hinein — dieser Satz hat einen Tag Fehlersuche gekostet:
+
+	     Kalender-Zugriff funktionierte am Morgen und war ab dem ersten
+	     Developer-ID-Release tot. Der Unterschied war nicht die Signatur,
+	     sondern das, was mit ihr kam: `make install` signiert ad-hoc, und
+	     dabei meldet der Build "Disabling hardened runtime". Das Release hat
+	     Hardened Runtime AN (flags=0x10000(runtime)) — und ohne das
+	     Entitlement lehnt macOS `requestFullAccessToEvents()` SOFORT ab:
+	     Rückgabe false, kein Dialog, keine Statusänderung, kein Eintrag in den
+	     Systemeinstellungen.
+
+	     Dass Erinnerungen weiter funktionierten, passt genau dazu: Hardened
+	     Runtime listet Calendars, nicht Reminders. -->
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
+	<key>com.apple.security.personal-information.reminders</key>
+	<true/>
 </dict>
 </plist>

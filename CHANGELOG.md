@@ -2,6 +2,53 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.7] — 2026-09-22
+
+### Behoben
+
+- **Kalender-Zugriff war ab dem ersten Developer-ID-Release tot.** Ursache:
+  **Hardened Runtime verlangt für geschützte Ressourcen ein
+  Resource-Access-Entitlement**, und Kallis Entitlements-Datei war leer.
+
+  `com.apple.security.personal-information.calendars` ergänzt (plus
+  `.reminders`).
+
+  Der Befund kam durch eine Diff-Frage, nicht durch Code-Lesen. Kalender
+  funktionierte am Morgen und ab 0.2.3 nicht mehr — die Frage war also nicht
+  „was ist am Code falsch", sondern **was hat sich geändert**:
+
+  | | |
+  |---|---|
+  | `make install` (bis 0.2.1) | signiert ad-hoc, Build meldet **„Disabling hardened runtime"** → Zugriff ging |
+  | `make release` (ab 0.2.3) | Developer ID, `flags=0x10000(runtime)` → **Hardened Runtime AN** → ohne Entitlement lehnt macOS ab |
+
+  Ohne das Entitlement gibt `requestFullAccessToEvents()` **sofort `false`**
+  zurück: kein Dialog, keine Statusänderung, **kein Eintrag in den
+  Systemeinstellungen** — im Kalender-Bereich standen Alcove, Bartender und
+  Calendr, Kalli fehlte ganz.
+
+  Dass **Erinnerungen weiter funktionierten**, passt exakt: Hardened Runtime
+  listet *Calendars*, nicht *Reminders*.
+
+  In der Entitlements-Datei stand mein eigener Kommentar, diese Schlüssel
+  gehörten „später bei einem App-Store-Build" hinein. Dieser Halbsatz hat einen
+  Tag Fehlersuche gekostet — er ist jetzt durch die Begründung ersetzt.
+
+### Nacharbeit
+
+- **Der Testlauf erzeugte eine zweite TCC-Identität.** `xcodebuild test`
+  startet die App als Test-Host; mit `CODE_SIGNING_ALLOWED=NO` war das ein
+  zweites, ad-hoc signiertes `com.kalli.app` neben dem ausgelieferten. Das
+  erklärt die **drei** verwaisten Kalender-Einträge (`tccutil reset` meldete
+  dreimal Erfolg) und das leere App-Symbol in den Systemeinstellungen.
+
+  `make test` und das Test-Gate in `release.sh` signieren jetzt wie das
+  Release. Der Test-Host ist damit identitätsgleich und hinterlässt keinen
+  zweiten Eintrag.
+
+  Ursache des Problems war das **nicht** — die gescheiterten Versuche lagen
+  zeitlich vor diesem Testlauf.
+
 ## [0.4.6] — 2026-09-22
 
 ### Behoben (Verdacht, jetzt prüfbar)
