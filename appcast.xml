@@ -3,6 +3,16 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.4.7</title>
+            <pubDate>Tue, 22 Sep 2026 13:52:55 +0200</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>45</sparkle:version>
+            <sparkle:shortVersionString>0.4.7</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.7/Kalli-0.4.7.zip" length="1342379" type="application/octet-stream" sparkle:edSignature="xJBHQAe7cJjqelbNMHNKV5jOI4f/BQdqgwB42t8mBwDmHE5AVldh1OwHG1W0sAgVhlju7Asu7QMZCtoAhHjbAw=="/>
+        </item>
+        <item>
             <title>0.4.6</title>
             <pubDate>Tue, 22 Sep 2026 13:42:14 +0200</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -21,16 +31,6 @@
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.5/Kalli-0.4.5.zip" length="1340781" type="application/octet-stream" sparkle:edSignature="N+YU5D52muxbrmuwm1WBL0OXQHO2p6JzwVyEFRTW/92wLVK1XHNIRL+FEM32zAEc9LztUMzhtuysGoj4J2cZDg=="/>
-        </item>
-        <item>
-            <title>0.4.4</title>
-            <pubDate>Tue, 22 Sep 2026 13:00:54 +0200</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>39</sparkle:version>
-            <sparkle:shortVersionString>0.4.4</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.4/Kalli-0.4.4.zip" length="1338425" type="application/octet-stream" sparkle:edSignature="4VNMlIxTJ4Sd8nt/Ias+XK9YHb5cPhT5ZGtZ/2wrR1fY9AGNXAzBANTL4lxn99E62lugL878YMACpf5Xx2XSAg=="/>
         </item>
     </channel>
 </rss>
