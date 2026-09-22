@@ -3,6 +3,16 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.4.1</title>
+            <pubDate>Tue, 22 Sep 2026 12:20:30 +0200</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>32</sparkle:version>
+            <sparkle:shortVersionString>0.4.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.1/Kalli-0.4.1.zip" length="1324402" type="application/octet-stream" sparkle:edSignature="fHKBfjnaZQzOkp1bSyBZ64F0iIUg4552im4AZUWAkOxMjM+tJCmdx45np/uZSeQvs9C7LPLgxqNRe8ZFSlUKDg=="/>
+        </item>
+        <item>
             <title>0.4.0</title>
             <pubDate>Tue, 22 Sep 2026 12:12:35 +0200</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
