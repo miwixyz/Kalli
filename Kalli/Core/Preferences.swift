@@ -91,8 +91,28 @@ final class Preferences {
     }
 
     /// Bereits beendete Termine des heutigen Tages ausblenden.
+    ///
+    /// **Gespeichert wird weiter diese negative Form**, obwohl die Oberfläche
+    /// seit 0.2.1 positiv fragt („anzeigen"). Ein Umbenennen des Schlüssels
+    /// hätte bei jedem bestehenden Nutzer die Einstellung still umgedeutet:
+    /// Wer „ausblenden" angehakt hatte, hätte plötzlich alles gesehen. Eine
+    /// Umbenennung, die Verhalten ändert, ist keine Umbenennung.
     var hidePastEvents: Bool {
         didSet { defaults.set(hidePastEvents, forKey: Key.hidePast) }
+    }
+
+    /// Dieselbe Einstellung, positiv gelesen — das ist die Form, die die
+    /// Oberfläche zeigt.
+    ///
+    /// Apples HIG rät von negativ formulierten Ankreuzfeldern ab: „ausblenden"
+    /// plus Häkchen ist eine doppelte Negation, die man bei jedem Blick neu
+    /// übersetzt. Angekreuzt = sichtbar muss man nicht lesen, das versteht man.
+    /// Nebenan stand „Erledigte Erinnerungen **anzeigen**" — zwei
+    /// Ankreuzfelder untereinander mit umgekehrter Logik. (Befund von Michael,
+    /// 2026-09-22.)
+    var showPastEvents: Bool {
+        get { !hidePastEvents }
+        set { hidePastEvents = !newValue }
     }
 
     /// Fortschritt des laufenden Termins — in der Leiste und im Popover.

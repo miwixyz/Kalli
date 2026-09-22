@@ -93,8 +93,9 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
     Sind erledigte Erinnerungen eingeblendet (Einstellungen → Ansicht), bleibt
     die Zeile ohnehin stehen; ein weiterer Klick nimmt das Häkchen zurück.
 
-**Vergangene Termine ausblenden** (Einstellungen → Ansicht) räumt die Liste im
-Lauf des Tages auf. Der Filter gilt **nur für heute** — an anderen Tagen wäre
+**Vergangene Termine anzeigen** (Einstellungen → Ansicht) ist ab Werk an.
+Abgeschaltet räumt sich die Liste im Lauf des Tages auf. Der Filter gilt **nur
+für heute** — an anderen Tagen wäre
 entweder alles vergangen oder nichts, und die Liste sähe leer statt aufgeräumt
 aus. Ganztägige Termine und Aufgaben bleiben sichtbar: Eine überfällige Aufgabe
 ist nicht erledigt, sondern das Gegenteil davon.

@@ -2,6 +2,23 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.2.1] — 2026-09-22
+
+### Behoben
+
+- **Zwei Ankreuzfelder untereinander mit umgekehrter Logik.** „Erledigte
+  Erinnerungen **anzeigen**" stand direkt über „Vergangene Termine
+  **ausblenden**" — angekreuzt bedeutete einmal mehr und einmal weniger zu
+  sehen. Beide fragen jetzt positiv: **„Vergangene Termine anzeigen"**.
+  Apples HIG rät von negativ formulierten Ankreuzfeldern ab; „ausblenden" plus
+  Häkchen ist eine doppelte Negation, die man bei jedem Blick neu übersetzt.
+
+  **Die gespeicherte Einstellung bleibt unberührt.** Intern heißt der Schlüssel
+  weiter `hidePastEvents`; die Oberfläche liest ihn nur umgekehrt. Ein
+  Umbenennen hätte bei jedem bestehenden Nutzer die Einstellung still
+  umgedeutet — wer „ausblenden" angehakt hatte, hätte plötzlich alles gesehen.
+  Eine Umbenennung, die Verhalten ändert, ist keine Umbenennung.
+
 ## [0.2.0] — 2026-09-22
 
 ### Neu

@@ -153,7 +153,7 @@ struct PopoverView: View {
                         }
                         if hiddenPastCount > 0 {
                             Button {
-                                prefs.hidePastEvents = false
+                                prefs.showPastEvents = true
                             } label: {
                                 Text(hiddenPastCount == 1
                                      ? "1 vergangener Termin ausgeblendet"
