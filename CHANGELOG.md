@@ -2,6 +2,27 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.1] — 2026-09-22
+
+### Behoben
+
+- **Das Release-Gate prüfte die falsche Signaturart.** Es rief
+  `sign_update --verify appcast.xml` — das prüft eine **Feed**-Signatur, ein
+  separates, optionales Sparkle-Merkmal, das `generate_appcast` gar nicht
+  erzeugt. Der Lauf für 0.4.0 brach daran ab, obwohl der Appcast korrekt war.
+
+  Richtig ist die Frage: **Passt die Signatur im Appcast zum Archiv, das
+  ausgeliefert wird?** Beide Richtungen gemessen — passende Signatur `EXIT 0`,
+  ein einziges verfälschtes Zeichen „failed to pass signing verification".
+
+  Gut, dass das Gate überhaupt geprüft hat: Es prüfte das Falsche, aber es hat
+  nicht stillschweigend ausgeliefert.
+
+- **Appcast-Prüfung parst mit Python statt `grep`.** Auf dem Entwickler-Mac ist
+  `grep` auf **ugrep** gemappt, dessen Regex-Verhalten abweicht — die
+  Signatur-Extraktion lief damit still leer. Eine stille Fehlextraktion ist an
+  dieser Stelle besonders teuer.
+
 ## [0.4.0] — 2026-09-22
 
 ### Neu
