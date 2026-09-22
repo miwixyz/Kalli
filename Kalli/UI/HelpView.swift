@@ -18,6 +18,11 @@ struct HelpView: View {
         case help = "Hilfe"
         case changes = "Änderungen"
         case legal = "Rechtliches"
+        // Muss in der App erreichbar sein, nicht nur im Repo: Sparkles
+        // MIT-Lizenz verlangt, dass Urheberhinweis und Lizenztext der
+        // AUSLIEFERUNG beigefügt werden. Das ausgelieferte Sparkle.framework
+        // enthält selbst keine Lizenzdatei — gemessen am 2026-09-22.
+        case thirdParty = "Fremdcode"
         var id: String { rawValue }
 
         var resource: String {
@@ -25,6 +30,7 @@ struct HelpView: View {
             case .help: "HILFE"
             case .changes: "CHANGELOG"
             case .legal: "RECHTLICHES"
+            case .thirdParty: "THIRD-PARTY-LICENSES"
             }
         }
     }

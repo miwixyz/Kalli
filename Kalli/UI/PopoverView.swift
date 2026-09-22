@@ -5,6 +5,7 @@ struct PopoverView: View {
     @Environment(Preferences.self) private var prefs
     @Environment(CalendarStore.self) private var store
     @Environment(MenuBarLabel.self) private var label
+    @Environment(Updater.self) private var updater
 
     @State private var visibleMonth = Date()
     @State private var selection = Date()
@@ -45,6 +46,7 @@ struct PopoverView: View {
                     .environment(prefs)
                     .environment(store)
                     .environment(label)
+                    .environment(updater)
             } else if case .denied = store.access {
                 accessHint
             } else {
@@ -250,6 +252,18 @@ struct PopoverView: View {
                 Image(systemName: showingSettings ? "chevron.left" : "gearshape")
             }
             .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
+
+            // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
+            // auszulösen — die automatische Suche ist ab Werk aus, weil sie
+            // eine Netzverbindung ist, die niemand erteilt hat.
+            Button {
+                updater.checkForUpdates()
+            } label: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+            }
+            .disabled(!updater.canCheck)
+            .help("Nach Updates suchen")
+
             Spacer()
             Button("Beenden") { NSApplication.shared.terminate(nil) }
                 .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))

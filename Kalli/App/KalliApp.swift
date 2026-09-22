@@ -6,6 +6,7 @@ struct KalliApp: App {
     @State private var prefs: Preferences
     @State private var store: CalendarStore
     @State private var label: MenuBarLabel
+    @State private var updater = Updater()
 
     init() {
         let p = Preferences()
@@ -21,6 +22,7 @@ struct KalliApp: App {
                 .environment(prefs)
                 .environment(store)
                 .environment(label)
+                .environment(updater)
                 .tint(Theme.accent)
                 .task {
                     // Berechtigung erst beim ersten Öffnen erfragen, nicht beim

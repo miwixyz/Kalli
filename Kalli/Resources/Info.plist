@@ -27,6 +27,23 @@
 	<key>LSUIElement</key>
 	<true/>
 
+	<!-- Sparkle. Der Appcast liegt IM REPO, nicht in einem Gist: Damit ist jede
+	     Änderung daran ein öffentlicher, datierter Commit — die billigste
+	     Manipulationserkennung, die zu haben ist.
+
+	     SUPublicEDKey ist der ÖFFENTLICHE Teil des Signierschlüssels. Der
+	     private Teil liegt ausschließlich im Login-Schlüsselbund des
+	     Entwickler-Macs und darf niemals in dieses Repo geraten.
+
+	     SUEnableAutomaticChecks fehlt hier ABSICHTLICH: Sparkle fragt dadurch
+	     beim ersten Mal, ob es automatisch suchen darf. Kalli hatte bis 0.3.1
+	     keinen Netzzugriff; ihn ab Werk einzuschalten wäre eine Vollmacht, die
+	     niemand erteilt hat. Begründung: docs/AUTO-UPDATE-DESIGN.md -->
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/miwixyz/Kalli/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>iE2bazGoslgGEsgo2MJUwphVYlEKkeRcsWdzwbGge4w=</string>
+
 	<!-- Ohne diese beiden Texte schlägt der Zugriff STILL fehl (macOS 14+).
 	     Der Nutzer sieht dann keinen Dialog, und die Liste bleibt einfach leer. -->
 	<key>NSCalendarsFullAccessUsageDescription</key>

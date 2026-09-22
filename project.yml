@@ -13,8 +13,20 @@ settings:
     ARCHS: arm64
     ONLY_ACTIVE_ARCH: YES
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "0.3.1"
+    MARKETING_VERSION: "0.4.0"
     CURRENT_PROJECT_VERSION: "6"
+
+# Genau EINE direkte Abhaengigkeit, null transitive.
+#
+# `exactVersion` statt `from:`: Bei einer Anwendung entscheidet sonst der
+# Auflösungszeitpunkt, welche Updater-Version ausgeliefert wird — und ein
+# Updater ist die falsche Stelle fuer Zufall. `Package.resolved` ist
+# versioniert, damit der Build reproduzierbar bleibt.
+# Begruendung vollstaendig: docs/AUTO-UPDATE-DESIGN.md
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
 
 targets:
   Kalli:
@@ -27,8 +39,12 @@ targets:
     resources:
       - path: Kalli/Resources/HILFE.md
       - path: Kalli/Resources/RECHTLICHES.md
+      - path: Kalli/Resources/THIRD-PARTY-LICENSES.md
       - path: Kalli/Resources/CHANGELOG.md
       - path: Kalli/Resources/AppIcon.icns
+    dependencies:
+      - package: Sparkle
+        product: Sparkle
     settings:
       base:
         INFOPLIST_FILE: Kalli/Resources/Info.plist

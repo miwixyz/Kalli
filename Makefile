@@ -1,4 +1,4 @@
-.PHONY: docs gen build run install clean check-docs release release-dry-run test
+.PHONY: docs gen build run install clean check-docs release release-dry-run test lock
 
 APP = Kalli
 CONFIG ?= Debug
@@ -11,8 +11,23 @@ DEST = /Applications/$(APP).app
 docs:
 	cp CHANGELOG.md Kalli/Resources/CHANGELOG.md
 
+# Das Lockfile lebt im Repo, nicht im generierten Projekt: `*.xcodeproj/` ist
+# gitignoriert, weil xcodegen es erzeugt. Ohne dieses Einspielen waere die
+# Commit-SHA der Abhaengigkeit nicht versioniert — und ein verschobener Tag
+# wuerde unbemerkt eine andere Sparkle-Fassung einziehen.
+SPM_DIR = $(APP).xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+
 gen: docs
 	xcodegen generate
+	@mkdir -p "$(SPM_DIR)"
+	@cp Package.resolved "$(SPM_DIR)/Package.resolved"
+	@echo "🔒 Package.resolved eingespielt (Sparkle auf Commit-SHA festgelegt)"
+
+# Nach einem bewussten Abhaengigkeits-Update: Lockfile zurueckschreiben.
+lock:
+	@cp "$(SPM_DIR)/Package.resolved" Package.resolved
+	@echo "🔒 Package.resolved aus dem Projekt zurueckgeschrieben — Diff pruefen!"
+	@git diff --stat Package.resolved
 
 build: gen
 	xcodebuild -project $(APP).xcodeproj -scheme $(APP) \

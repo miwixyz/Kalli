@@ -2,6 +2,61 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.0] — 2026-09-22
+
+### Neu
+
+- **Automatische Updates über Sparkle** — möglich geworden, weil das Repo
+  öffentlich ist. Vollständiger Sicherheitsentwurf **vor** der ersten Zeile
+  Code: [`docs/AUTO-UPDATE-DESIGN.md`](docs/AUTO-UPDATE-DESIGN.md), mit
+  Datenflussdiagramm, STRIDE je Vertrauensgrenze, Missbrauchsfällen,
+  verworfenen Alternativen und getragenen Restrisiken.
+
+  - **Ab Werk aus.** `SUEnableAutomaticChecks` ist bewusst **nicht** gesetzt;
+    Sparkle fragt dadurch beim ersten Mal. Kalli hatte bis 0.3.1 keinen
+    Netzzugriff — ihn ab Werk einzuschalten wäre eine Vollmacht, die niemand
+    erteilt hat. Gleiche Haltung wie bei Kalenderzugriff und Mitteilungen.
+  - **Von Hand** jederzeit über das Pfeil-Symbol unten im Popover.
+  - **Zwei unabhängige Signaturen** werden geprüft, bevor etwas ersetzt wird:
+    EdDSA gegen den eingebauten öffentlichen Schlüssel **und** Apples
+    Developer ID. Ein Angreifer bräuchte beide Schlüssel; ein manipulierter
+    Appcast allein liefert nichts aus.
+  - **Der Appcast liegt im Repo**, nicht in einem Gist. Jede Änderung daran ist
+    damit ein öffentlicher, datierter Commit — die billigste
+    Manipulationserkennung, die zu haben ist.
+  - **Sparkle exakt auf 2.10.0**, `Package.resolved` versioniert und auf die
+    Commit-SHA gepinnt. Ein verschobener Tag würde auffallen. Eine direkte
+    Abhängigkeit, **null** transitive.
+  - **Die Werkzeuge kommen aus derselben festgelegten Version**, die in der App
+    steckt — nicht aus einem handplatzierten Ordner. Und ohne `2>/dev/null`:
+    Der Appcast wird nach dem Signieren **kryptografisch gegengelesen**
+    (`sign_update --verify`), zusätzlich werden Version und Download-URL
+    geprüft. Ein still unsignierter Appcast wäre entweder „niemand kann
+    updaten" oder etwas Schlimmeres.
+
+### Geändert — Datenschutz-Zusage, im selben Commit
+
+- **„Kalli sendet nichts" ist ersetzt, nicht relativiert.** Mit dem Updater wäre
+  der Satz falsch geworden: Kalli ruft `raw.githubusercontent.com` ab und
+  übermittelt dabei — wie jeder HTTP-Aufruf — IP-Adresse und implizit die
+  installierte Version. Kein Tracking, keine Kennung, aber Verkehr, wo vorher
+  keiner war.
+
+  Offengelegt in `RECHTLICHES.md` (eigener Abschnitt mit dem, was GitHub sieht),
+  `HILFE.md`, README und README-Fußzeile. Das war ein Abnahmekriterium des
+  Entwurfs: **ohne diese Änderung wird nicht ausgeliefert.**
+
+- **Lizenzhinweis für Fremdcode mitgeliefert.** Sparkle steht unter MIT, und MIT
+  verlangt, dass Urheberhinweis und Lizenztext der **Auslieferung** beigefügt
+  werden. Gemessen: Das ausgelieferte `Sparkle.framework` enthält **keine**
+  Lizenzdatei. Kalli führt sie jetzt selbst mit — `THIRD-PARTY-LICENSES.md`, im
+  Repo **und im App-Bundle**, erreichbar unter Einstellungen → Hilfe →
+  Fremdcode. Das Doku-Gate prüft ihr Vorhandensein.
+
+  Dabei fiel auf, dass `RECHTLICHES.md` einen Abschnitt „Verwendete
+  Fremdsoftware: **Keine.**" trug. Richtiggestellt statt einen zweiten daneben
+  zu setzen.
+
 ## [0.3.1] — 2026-09-22
 
 ### Neu

@@ -55,7 +55,7 @@ step() { echo ""; echo "▶ $*"; }
 # ---------------------------------------------------------------------------
 # 0. Vorbedingungen. Alle messen, keine annehmen.
 # ---------------------------------------------------------------------------
-step "[0/9] Vorbedingungen"
+step "[0/10] Vorbedingungen"
 
 command -v gh >/dev/null || fail "gh fehlt — brew install gh"
 command -v xcodegen >/dev/null || fail "xcodegen fehlt — brew install xcodegen"
@@ -103,7 +103,7 @@ echo "  ✓ notarytool-Profil: ${NOTARY_PROFILE}"
 # ---------------------------------------------------------------------------
 # 1. Doku-Gate — derselbe Prüfer wie bei `make install`
 # ---------------------------------------------------------------------------
-step "[1/9] Doku-Gate"
+step "[1/10] Doku-Gate"
 bash scripts/docs-gate.sh
 
 # ---------------------------------------------------------------------------
@@ -111,7 +111,7 @@ bash scripts/docs-gate.sh
 # ---------------------------------------------------------------------------
 # Ein Release, das die Tests nicht laeuft, ist ein Release ohne Abnahme. Sie
 # brauchen unter einer Sekunde — es gibt keinen Grund, sie zu ueberspringen.
-step "[2/9] Tests"
+step "[2/10] Tests"
 xcodebuild -project "${APP}.xcodeproj" -scheme "${APP}" \
     -destination 'platform=macOS' \
     -derivedDataPath ./build \
@@ -134,7 +134,7 @@ echo "  ✓ alle Tests bestanden"
 # also gering. Der richtige Weg kostet hier aber nichts und trägt, sobald
 # jemand eine Berechtigung ergänzt.
 BUILD_NUMBER="$(git rev-list --count HEAD)"
-step "[3/9] Release-Build, Hardened Runtime (Build ${BUILD_NUMBER})"
+step "[3/10] Release-Build, Hardened Runtime (Build ${BUILD_NUMBER})"
 
 rm -rf build/Kalli.xcarchive build/export "${DIST}"
 mkdir -p "${DIST}"
@@ -163,7 +163,7 @@ APP_PATH="build/export/${BUNDLE}"
 # ---------------------------------------------------------------------------
 # 3. Signatur prüfen — messen, nicht glauben
 # ---------------------------------------------------------------------------
-step "[4/9] Signatur prüfen"
+step "[4/10] Signatur prüfen"
 SIGN_INFO="$(codesign -dv --verbose=4 "${APP_PATH}" 2>&1)"
 echo "${SIGN_INFO}" | grep -q "Authority=Developer ID Application" \
     || fail "Nicht mit Developer ID signiert. Ein ad-hoc signiertes Release würde auf dem anderen Mac scheitern."
@@ -177,7 +177,7 @@ echo "  ✓ Developer ID + Hardened Runtime bestätigt"
 # Notarisiert wird ein ZIP, geheftet wird an die .app: Ein Ticket lässt sich
 # nicht an ein ZIP heften. Deshalb zweimal packen — einmal zum Einreichen,
 # einmal danach mit Ticket.
-step "[5/9] Bei Apple einreichen (dauert meist 1–3 Minuten)"
+step "[5/10] Bei Apple einreichen (dauert meist 1–3 Minuten)"
 ditto -c -k --keepParent "${APP_PATH}" "${DIST}/notarize.zip"
 
 xcrun notarytool submit "${DIST}/notarize.zip" \
@@ -195,7 +195,7 @@ echo "  ✓ Notarisierung angenommen"
 # ---------------------------------------------------------------------------
 # 5. Ticket anheften und unabhängig gegenprüfen
 # ---------------------------------------------------------------------------
-step "[6/9] Ticket anheften"
+step "[6/10] Ticket anheften"
 xcrun stapler staple "${APP_PATH}" >/dev/null
 xcrun stapler validate "${APP_PATH}" >/dev/null || fail "Ticket ist nicht angeheftet"
 
@@ -209,7 +209,7 @@ echo "  ✓ Gatekeeper akzeptiert (source: $(echo "${SPCTL}" | awk -F'=' '/sourc
 # ---------------------------------------------------------------------------
 # 6. Endgültiges ZIP
 # ---------------------------------------------------------------------------
-step "[7/9] ZIP packen und ALS AUSGELIEFERTES ARTEFAKT pruefen"
+step "[7/10] ZIP packen und ALS AUSGELIEFERTES ARTEFAKT pruefen"
 ZIP="${DIST}/${APP}-${VERSION}.zip"
 ditto -c -k --keepParent "${APP_PATH}" "${ZIP}"
 rm -f "${DIST}/notarize.zip"
@@ -244,7 +244,7 @@ fi
 # ---------------------------------------------------------------------------
 # 7. GitHub-Release
 # ---------------------------------------------------------------------------
-step "[8/9] GitHub-Release ${TAG}"
+step "[8/10] GitHub-Release ${TAG}"
 # Release-Notizen aus dem CHANGELOG-Abschnitt dieser Version — eine Quelle,
 # nicht zwei, die auseinanderlaufen.
 awk -v v="[${VERSION}]" '
@@ -265,10 +265,70 @@ gh release create "${TAG}" "${ZIP}" \
 # ---------------------------------------------------------------------------
 # Ein lokal erfolgreicher Ablauf sagt nichts darüber, was tatsächlich
 # veröffentlicht ist. Gefragt wird deshalb GitHub.
-step "[9/9] Veröffentlichung am Remote prüfen"
+step "[9/10] Veröffentlichung am Remote prüfen"
 ASSET="$(gh release view "${TAG}" --json assets --jq '.assets[].name' 2>/dev/null || true)"
 [ -n "${ASSET}" ] || fail "Release ${TAG} hat auf GitHub kein Asset"
 echo "  ✓ ${TAG} veröffentlicht, Asset: ${ASSET}"
+
+# ---------------------------------------------------------------------------
+# 10. Appcast erzeugen, signieren, GEGENLESEN, veröffentlichen
+# ---------------------------------------------------------------------------
+# Die Werkzeuge kommen aus der FESTGELEGTEN Sparkle-Version, die auch in der App
+# steckt — nicht aus einem handplatzierten Ordner unbekannter Herkunft.
+#
+# Und es gibt hier kein `2>/dev/null`: Ein Appcast, der still nicht signiert
+# wurde, heißt entweder "niemand kann updaten" oder — schlimmer — "etwas geht
+# ungeprüft durch". Beides muss laut scheitern.
+step "[10/10] Appcast erzeugen und signieren"
+
+SPARKLE_BIN="build/SourcePackages/artifacts/sparkle/Sparkle/bin"
+[ -x "${SPARKLE_BIN}/generate_appcast" ] \
+    || fail "generate_appcast fehlt unter ${SPARKLE_BIN} — wurde das Paket aufgelöst? (make build)"
+
+# Nur das aktuelle Archiv liegt in dist/; der Appcast enthält damit einen
+# Eintrag. Sparkle braucht nur den neuesten.
+"${SPARKLE_BIN}/generate_appcast" "${DIST}" \
+    --download-url-prefix "https://github.com/miwixyz/Kalli/releases/download/${TAG}/" \
+    --link "https://github.com/miwixyz/Kalli" \
+    -o appcast.xml \
+    || fail "generate_appcast fehlgeschlagen"
+
+# Nachlesen statt glauben, drei Fragen:
+grep -q "sparkle:edSignature=\"[^\"]\+\"" appcast.xml \
+    || fail "Der Appcast trägt keine EdDSA-Signatur"
+grep -q "${VERSION}" appcast.xml \
+    || fail "Der Appcast nennt Version ${VERSION} nicht"
+grep -q "releases/download/${TAG}/" appcast.xml \
+    || fail "Die Download-URL im Appcast zeigt nicht auf ${TAG}"
+
+# Kryptografische Gegenprüfung mit demselben Werkzeug, das auch signiert —
+# bestaetigt, dass die eingebettete Signatur zum Schluessel passt.
+"${SPARKLE_BIN}/sign_update" --verify appcast.xml \
+    || fail "Die Signatur des Appcasts ist nicht verifizierbar"
+echo "  ✓ Appcast signiert und gegengelesen"
+
+# Der Appcast liegt IM REPO, nicht in einem Gist: Jede Änderung daran ist damit
+# ein öffentlicher, datierter Commit. Billigste Manipulationserkennung, die zu
+# haben ist.
+git add appcast.xml
+if git diff --cached --quiet -- appcast.xml; then
+    echo "  ℹ️  Appcast unverändert — kein Commit nötig"
+else
+    git commit -q -m "Appcast für ${TAG}"
+    git push -q origin main
+    echo "  ✓ appcast.xml committet und gepusht"
+fi
+
+# Zum Schluss: Sieht der Feed unter der URL so aus, wie die App ihn erwartet?
+# raw.githubusercontent.com cacht kurz — ein Fehlschlag hier ist kein Abbruch,
+# aber er wird gesagt statt verschwiegen.
+FEED="https://raw.githubusercontent.com/miwixyz/Kalli/main/appcast.xml"
+if curl -fsS --netrc-file /dev/null "${FEED}" 2>/dev/null | grep -q "${VERSION}"; then
+    echo "  ✓ Feed unter ${FEED} nennt ${VERSION}"
+else
+    echo "  ⚠️  Feed nennt ${VERSION} noch nicht — raw.githubusercontent cacht bis zu 5 Min."
+    echo "     → ZU TUN: in ein paar Minuten prüfen: curl -s ${FEED} | grep ${VERSION}"
+fi
 
 echo ""
 echo "✅ ${APP} ${VERSION} released."

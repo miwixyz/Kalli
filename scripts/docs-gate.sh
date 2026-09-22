@@ -33,7 +33,8 @@ echo "▶ Doku-Gate"
 
 # --- 1) Sind alle Dokumente vorhanden? -------------------------------------
 for f in CHANGELOG.md README.md LICENSE \
-         Kalli/Resources/HILFE.md Kalli/Resources/RECHTLICHES.md; do
+         Kalli/Resources/HILFE.md Kalli/Resources/RECHTLICHES.md \
+         Kalli/Resources/THIRD-PARTY-LICENSES.md; do
     if [ ! -f "$f" ]; then
         note "❌ fehlt: $f"
         FAIL=1

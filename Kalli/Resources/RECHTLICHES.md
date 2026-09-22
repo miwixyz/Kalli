@@ -16,8 +16,13 @@ Gewährleistung** bereitgestellt.
 
 ## Datenschutz
 
-**Kalli sendet nichts.** Es gibt keinen Server, keine Analyse, keine
-Absturzberichte an Dritte, keine Werbung, keine Kennungen.
+**Kein Server, keine Analyse, keine Absturzberichte an Dritte, keine Werbung,
+keine Kennungen.** Es gibt genau **einen** Netzwerkzugriff, und der ist unten
+vollständig beschrieben: die Update-Prüfung.
+
+> Bis Version 0.3.1 stand hier „Kalli sendet nichts". Mit der eingebauten
+> Update-Funktion (ab 0.4.0) wäre dieser Satz **falsch** geworden. Er ist
+> ersetzt, nicht relativiert.
 
 Was Kalli liest:
 
@@ -26,6 +31,7 @@ Was Kalli liest:
 | Kalender (EventKit) | **nur lesen** | Termine im Raster und in der Tagesliste anzeigen |
 | Erinnerungen (EventKit) | lesen **und** Erledigt-Kennzeichen setzen | Aufgaben anzeigen und abhaken |
 | Mitteilungen (macOS) | **schreiben**, nur wenn du sie einschaltest | Hinweis vor einem Termin |
+| GitHub (Netz) | **abrufen**, nur für Updates | Nachsehen, ob eine neuere Fassung vorliegt |
 
 **Was geschrieben wird — vollständig:** ausschließlich das Erledigt-Kennzeichen
 einer Erinnerung, und nur wenn du das Häkchen anklickst. Kalli legt nichts an,
@@ -57,6 +63,35 @@ anzeigen: Wenn entsperrt**.
 Die Mitteilungs-Berechtigung wird **erst beim Einschalten** erfragt, nie beim
 Start, und kann jederzeit in den Systemeinstellungen entzogen werden.
 
+### Der einzige Netzwerkzugriff: die Update-Prüfung
+
+Kalli kann nachsehen, ob eine neuere Fassung vorliegt. Dazu ruft es zwei
+Adressen bei GitHub ab:
+
+- `raw.githubusercontent.com` — eine kleine Textdatei mit der neuesten
+  Versionsnummer
+- `github.com` — nur wenn du ein Update installierst: die Programmdatei selbst
+
+**Was GitHub dabei sieht**, wie bei jedem Aufruf einer Webadresse: deine
+**IP-Adresse**, den Zeitpunkt und einen Programmkenner, aus dem sich die
+installierte Version ablesen lässt. Kalli sendet **nichts darüber hinaus** —
+keine Kennung, keine Kalenderdaten, keine Statistik. Es gibt keinen Server von
+Michael Wildenauer; GitHub ist die Bezugsquelle, nicht ein Auswertungsdienst.
+Was GitHub mit Abrufprotokollen tut, regeln GitHubs eigene
+Datenschutzbestimmungen.
+
+**Ab Werk ist die automatische Suche AUS.** Beim ersten Mal fragt Kalli, ob es
+selbständig nachsehen darf — sagst du nein, findet **kein** Netzwerkzugriff
+statt, außer du drückst den Knopf „Nach Updates suchen" von Hand. Die
+Entscheidung lässt sich jederzeit ändern.
+
+**Wie sichergestellt ist, dass ein Update echt ist:** Jedes Update trägt zwei
+unabhängige Signaturen — eine Signatur des Archivs mit einem Schlüssel, dessen
+öffentlicher Teil in Kalli eingebaut ist, und Apples Developer-ID-Signatur.
+Beide werden geprüft, **bevor** irgendetwas ersetzt wird. Schlägt eine fehl,
+bricht Kalli ab. Eine untergeschobene Datei wird nicht installiert, sondern
+abgelehnt.
+
 **Kein Doppel-Alarm:** Kalli meldet nur Termine, die im Kalender keinen eigenen
 Alarm tragen.
 
@@ -72,8 +107,9 @@ enthalten, Termine falsch darstellen oder unerwartet beenden.
 **Verlasse dich für wichtige Termine nicht allein auf Kalli.** Maßgeblich sind
 immer die Kalender- und die Erinnerungen-App von Apple. Kalli ist im
 Wesentlichen eine Ansicht darauf; die einzigen Änderungen, die es vornimmt, sind
-das Abhaken einer Erinnerung auf deinen Klick hin und — falls eingeschaltet —
-das Planen von Systemmitteilungen.
+das Abhaken einer Erinnerung auf deinen Klick hin, das Planen von
+Systemmitteilungen und das Installieren eines Updates — die letzten beiden nur,
+falls eingeschaltet bzw. von dir bestätigt.
 
 **Verlasse dich für wichtige Termine auch nicht allein auf Kallis Hinweise.**
 Eine Mitteilung kann ausbleiben, wenn der Mac aus ist, schläft, „Nicht stören"
@@ -81,9 +117,17 @@ aktiv ist oder die Berechtigung entzogen wurde.
 
 ## Verwendete Fremdsoftware
 
-Keine. Kalli nutzt ausschließlich Apples eigene Frameworks (SwiftUI, AppKit,
-EventKit, ServiceManagement). Es sind **keine externen Pakete** eingebunden,
-also auch keine fremden Lizenzbedingungen zu beachten.
+**Eine Komponente:** **Sparkle** (MIT-Lizenz) für die Update-Funktion.
+Urheberhinweis und vollständiger Lizenztext liegen in
+`THIRD-PARTY-LICENSES.md` — im Quelltext-Verzeichnis **und in der App** unter
+Einstellungen → Hilfe → Fremdcode. Das ausgelieferte Sparkle-Framework bringt
+selbst keine Lizenzdatei mit; Kalli führt sie deshalb mit, weil die Lizenz das
+für Auslieferungen verlangt.
+
+Sonst ausschließlich Apples eigene Frameworks (SwiftUI, AppKit, EventKit,
+UserNotifications, ServiceManagement).
+
+> Bis Version 0.3.1 stand hier „Keine". Das war bis dahin richtig.
 
 ## Marken
 

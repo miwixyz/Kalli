@@ -101,7 +101,10 @@ Kalli/
 KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
 ```
 
-Kein RxSwift, keine externen Pakete. `@Observable` und SwiftUI reichen für diese Größe.
+Eine direkte Abhängigkeit (**Sparkle**, für Updates), null transitive. Sonst
+`@Observable` und SwiftUI — das reicht für diese Größe. Sparkle ist exakt auf
+2.10.0 festgelegt, `Package.resolved` ist versioniert und pinnt die Commit-SHA;
+ein verschobener Tag würde damit auffallen.
 
 ## Tests
 
@@ -242,15 +245,25 @@ darüber, was veröffentlicht ist.
 
 ## Aktualisieren
 
-Kalli hat **noch kein Sparkle**. Der Grund, der bis zum 2026-09-22 dagegen
-sprach, ist mit der Veröffentlichung entfallen: Ein Appcast braucht eine
-öffentlich erreichbare Download-URL, und die gibt es jetzt. Sparkle ist damit
-der nächste Schritt und kein Hindernis mehr.
+Kalli aktualisiert sich über **Sparkle** — aber nur, wenn du es erlaubst.
 
-Bis dahin:
+- **Ab Werk aus.** Beim ersten Mal fragt Sparkle, ob automatisch gesucht werden
+  darf. Sagst du nein, gibt es keinen Netzwerkzugriff.
+- **Von Hand** jederzeit über das Pfeil-Symbol unten im Popover.
+- **Zwei Signaturen** werden geprüft, bevor etwas ersetzt wird: die
+  EdDSA-Signatur des Archivs gegen den in der App eingebauten öffentlichen
+  Schlüssel, und Apples Developer-ID-Signatur. Schlägt eine fehl, bricht
+  Sparkle ab.
+- Der **Appcast liegt im Repo** (`appcast.xml`), nicht in einem Gist: Jede
+  Änderung daran ist damit ein öffentlicher, datierter Commit — die billigste
+  Manipulationserkennung, die zu haben ist.
 
-- **Auf dem Entwicklungs-Mac:** `cd ~/Coding/Kalli && git pull && make install`
-- **Auf jedem anderen Mac:** neues Release herunterladen (siehe oben)
+Auf dem Entwicklungs-Mac weiterhin: `git pull && make install`.
+
+Vollständiger Sicherheitsentwurf — Datenflussdiagramm, STRIDE je
+Vertrauensgrenze, Missbrauchsfälle, verworfene Alternativen und die bewusst
+getragenen Restrisiken — in
+[`docs/AUTO-UPDATE-DESIGN.md`](docs/AUTO-UPDATE-DESIGN.md).
 
 ## Lizenz
 
@@ -258,9 +271,13 @@ MIT — siehe [LICENSE](LICENSE). Rechtliche Hinweise und Datenschutz stehen in
 `Kalli/Resources/RECHTLICHES.md` und in der App unter Einstellungen → Hilfe →
 Rechtliches.
 
-**Kurz zum Datenschutz:** Kalli sendet nichts. Kein Server, keine Analyse, keine
-Kennungen. Kalender werden nur gelesen; bei Erinnerungen wird ausschließlich das
+**Kurz zum Datenschutz:** Kein Server, keine Analyse, keine Kennungen. Kalender
+werden nur gelesen; bei Erinnerungen wird ausschließlich das
 Erledigt-Kennzeichen gesetzt. Gespeichert werden nur die eigenen Einstellungen.
+
+**Genau ein Netzwerkzugriff:** die Update-Prüfung bei GitHub — ab Werk **aus**,
+beim ersten Mal wird gefragt. GitHub sieht dabei IP-Adresse und installierte
+Version, nichts darüber hinaus.
 
 **Eine Ausnahme, benannt statt versteckt:** Sind Systemmitteilungen
 eingeschaltet (ab Werk **aus**), gibt Kalli Titel und Uhrzeit des Termins an
