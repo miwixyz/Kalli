@@ -256,10 +256,18 @@ struct PopoverView: View {
             // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
             // auszulösen — die automatische Suche ist ab Werk aus, weil sie
             // eine Netzverbindung ist, die niemand erteilt hat.
+            //
+            // **Mit Text, nicht nur Symbol.** In 0.4.0 stand hier allein ein
+            // Kreispfeil, und Michael sagte zu Recht: „Das Reload-Icon allein
+            // ist nicht zu verstehen." Ein Kreispfeil in einer Kalender-App
+            // liest sich wie „Termine neu laden", nicht wie „Updates". Das
+            // Zahnrad daneben darf symbolfrei bleiben, weil es überall
+            // dasselbe bedeutet — dieses hier nicht.
             Button {
                 updater.checkForUpdates()
             } label: {
-                Image(systemName: "arrow.triangle.2.circlepath")
+                Label("Updates", systemImage: "arrow.down.circle")
+                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
             }
             .disabled(!updater.canCheck)
             .help("Nach Updates suchen")

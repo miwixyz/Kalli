@@ -141,6 +141,31 @@ dorthin.
 Steht dort „Autostart ist für diesen Build nicht verfügbar", liegt Kalli nicht
 an einem festen Ort. `make install` legt die App nach `/Applications`.
 
+## Updates
+
+Kalli kann sich selbst aktualisieren. **Ab Werk fragt es nicht von allein** —
+beim ersten Mal fragt es dich, ob es selbständig nachsehen darf.
+
+- **Von Hand:** der Knopf **„Updates“** unten im Popover. Kalli sagt auch, wenn
+  es **kein** Update gibt — ein Knopf, der nichts sichtbar tut, sieht wie ein
+  kaputter Knopf aus.
+- **Automatisch:** nur wenn du es erlaubt hast. Die Entscheidung lässt sich
+  jederzeit ändern.
+
+Sagst du nein, gibt es **keinen** Netzwerkzugriff, außer du drückst den Knopf.
+
+**Was dabei übertragen wird:** Kalli ruft eine kleine Textdatei bei GitHub ab.
+GitHub sieht dabei — wie bei jedem Aufruf einer Webadresse — deine IP-Adresse
+und die installierte Version. Nichts darüber hinaus, keine Kalenderdaten.
+Vollständig in **Rechtliches**.
+
+**Warum ein Update sicher ist:** Jedes trägt zwei unabhängige Signaturen, die
+Kalli prüft, **bevor** es etwas ersetzt. Schlägt eine fehl, bricht es ab. Eine
+untergeschobene Datei wird abgelehnt, nicht installiert.
+
+Eine Mitteilung über ein Update kann ausbleiben, wenn der Mac aus ist oder
+schläft. Der Knopf funktioniert immer.
+
 ## Berechtigungen
 
 Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und
@@ -156,6 +181,10 @@ Hinweis mit Direktlink in die Systemeinstellungen.
 **Mitteilungen** sind eine dritte, davon unabhängige Berechtigung. Sie wird
 ausschließlich dann erfragt, wenn du „Systemmitteilung vor dem Termin"
 einschaltest — nie beim Start.
+
+**Der Netzzugriff für Updates** ist keine macOS-Berechtigung, sondern Kallis
+eigene Frage beim ersten Mal — siehe **Updates** oben. Bis dahin und bei einem
+Nein findet kein Netzzugriff statt.
 
 ## Was Kalli nicht kann — und nicht können soll
 
