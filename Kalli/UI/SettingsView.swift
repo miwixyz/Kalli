@@ -60,8 +60,13 @@ struct SettingsView: View {
 private struct SourcesSection: View {
     @Environment(Preferences.self) private var prefs
     @Environment(CalendarStore.self) private var store
+    @Environment(MenuBarLabel.self) private var label
 
     var body: some View {
+        permissions
+
+        Divider()
+
         Text("Abgewählte Kalender und Listen erscheinen weder im Raster noch in der Tagesliste.")
             .font(.caption2)
             .foregroundStyle(.secondary)
@@ -70,9 +75,62 @@ private struct SourcesSection: View {
         group(title: "Erinnerungen", kind: .reminder)
 
         if store.sources.isEmpty {
-            Text("Keine Kalender gefunden — fehlt die Berechtigung?")
+            // Vorher stand hier eine Frage („fehlt die Berechtigung?"). Der
+            // Berechtigungs-Block oben beantwortet sie jetzt.
+            Text("Keine Kalender gefunden. Der Berechtigungs-Stand steht oben.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Zustand **und** Handlungsmöglichkeit für beide Berechtigungen.
+    ///
+    /// Vorher gab es das nicht: Wurde eine Berechtigung entzogen oder war sie
+    /// nie erteilt, blieb die Liste leer und die App sagte nur „Keine Kalender
+    /// gefunden — fehlt die Berechtigung?". Eine Frage statt einer Antwort, ohne
+    /// Weg zur Behebung. (Befund von Michael, 2026-09-22.)
+    ///
+    /// Der Zustand wird bei jedem Zeichnen **frisch von macOS gelesen**, nicht
+    /// gespiegelt — wie bei `LoginItem`.
+    @ViewBuilder
+    private var permissions: some View {
+        Text("Berechtigungen")
+            .font(.headline)
+
+        permissionRow("Kalender", store.eventPermission, reminders: false)
+        permissionRow("Erinnerungen", store.reminderPermission, reminders: true)
+
+        if store.canPrompt {
+            Button("Fehlende Berechtigung anfragen") {
+                Task {
+                    await store.requestAccess()
+                    label.update()
+                }
+            }
+            Text("macOS zeigt den Dialog nur einmal. Wurde schon abgelehnt, "
+                 + "hilft ausschließlich der Weg über die Systemeinstellungen.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private func permissionRow(_ title: String, _ state: CalendarStore.Permission,
+                               reminders: Bool) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: state == .granted ? "checkmark.circle.fill" : "exclamationmark.circle")
+                .foregroundStyle(state == .granted ? Color.green : .orange)
+            Text("\(title): \(state.label)")
+                .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+            Spacer()
+            // Nur anbieten, wo es auch wirkt. Ein Knopf, der nichts tun kann,
+            // ist schlimmer als keiner.
+            if state == .denied {
+                Button("Systemeinstellungen") {
+                    CalendarStore.openPrivacySettings(reminders: reminders)
+                }
+                .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
+            }
         }
     }
 

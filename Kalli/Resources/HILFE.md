@@ -178,6 +178,20 @@ wird angelegt, umbenannt oder gelöscht.
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
 Hinweis mit Direktlink in die Systemeinstellungen.
 
+**Stand prüfen und neu anstoßen:** Einstellungen → **Kalender**, ganz oben.
+Dort steht für Kalender und Erinnerungen getrennt, ob die Berechtigung erteilt,
+noch nicht gefragt, abgelehnt oder durch eine Geräteverwaltung gesperrt ist —
+bei jedem Öffnen frisch von macOS gelesen, nicht gespiegelt.
+
+- **„noch nicht gefragt"** → Knopf *Fehlende Berechtigung anfragen*
+- **„abgelehnt"** → Knopf *Systemeinstellungen*. macOS zeigt den Dialog nur
+  einmal; danach hilft ausschließlich dieser Weg.
+
+Fehlt eine der beiden, erscheint außerdem oben im Popover eine orange Zeile
+„Eine Berechtigung fehlt — hier prüfen", die direkt dorthin führt. Bis 0.4.2
+war dieser Teilfall unsichtbar: Kalender erteilt, Erinnerungen nicht — die
+Ansicht funktionierte, und nichts sagte, dass die Hälfte fehlt.
+
 **Mitteilungen** sind eine dritte, davon unabhängige Berechtigung. Sie wird
 ausschließlich dann erfragt, wenn du „Systemmitteilung vor dem Termin"
 einschaltest — nie beim Start.

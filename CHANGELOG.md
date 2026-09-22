@@ -2,6 +2,48 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.3] — 2026-09-22
+
+### Behoben
+
+- **Die fehlende Berechtigung wurde nie mehr angefragt — und war nirgends zu
+  sehen.** Michael: „Die Kalender-Berechtigung wird nicht mehr abgefragt und es
+  gibt keine Möglichkeit in der App das zu überprüfen und neu anzustoßen."
+  Beides stimmte, und die Ursache war der eigene Fix aus 0.1.1:
+
+  `loadIfAlreadyAuthorized()` setzte `access = .partial(events: true,
+  reminders: false)`, sobald **eine** der beiden Berechtigungen schon erteilt
+  war. Die Anfrage hing aber an `access == .unknown` — und war damit
+  ausgeschlossen. Angezeigt wurde der Teilfall auch nicht: Der Hinweis im
+  Popover hing an `.denied`. Ein Zustand, der den Anfrage-Pfad blockiert und
+  keine Anzeige hat.
+
+  Drei Änderungen:
+  - **Gefragt wird jetzt nach dem, was zählt:** Steht eine der beiden auf
+    `notDetermined`? Nur dann kann ein Dialog etwas bewirken.
+  - **Einstellungen → Kalender** zeigt oben für Kalender und Erinnerungen
+    getrennt den Zustand — **bei jedem Öffnen frisch von macOS gelesen**, nicht
+    gespiegelt (gleiche Haltung wie beim Autostart). Mit *Anfragen* wo das wirkt
+    und *Systemeinstellungen* wo nur das hilft. Ein Knopf, der nichts tun kann,
+    wird nicht angeboten.
+  - **Orange Zeile im Popover**, wenn etwas fehlt — blockiert die Ansicht nicht,
+    ist aber nicht zu übersehen, und führt direkt hin.
+
+  Ersetzt wurde dabei auch „Keine Kalender gefunden — **fehlt die
+  Berechtigung?**". Eine Frage statt einer Antwort, ohne Weg zur Behebung.
+
+- **`writeOnly` gilt als nicht erteilt.** Den Status gibt es nur für Kalender;
+  Kalli liest ausschließlich. „Erteilt" anzuzeigen, während die Liste leer
+  bleibt, wäre eine Behauptung. Durch Mutationsprobe abgenommen: Setzt man ihn
+  auf „erteilt", fällt genau der zugehörige Test.
+
+### Neu
+
+- **5 weitere Tests** (48 gesamt) für die Abbildung von EventKits
+  Berechtigungsstatus, inklusive der Zusicherung, dass **jeder** Zustand eine
+  Beschriftung hat — ein leeres Label wäre genau die stille Lücke, die den
+  Befund ausgelöst hat.
+
 ## [0.4.2] — 2026-09-22
 
 ### Behoben

@@ -28,7 +28,16 @@ struct KalliApp: App {
                     // Berechtigung erst beim ersten Öffnen erfragen, nicht beim
                     // Start: Ein Dialog, der ungefragt beim Login aufpoppt, wird
                     // reflexhaft weggeklickt — und dann ist die App still kaputt.
-                    if store.access == .unknown {
+                    // `canPrompt` statt `access == .unknown`: Steht eine der
+                    // beiden Berechtigungen auf `notDetermined`, kann ein Dialog
+                    // etwas bewirken — sonst nicht.
+                    //
+                    // Die alte Bedingung war der Fehler vom 2026-09-22: Sobald
+                    // EINE Berechtigung schon erteilt war, stand `access` auf
+                    // `.partial` statt `.unknown`, und die FEHLENDE wurde nie
+                    // angefragt. Unsichtbar obendrein, weil der Hinweis im
+                    // Popover an `.denied` hing.
+                    if store.canPrompt {
                         await store.requestAccess()
                         label.update()
                     }

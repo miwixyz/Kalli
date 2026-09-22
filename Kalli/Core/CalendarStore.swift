@@ -1,3 +1,4 @@
+import AppKit
 import EventKit
 import Foundation
 import OSLog
@@ -72,6 +73,85 @@ final class CalendarStore {
     }
 
     // MARK: - Berechtigung
+
+    /// Der Zustand **einer** Berechtigung, frisch von macOS gelesen.
+    ///
+    /// Gleiche Haltung wie bei `LoginItem`: Der wahre Zustand liegt bei macOS,
+    /// nicht bei uns. Ein gespiegelter Wert wird beim ersten Eingriff von außen
+    /// falsch — der Nutzer kann den Zugriff jederzeit in den
+    /// Systemeinstellungen entziehen, ohne dass Kalli davon erfährt.
+    enum Permission: Equatable {
+        /// Noch nie gefragt — **nur hier** kann ein Anfragen etwas bewirken.
+        case notDetermined
+        case granted
+        /// Abgelehnt. macOS fragt danach **nie wieder**; der einzige Weg zurück
+        /// sind die Systemeinstellungen.
+        case denied
+        /// Durch Geräteverwaltung gesperrt. Nicht durch den Nutzer änderbar.
+        case restricted
+
+        var label: String {
+            switch self {
+            case .notDetermined: "noch nicht gefragt"
+            case .granted: "erteilt"
+            case .denied: "abgelehnt"
+            case .restricted: "gesperrt (Geräteverwaltung)"
+            }
+        }
+    }
+
+    nonisolated static func permission(_ status: EKAuthorizationStatus) -> Permission {
+        switch status {
+        case .notDetermined: .notDetermined
+        case .fullAccess: .granted
+        case .denied: .denied
+        case .restricted: .restricted
+        // `writeOnly` gibt es nur fuer Kalender und reicht Kalli nicht — es
+        // liest ausschliesslich. Als "abgelehnt" behandeln, damit die Anzeige
+        // nicht "erteilt" behauptet, waehrend die Liste leer bleibt.
+        case .writeOnly: .denied
+        @unknown default: .denied
+        }
+    }
+
+    nonisolated var eventPermission: Permission {
+        Self.permission(EKEventStore.authorizationStatus(for: .event))
+    }
+
+    nonisolated var reminderPermission: Permission {
+        Self.permission(EKEventStore.authorizationStatus(for: .reminder))
+    }
+
+    /// Kann ein Anfragen überhaupt etwas bewirken?
+    ///
+    /// **Der Kern des Fehlers vom 2026-09-22:** Bis dahin fragte die App nur,
+    /// wenn `access == .unknown` war. `loadIfAlreadyAuthorized()` setzte aber
+    /// `.partial(events: true, reminders: false)`, sobald *eine* der beiden
+    /// Berechtigungen schon erteilt war — und damit wurde die **fehlende nie
+    /// angefragt**. Angezeigt wurde `.partial` auch nicht (der Hinweis im
+    /// Popover hing an `.denied`). Michael: „Die Kalender-Berechtigung wird
+    /// nicht mehr abgefragt und es gibt keine Möglichkeit in der App das zu
+    /// überprüfen und neu anzustoßen." Beides stimmte.
+    ///
+    /// Gefragt wird jetzt nach dem, was zählt: Steht irgendeine der beiden auf
+    /// `notDetermined`? Nur dann kann ein Dialog erscheinen.
+    nonisolated var canPrompt: Bool {
+        eventPermission == .notDetermined || reminderPermission == .notDetermined
+    }
+
+    /// Fehlt etwas, das Kalli braucht?
+    nonisolated var permissionsIncomplete: Bool {
+        eventPermission != .granted || reminderPermission != .granted
+    }
+
+    /// Öffnet die Systemeinstellungen an der richtigen Stelle — der einzige Weg
+    /// zurück, wenn eine Berechtigung abgelehnt wurde.
+    nonisolated static func openPrivacySettings(reminders: Bool = false) {
+        let pane = reminders ? "Privacy_Reminders" : "Privacy_Calendars"
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)") {
+            NSWorkspace.shared.open(url)
+        }
+    }
 
     func requestAccess() async {
         async let eventsOK = requestEvents()

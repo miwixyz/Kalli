@@ -50,6 +50,26 @@ struct PopoverView: View {
             } else if case .denied = store.access {
                 accessHint
             } else {
+                // Fehlt eine Berechtigung nur teilweise (z. B. Kalender ja,
+                // Erinnerungen nein), funktioniert die Ansicht — und genau
+                // deshalb war der Zustand bis 0.4.2 unsichtbar: Der
+                // Vollbild-Hinweis hing an `.denied`, der Teilfall an nichts.
+                // Eine Zeile, die nicht blockiert, aber nicht zu übersehen ist.
+                if store.permissionsIncomplete {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { showingSettings = true }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle")
+                            Text("Eine Berechtigung fehlt — hier prüfen")
+                                .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
+                        }
+                        .foregroundStyle(.orange)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 if prefs.showUpcomingBanner, let banner = bannerItem {
                     UpcomingBanner(item: banner, showProgress: prefs.showRunningProgress,
                                    scale: prefs.layoutScale)
