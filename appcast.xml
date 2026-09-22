@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Kalli</title>
+        <item>
+            <title>0.4.0</title>
+            <pubDate>Tue, 22 Sep 2026 12:12:35 +0200</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>30</sparkle:version>
+            <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.0/Kalli-0.4.0.zip" length="1324000" type="application/octet-stream" sparkle:edSignature="lhqh3OtXo6mMAo2cy37ISTMlzg5e0uDVJo4GBI5F1GwpdF2unqT2J60ar3tU/aONPPkzmHIHdtaGCfKFzDqzCA=="/>
+        </item>
+    </channel>
+</rss>

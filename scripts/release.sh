@@ -293,19 +293,34 @@ SPARKLE_BIN="build/SourcePackages/artifacts/sparkle/Sparkle/bin"
     -o appcast.xml \
     || fail "generate_appcast fehlgeschlagen"
 
-# Nachlesen statt glauben, drei Fragen:
-grep -q "sparkle:edSignature=\"[^\"]\+\"" appcast.xml \
-    || fail "Der Appcast trägt keine EdDSA-Signatur"
-grep -q "${VERSION}" appcast.xml \
-    || fail "Der Appcast nennt Version ${VERSION} nicht"
-grep -q "releases/download/${TAG}/" appcast.xml \
-    || fail "Die Download-URL im Appcast zeigt nicht auf ${TAG}"
+# Nachlesen statt glauben. Geparst wird mit Python, nicht mit grep: Auf diesem
+# Mac ist `grep` auf ugrep gemappt, dessen Regex-Verhalten abweicht — eine
+# stille Fehlextraktion waere hier besonders teuer.
+python3 - "$VERSION" "$TAG" <<'PY' || fail "Appcast-Pruefung fehlgeschlagen"
+import re, sys
+version, tag = sys.argv[1], sys.argv[2]
+xml = open("appcast.xml", encoding="utf-8").read()
+m = re.search(r'sparkle:edSignature="([^"]+)"', xml)
+if not m:                      sys.exit("Der Appcast traegt keine EdDSA-Signatur")
+if version not in xml:         sys.exit(f"Der Appcast nennt Version {version} nicht")
+if f"releases/download/{tag}/" not in xml:
+                               sys.exit(f"Die Download-URL zeigt nicht auf {tag}")
+open(".appcast-sig", "w").write(m.group(1))
+PY
 
-# Kryptografische Gegenprüfung mit demselben Werkzeug, das auch signiert —
-# bestaetigt, dass die eingebettete Signatur zum Schluessel passt.
-"${SPARKLE_BIN}/sign_update" --verify appcast.xml \
-    || fail "Die Signatur des Appcasts ist nicht verifizierbar"
-echo "  ✓ Appcast signiert und gegengelesen"
+# KRYPTOGRAFISCHE Gegenpruefung: Passt die Signatur im Appcast zum ARCHIV, das
+# ausgeliefert wird? Das ist die Frage, auf die es ankommt.
+#
+# Achtung, hier stand zuerst `sign_update --verify appcast.xml` — und das ist
+# etwas ANDERES: Es prueft eine *Feed*-Signatur, ein separates, optionales
+# Sparkle-Merkmal, das `generate_appcast` gar nicht erzeugt. Der Lauf fuer
+# v0.4.0 scheiterte daran, obwohl der Appcast korrekt war. Das Gate prueefte
+# das Falsche; gut, dass es ueberhaupt prueefte. (2026-09-22.)
+APPCAST_SIG="$(cat .appcast-sig)"
+rm -f .appcast-sig
+"${SPARKLE_BIN}/sign_update" --verify "${ZIP}" "${APPCAST_SIG}" \
+    || fail "Die Signatur im Appcast passt NICHT zum ausgelieferten Archiv"
+echo "  ✓ Appcast-Signatur gegen das ausgelieferte Archiv verifiziert"
 
 # Der Appcast liegt IM REPO, nicht in einem Gist: Jede Änderung daran ist damit
 # ein öffentlicher, datierter Commit. Billigste Manipulationserkennung, die zu
