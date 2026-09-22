@@ -37,6 +37,10 @@ struct KalliApp: App {
                     // `.partial` statt `.unknown`, und die FEHLENDE wurde nie
                     // angefragt. Unsichtbar obendrein, weil der Hinweis im
                     // Popover an `.denied` hing.
+                    // Auch der Nicht-Fall wird protokolliert. „Es passiert
+                    // nichts" muss unterscheidbar sein von „es wurde nichts
+                    // versucht" — das war am 2026-09-22 nicht unterscheidbar.
+                    CalendarStore.logPopoverOpened(canPrompt: store.canPrompt)
                     if store.canPrompt {
                         await store.requestAccess()
                         label.update()

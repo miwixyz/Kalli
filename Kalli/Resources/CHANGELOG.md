@@ -2,6 +2,51 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.5] — 2026-09-22
+
+Reines **Diagnose-Release**. Keine Verhaltensänderung, kein Lösungsversuch.
+
+### Warum
+
+Die Kalender-Berechtigung steht auf „noch nicht gefragt", ein Klick auf
+*Fehlende Berechtigung anfragen* bewirkt nichts, und in den Systemeinstellungen
+war Kalli mit **leerem Symbol** gelistet — ein TCC-Eintrag, den macOS nicht
+auflösen kann. Ein `tccutil reset Calendar com.kalli.app` meldete
+**dreimal** „Successfully reset", was auf mehrere verwaiste Einträge deutet.
+
+Danach: kein Dialog, und im Protokoll **kein einziger Eintrag**. Gemessen wurde
+außerdem, dass der laufende Prozess wirklich 0.4.4 mit Messpunkt ist
+(Binary 13:00:34 von Sparkle geschrieben, Prozess 13:06:34 gestartet).
+
+**Drei widerlegte Hypothesen.** Ab der dritten wird nicht weiter geraten,
+sondern gemessen — und der Messpunkt saß an der falschen Stelle: mitten im
+Anfrage-Pfad, der offenbar nie läuft.
+
+### Neu
+
+- **Startprotokoll, bedingungslos.** Bei jedem Programmstart, als Erstes:
+  Status beider Berechtigungen, `canPrompt`, **und die Rohwerte** von
+  `EKAuthorizationStatus` (0 = notDetermined, 1 = restricted, 2 = denied,
+  3 = fullAccess, 4 = writeOnly). Die übersetzten Bezeichnungen sind eine
+  Interpretation; die Rohwerte sind es nicht.
+- **Popover-Öffnen wird protokolliert**, auch wenn daraus **keine** Anfrage
+  folgt. „Es passiert nichts" muss unterscheidbar sein von „es wurde nichts
+  versucht" — genau das war es nicht.
+
+Auslesen:
+
+```bash
+log show --last 10m --predicate 'subsystem == "com.kalli.app"'
+```
+
+### Bewusst nicht enthalten
+
+`NSCalendarsUsageDescription` fehlt in der `Info.plist` und ist der nächste
+Verdächtige. Der Schlüssel wird **absichtlich noch nicht** ergänzt: Würden
+Diagnose und Lösungsversuch zusammen ausgeliefert und es funktionierte danach,
+bliebe unklar, was gewirkt hat — und das nächste Projekt erbte eine Vermutung
+statt einer Erkenntnis.
+
 ## [0.4.4] — 2026-09-22
 
 ### Behoben

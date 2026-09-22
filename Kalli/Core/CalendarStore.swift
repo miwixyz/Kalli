@@ -41,7 +41,7 @@ final class CalendarStore {
     /// sagen: `save()` lief ohne Fehler durch, und danach prueft niemand, ob
     /// das Kennzeichen wirklich steht. Drei Vermutungen ohne Messung sind eine
     /// zu viel — also erst messen.
-    private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
+    nonisolated private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
 
     private let store = EKEventStore()
     private let alerts = EventAlerts()
@@ -135,6 +135,13 @@ final class CalendarStore {
     ///
     /// Gefragt wird jetzt nach dem, was zählt: Steht irgendeine der beiden auf
     /// `notDetermined`? Nur dann kann ein Dialog erscheinen.
+    /// Protokolliert, dass das Popover geöffnet wurde — und ob daraus eine
+    /// Anfrage folgte. Ohne diese Zeile sieht „nichts passiert" genauso aus wie
+    /// „nichts wurde versucht".
+    nonisolated static func logPopoverOpened(canPrompt: Bool) {
+        log.notice("POPOVER geoeffnet — canPrompt \(canPrompt, privacy: .public)")
+    }
+
     nonisolated var canPrompt: Bool {
         eventPermission == .notDetermined || reminderPermission == .notDetermined
     }
@@ -586,6 +593,16 @@ final class CalendarStore {
     /// Beim allerersten Start ist der Status `.notDetermined` — dann tut diese
     /// Funktion nichts und das Popover fragt wie bisher beim ersten Öffnen.
     func loadIfAlreadyAuthorized() async {
+        // BEDINGUNGSLOS protokollieren, als Erstes. Dieser Messpunkt darf nicht
+        // davon abhaengen, dass jemand das Popover oeffnet oder einen Knopf
+        // drueckt — genau daran ist die Diagnose am 2026-09-22 dreimal
+        // gescheitert: Der Messpunkt sass im Anfrage-Pfad, und der lief nie.
+        //
+        // Die Rohwerte stehen mit dabei, weil die uebersetzten Bezeichnungen
+        // eine Interpretation sind. 0 = notDetermined, 1 = restricted,
+        // 2 = denied, 3 = fullAccess, 4 = writeOnly.
+        Self.log.notice("START — Kalender \(self.eventPermission.label, privacy: .public), Erinnerungen \(self.reminderPermission.label, privacy: .public), canPrompt \(self.canPrompt, privacy: .public), Rohwerte event=\(EKEventStore.authorizationStatus(for: .event).rawValue, privacy: .public) reminder=\(EKEventStore.authorizationStatus(for: .reminder).rawValue, privacy: .public)")
+
         let e = EKEventStore.authorizationStatus(for: .event) == .fullAccess
         let r = EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
         guard e || r else { return }
