@@ -2,6 +2,26 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.1.1] — 2026-09-22
+
+Zwei Befunde aus dem ersten Tag im Alltag. Beide gemessen, nicht vermutet.
+
+### Behoben
+
+- **Die Leiste war nach jedem Start leer, bis man das Symbol anklickte.**
+  `reload()` stieg aus, solange kein Monat geladen war — und geladen wurde
+  ausschließlich vom Popover. Der Minuten-Timer rechnete also brav über eine
+  leere Liste: Erfolg gemeldet, während die Vorbedingung verletzt war. Die App
+  lädt jetzt beim Start selbst, sofern die Berechtigung schon erteilt ist. Der
+  Vorsatz, beim Login **keinen** Berechtigungsdialog aufzuwerfen, bleibt
+  unangetastet — es wird nur der Status gelesen, nie gefragt.
+- **Ein laufender Termin verdrängte den nächsten vollständig.** Bei
+  „Praxis 08:00–16:00" hieß das acht Stunden Fortschrittsbalken, während zwei
+  Termine um 10:00 die Leiste nie erreichten. Jetzt gilt: **was kommt, schlägt
+  was läuft** — sobald der nächste Termin in Vorlaufzeit ist, steht er in der
+  Leiste. Der Fortschritt des laufenden Termins bleibt im Popover, wo Platz
+  dafür ist.
+
 ## [0.1.0] — 2026-09-21
 
 Erste Fassung, in einer Sitzung gebaut.

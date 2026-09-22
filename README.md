@@ -29,7 +29,9 @@ ansteht, bezahlt das mit Oberfläche.
 - **Liquid Glass** auf dem Popover (macOS 26+)
 - **Tagesliste nach Art gruppiert:** Ganztägig, Termine, Aufgaben — je mit
   eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
-- **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste
+- **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste.
+  In der Leiste hat der **nächste** Termin Vorrang, sobald er in Vorlaufzeit ist —
+  ein Tagesblock würde sonst stundenlang alles verdecken, was dazwischen liegt
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Start bei der Anmeldung**, abschaltbar
 

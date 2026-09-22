@@ -307,6 +307,33 @@ final class CalendarStore {
         }
     }
 
+    /// Lädt beim App-Start — aber nur, wenn die Berechtigung schon erteilt ist.
+    ///
+    /// Ohne das zeigte die Menüleiste nach jedem Start **nur das Datum**:
+    /// `reload()` steigt aus, solange `loadedRange` nil ist, und gesetzt wurde
+    /// das bis 2026-09-22 ausschließlich von `PopoverView`. Der Minuten-Timer
+    /// rief also brav `refreshNextEvent()` — über ein leeres `items`. Erfolg
+    /// gemeldet, während eine Vorbedingung verletzt war. Erst ein Klick auf das
+    /// Symbol füllte die Leiste (Befund von Michael, 2026-09-22).
+    ///
+    /// Bewusst nur **Lesen** des Status, nie `requestAccess()`: Der Vorsatz,
+    /// beim Login keinen Berechtigungsdialog aufzuwerfen, bleibt unangetastet.
+    /// Beim allerersten Start ist der Status `.notDetermined` — dann tut diese
+    /// Funktion nichts und das Popover fragt wie bisher beim ersten Öffnen.
+    func loadIfAlreadyAuthorized() async {
+        let e = EKEventStore.authorizationStatus(for: .event) == .fullAccess
+        let r = EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
+        guard e || r else { return }
+
+        access = switch (e, r) {
+        case (true, true): .granted
+        default: .partial(events: e, reminders: r)
+        }
+
+        loadSources()
+        await load(month: Date(), calendar: .current)
+    }
+
     /// Von außen aufrufbar, damit der Menüleisten-Text mitwandert, ohne alles neu zu laden.
     func refreshNextEvent() { recomputeNextEvent() }
 }

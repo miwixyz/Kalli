@@ -52,6 +52,16 @@ final class MenuBarLabel {
         t.tolerance = 10
         RunLoop.main.add(t, forMode: .common)
         timer = t
+
+        // Der Anstoss zum ersten Laden gehoert hierhin, weil dies das einzige
+        // Objekt ist, das vor dem ersten Oeffnen des Popovers lebt. Ohne ihn
+        // bleibt die Leiste bis zum ersten Klick leer — siehe
+        // CalendarStore.loadIfAlreadyAuthorized().
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            await self.store.loadIfAlreadyAuthorized()
+            self.update()
+        }
     }
 
     // Kein deinit: Ein `deinit` ist nonisolated und darf MainActor-isolierte
@@ -78,33 +88,55 @@ final class MenuBarLabel {
             dateFormatter.dateFormat = prefs.menuBarDateFormat
             parts.append(dateFormatter.string(from: now))
         }
-        // Laufender Termin hat Vorrang: was jetzt passiert, schlaegt was kommt.
-        if prefs.showRunningProgress, let running = store.runningEvent,
-           let remaining = running.remainingLabel() {
+        // Was KOMMT schlaegt was LAEUFT — sobald es in Vorlaufzeit ist.
+        //
+        // Bis 2026-09-22 war es umgekehrt (ein `else if`): ein laufender Termin
+        // verdraengte den naechsten vollstaendig. Bei "Praxis 08:00–16:00" hiess
+        // das acht Stunden Fortschrittsbalken, waehrend zwei Termine um 10:00
+        // die Leiste nie erreichten (Befund von Michael, 2026-09-22). Die
+        // Leiste ist knapp; sie muss das Handlungsrelevante zeigen, und das ist
+        // der naechste Termin. Der Fortschritt des Laufenden steht weiter im
+        // Popover, wo Platz dafuer ist.
+        if let part = nextEventPart() ?? runningEventPart() {
             let sep = parts.isEmpty ? "" : "· "
-            parts.append("\(sep)\(shorten(running.title)) \(remaining)")
-        } else if prefs.showNextEventInMenuBar, let next = store.nextEvent,
-                  let start = next.start,
-                  // Erst ab der eingestellten Vorlaufzeit. Ein Termin, der in
-                  // fuenf Stunden beginnt, ist in einer stets sichtbaren Leiste
-                  // kein Hinweis, sondern Belegung.
-                  start.timeIntervalSinceNow <= Double(prefs.menuBarLeadMinutes) * 60 {
-            let sep = parts.isEmpty ? "" : "· "
-            // Tag voranstellen, wenn der Termin nicht heute ist. Ohne das liest
-            // sich "08:00 Praxis" um 15 Uhr wie ein laufender Termin, obwohl es
-            // der von morgen früh ist.
-            let dayPrefix: String
-            if Calendar.current.isDateInToday(start) {
-                dayPrefix = ""
-            } else if Calendar.current.isDateInTomorrow(start) {
-                dayPrefix = "morgen "
-            } else {
-                weekdayFormatter.dateFormat = "EEE"
-                dayPrefix = weekdayFormatter.string(from: start) + " "
-            }
-            parts.append("\(sep)\(dayPrefix)\(timeFormatter.string(from: start)) \(shorten(next.title))")
+            parts.append("\(sep)\(part)")
         }
         text = parts.joined(separator: " ")
+    }
+
+    /// Der naechste Termin, aber erst ab der eingestellten Vorlaufzeit.
+    ///
+    /// Ein Termin, der in fuenf Stunden beginnt, ist in einer stets sichtbaren
+    /// Leiste kein Hinweis, sondern Belegung.
+    private func nextEventPart() -> String? {
+        guard prefs.showNextEventInMenuBar,
+              let next = store.nextEvent,
+              let start = next.start,
+              start.timeIntervalSinceNow <= Double(prefs.menuBarLeadMinutes) * 60
+        else { return nil }
+
+        // Tag voranstellen, wenn der Termin nicht heute ist. Ohne das liest
+        // sich "08:00 Praxis" um 15 Uhr wie ein laufender Termin, obwohl es
+        // der von morgen früh ist.
+        let dayPrefix: String
+        if Calendar.current.isDateInToday(start) {
+            dayPrefix = ""
+        } else if Calendar.current.isDateInTomorrow(start) {
+            dayPrefix = "morgen "
+        } else {
+            weekdayFormatter.dateFormat = "EEE"
+            dayPrefix = weekdayFormatter.string(from: start) + " "
+        }
+        return "\(dayPrefix)\(timeFormatter.string(from: start)) \(shorten(next.title))"
+    }
+
+    /// Der laufende Termin mit Restzeit. Nur wenn nichts Naeheres ansteht.
+    private func runningEventPart() -> String? {
+        guard prefs.showRunningProgress,
+              let running = store.runningEvent,
+              let remaining = running.remainingLabel()
+        else { return nil }
+        return "\(shorten(running.title)) \(remaining)"
     }
 
     /// Damit das Symbol nur beim echten Tageswechsel neu gezeichnet wird und
