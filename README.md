@@ -32,7 +32,8 @@ ansteht, bezahlt das mit Oberfläche.
   eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste.
   In der Leiste hat der **nächste** Termin Vorrang, sobald er in Vorlaufzeit ist —
-  ein Tagesblock würde sonst stundenlang alles verdecken, was dazwischen liegt
+  ein Tagesblock würde sonst stundenlang alles verdecken, was dazwischen liegt.
+  Laufen mehrere gleichzeitig, steht der dort, der **zuerst endet**
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Start bei der Anmeldung**, abschaltbar
 

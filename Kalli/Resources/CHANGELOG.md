@@ -2,6 +2,23 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.1.3] — 2026-09-22
+
+### Behoben
+
+- **Bei überlappenden Terminen stand der falsche in der Leiste.** Laufen
+  mehrere gleichzeitig, gewinnt jetzt der, der **zuerst endet**. Vorher nahm
+  Kalli den mit dem frühesten Start — und damit bei „Praxis 08:00–16:00" acht
+  Stunden lang die Praxis, obwohl um 10:00 ein Termin über 30 Minuten darin
+  lag. Wer wissen will, wann er wieder frei ist, meint den nächsten
+  Endzeitpunkt, nicht den ältesten Anfang.
+- **Bei gleicher Startzeit gewinnt der kürzere Termin.** „P&O 10:00–10:30" ist
+  konkreter als „Abfrage 10:00–12:00". Vorher entschied die Reihenfolge, in der
+  EventKit die Termine zufällig lieferte.
+- **Der Messpunkt fürs Abhaken war stumpf.** Die Bestätigung lief auf Stufe
+  `info`, und die hält macOS nur im Speicher — im Protokoll stand danach
+  nichts. Jetzt `notice`, also dauerhaft nachlesbar.
+
 ## [0.1.2] — 2026-09-22
 
 ### Neu

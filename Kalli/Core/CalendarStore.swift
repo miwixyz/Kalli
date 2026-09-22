@@ -33,7 +33,7 @@ final class CalendarStore {
 
     /// Messpunkt fuer das Abhaken. Von aussen lesbar mit:
     ///
-    ///     log show --last 15m --predicate 'subsystem == "com.kalli.app"' --info
+    ///     log show --last 15m --predicate 'subsystem == "com.kalli.app"'
     ///
     /// Gebaut am 2026-09-22, nachdem Michael meldete, dass abgehakte Aufgaben
     /// nicht in Apple Erinnerungen ankommen. Die App hatte dazu nichts zu
@@ -293,7 +293,7 @@ final class CalendarStore {
                 : "Das Zurücknehmen ist nicht angekommen — Apple Erinnerungen hat es nicht übernommen."
         }
 
-        Self.log.info("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public).")
+        Self.log.notice("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public).")
         return nil
     }
 
@@ -322,29 +322,49 @@ final class CalendarStore {
 
     private func recomputeNextEvent() {
         let now = Date()
-        nextEvent = items.first { item in
-            guard case .event = item.kind, !item.isAllDay, let start = item.start else { return false }
-            return start > now
-        }
+        // Bei gleicher Startzeit gewinnt der kuerzere Termin: "P&O 10:00-10:30"
+        // ist konkreter als "Abfrage 10:00-12:00". Ein `items.first` haette hier
+        // genommen, was EventKit zufaellig zuerst liefert.
+        nextEvent = items
+            .filter { item in
+                guard case .event = item.kind, !item.isAllDay,
+                      let start = item.start else { return false }
+                return start > now
+            }
+            .min { lhs, rhs in
+                let ls = lhs.start ?? .distantFuture
+                let rs = rhs.start ?? .distantFuture
+                if ls != rs { return ls < rs }
+                return (lhs.end ?? .distantFuture) < (rhs.end ?? .distantFuture)
+            }
         // Ganztägige laufen per Definition den ganzen Tag — ein Fortschritt
         // daran wäre die Uhrzeit, keine Information über den Termin.
         //
-        // Zwei weitere Einschränkungen, beide aus dem Befund vom 2026-09-21,
-        // dass ein Termin von *gestern* als laufend angezeigt wurde:
+        // Drei weitere Einschränkungen. Die ersten zwei aus dem Befund vom
+        // 2026-09-21, dass ein Termin von *gestern* als laufend angezeigt
+        // wurde; die dritte vom 2026-09-22:
         //   1. Der Termin muss heute begonnen haben. `start <= now && end > now`
         //      ist formal richtig, trifft aber auch mehrtägige Termine, deren
         //      Ende zufällig in der Zukunft liegt. Ein Fortschrittsbalken über
         //      zwei Tage sagt nichts.
         //   2. Termine über MAX_RUNNING_HOURS sind eher Zustände als Termine
         //      (Urlaub, Bereitschaft) — ein Prozentwert darauf ist Rauschen.
+        //   3. Laufen MEHRERE gleichzeitig, gewinnt der, der ZUERST ENDET.
+        //      `items.first` nahm den mit dem fruehesten Start — und damit bei
+        //      "Praxis 08:00-16:00" acht Stunden lang die Praxis, obwohl um
+        //      10:00 ein 30-Minuten-Termin darin lag. Wer wissen will, wann er
+        //      wieder frei ist, meint den naechsten Endzeitpunkt, nicht den
+        //      aeltesten Anfang. (Befund von Michael, 2026-09-22.)
         let calendar = Calendar.current
-        runningEvent = items.first { item in
-            guard case .event = item.kind, !item.isAllDay,
-                  let start = item.start, let end = item.end else { return false }
-            guard start <= now, end > now else { return false }
-            guard calendar.isDateInToday(start) else { return false }
-            return end.timeIntervalSince(start) <= Self.maxRunningHours * 3600
-        }
+        runningEvent = items
+            .filter { item in
+                guard case .event = item.kind, !item.isAllDay,
+                      let start = item.start, let end = item.end else { return false }
+                guard start <= now, end > now else { return false }
+                guard calendar.isDateInToday(start) else { return false }
+                return end.timeIntervalSince(start) <= Self.maxRunningHours * 3600
+            }
+            .min { ($0.end ?? .distantFuture) < ($1.end ?? .distantFuture) }
     }
 
     /// Lädt beim App-Start — aber nur, wenn die Berechtigung schon erteilt ist.
