@@ -21,7 +21,8 @@ ansteht, bezahlt das mit Oberfläche.
 ## Funktionen
 
 - **Menüleiste:** Datum in frei wählbarem Format, optional der nächste Termin
-  (Titel auf feste Länge gekürzt, damit die Leistenbreite nicht springt)
+  mit Countdown („10:00 P&O in 13 Min.", Titel auf feste Länge gekürzt, damit
+  die Leistenbreite nicht springt)
 - **Popover:** Monatsraster mit Kalenderwochen, Punkt an Tagen mit Einträgen,
   Tagesliste mit Terminen und Erinnerungen
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
@@ -35,7 +36,9 @@ ansteht, bezahlt das mit Oberfläche.
 - **Hinweis auf Kommendes** mit einstellbarer Vorlaufzeit
 - **Start bei der Anmeldung**, abschaltbar
 
-**Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen in der Erinnerungen-App.
+**Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen
+in der Erinnerungen-App. Kalli **liest das Kennzeichen danach zurück** und meldet, wenn es nicht
+angekommen ist: Ein `save()` ohne Fehler heißt nur, dass der Aufruf durchlief.
 
 Ausdrücklich nicht enthalten: Termine anlegen oder ändern, Aufgaben anlegen oder löschen,
 Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.

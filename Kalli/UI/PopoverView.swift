@@ -64,6 +64,18 @@ struct PopoverView: View {
                 agenda
             }
 
+            // Die Fehlermeldung stand bis 2026-09-22 INNERHALB der ScrollView,
+            // hinter der Terminliste. Bei voller Agenda lag sie unter der Falz
+            // und war nur nach Scrollen zu sehen — eine Meldung, die man
+            // suchen muss, ist keine. Sie gehoert an einen festen Platz.
+            if let toggleError {
+                Label(toggleError, systemImage: "exclamationmark.triangle")
+                    .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             footer
         }
         .padding(12)
@@ -138,11 +150,6 @@ struct PopoverView: View {
                                 justCompleted: justCompleted,
                                 onToggle: { item in toggle(item) }
                             )
-                        }
-                        if let toggleError {
-                            Label(toggleError, systemImage: "exclamationmark.triangle")
-                                .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
-                                .foregroundStyle(.orange)
                         }
                         if hiddenPastCount > 0 {
                             Button {

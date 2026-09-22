@@ -127,7 +127,17 @@ final class MenuBarLabel {
             weekdayFormatter.dateFormat = "EEE"
             dayPrefix = weekdayFormatter.string(from: start) + " "
         }
-        return "\(dayPrefix)\(timeFormatter.string(from: start)) \(shorten(next.title))"
+        // Countdown dazu, aber nur fuer heute. "morgen 08:00 Praxis in 22:15
+        // Std." waere eine Zahl, die niemand liest — der Tagesname sagt es
+        // schon. Heute ist "in 13 Min." dagegen das, was die Entscheidung
+        // traegt: aufstehen oder weiterarbeiten.
+        let countdown: String
+        if Calendar.current.isDateInToday(start), let inLabel = next.startsInLabel() {
+            countdown = " " + inLabel
+        } else {
+            countdown = ""
+        }
+        return "\(dayPrefix)\(timeFormatter.string(from: start)) \(shorten(next.title))\(countdown)"
     }
 
     /// Der laufende Termin mit Restzeit. Nur wenn nichts Naeheres ansteht.

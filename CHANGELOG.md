@@ -2,6 +2,29 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.1.2] — 2026-09-22
+
+### Neu
+
+- **Countdown in der Leiste** — der nächste Termin steht jetzt mit „in 13 Min."
+  dort. Nur für heute: „morgen 08:00 Praxis in 22:15 Std." wäre eine Zahl, die
+  niemand liest — der Tagesname sagt es schon.
+
+### Behoben
+
+- **Abgehaktes wurde nicht nachgeprüft.** Ein `save()` ohne Fehler heißt nur,
+  dass der Aufruf durchgelaufen ist — nicht, dass das Kennzeichen steht. Kalli
+  liest das Häkchen jetzt frisch aus EventKit zurück und meldet ausdrücklich,
+  wenn Apple Erinnerungen die Änderung nicht übernommen hat. Vorher blendete
+  sich die Zeile nach drei Sekunden aus und sah nach Erfolg aus, egal was
+  wirklich passiert war.
+- **Die Fehlermeldung lag unter der Falz.** Sie stand innerhalb der
+  Scrollfläche hinter der Terminliste und war bei voller Agenda nur nach
+  Scrollen zu sehen. Eine Meldung, die man suchen muss, ist keine — sie hat
+  jetzt einen festen Platz über der Fußzeile.
+- **Messpunkt für das Abhaken**, lesbar von außen:
+  `log show --last 15m --predicate 'subsystem == "com.kalli.app"' --info`
+
 ## [0.1.1] — 2026-09-22
 
 Zwei Befunde aus dem ersten Tag im Alltag. Beide gemessen, nicht vermutet.

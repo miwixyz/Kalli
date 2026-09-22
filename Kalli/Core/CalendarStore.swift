@@ -1,5 +1,6 @@
 import EventKit
 import Foundation
+import OSLog
 import Observation
 
 /// Liest Termine und Erinnerungen.
@@ -29,6 +30,17 @@ final class CalendarStore {
 
     /// Längste Dauer, für die ein Fortschritt sinnvoll ist.
     private static let maxRunningHours: Double = 12
+
+    /// Messpunkt fuer das Abhaken. Von aussen lesbar mit:
+    ///
+    ///     log show --last 15m --predicate 'subsystem == "com.kalli.app"' --info
+    ///
+    /// Gebaut am 2026-09-22, nachdem Michael meldete, dass abgehakte Aufgaben
+    /// nicht in Apple Erinnerungen ankommen. Die App hatte dazu nichts zu
+    /// sagen: `save()` lief ohne Fehler durch, und danach prueft niemand, ob
+    /// das Kennzeichen wirklich steht. Drei Vermutungen ohne Messung sind eine
+    /// zu viel — also erst messen.
+    private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
 
     private let store = EKEventStore()
     private var observer: NSObjectProtocol?
@@ -247,13 +259,41 @@ final class CalendarStore {
             return "Diese Erinnerung gibt es nicht mehr."
         }
 
+        let listName = reminder.calendar?.title ?? "(ohne Liste)"
         reminder.isCompleted = completed
         do {
             try store.save(reminder, commit: true)
         } catch {
+            Self.log.error("Speichern fehlgeschlagen — Liste \(listName, privacy: .public), Ziel \(completed, privacy: .public): \(error.localizedDescription, privacy: .public)")
             return error.localizedDescription
         }
+
         await reload()
+
+        // NACHLESEN STATT GLAUBEN. Ein `save()` ohne Fehler heisst nur: der
+        // Aufruf ist durchgelaufen. Ob das Kennzeichen wirklich steht, weiss
+        // allein EventKit — und `reload()` hat gerade frisch gelesen.
+        //
+        // Ohne diese Pruefung meldet die App Erfolg, die Zeile blendet sich
+        // nach drei Sekunden aus, und niemand erfaehrt, dass in Apple
+        // Erinnerungen nichts angekommen ist. Genau dieser Fall wurde am
+        // 2026-09-22 gemeldet.
+        guard let fresh = items.first(where: { $0.id == item.id }) else {
+            // Kein Beweis moeglich: Die Erinnerung liegt ausserhalb des
+            // geladenen Zeitraums. Das ist kein Fehler, aber auch keine
+            // Bestaetigung — und wird als das protokolliert, was es ist.
+            Self.log.notice("Nicht nachpruefbar — Erinnerung liegt ausserhalb des geladenen Zeitraums. Liste \(listName, privacy: .public), Ziel \(completed, privacy: .public).")
+            return nil
+        }
+
+        if fresh.isCompleted != completed {
+            Self.log.error("Haekchen NICHT angekommen — Liste \(listName, privacy: .public): gesetzt auf \(completed, privacy: .public), zurueckgelesen \(fresh.isCompleted, privacy: .public).")
+            return completed
+                ? "Das Häkchen ist nicht angekommen — Apple Erinnerungen hat es nicht übernommen."
+                : "Das Zurücknehmen ist nicht angekommen — Apple Erinnerungen hat es nicht übernommen."
+        }
+
+        Self.log.info("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public).")
         return nil
     }
 
