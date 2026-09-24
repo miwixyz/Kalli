@@ -50,6 +50,18 @@ final class EventAlerts {
         ) async -> UNNotificationPresentationOptions {
             [.banner, .sound]
         }
+
+        /// Klick auf die Update-Erinnerung (siehe `Updater`). Es gibt nur einen
+        /// Delegate pro App — deshalb landet auch dieser Klick hier.
+        func userNotificationCenter(
+            _ center: UNUserNotificationCenter,
+            didReceive response: UNNotificationResponse
+        ) async {
+            guard response.notification.request.identifier == Updater.erinnerungsID else { return }
+            await MainActor.run {
+                NotificationCenter.default.post(name: .kalliUpdateErinnerungGeklickt, object: nil)
+            }
+        }
     }
 
     /// Fragt die Berechtigung an. Gibt zurueck, ob sie danach vorliegt.

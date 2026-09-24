@@ -168,6 +168,11 @@ Vollständig in **Rechtliches**.
 Kalli prüft, **bevor** es etwas ersetzt. Schlägt eine fehl, bricht es ab. Eine
 untergeschobene Datei wird abgelehnt, nicht installiert.
 
+**Wenn die automatische Suche etwas findet,** öffnet Kalli **kein** Fenster —
+macOS würde es hinter deine anderen Apps legen, wo man es nicht sieht. Stattdessen
+kommt eine Mitteilung **„Kalli … ist da“**, und der Knopf unten heißt **„Update …“**.
+Ein Klick auf eins von beiden öffnet das Update-Fenster, und zwar vorn.
+
 Eine Mitteilung über ein Update kann ausbleiben, wenn der Mac aus ist oder
 schläft. Der Knopf funktioniert immer.
 

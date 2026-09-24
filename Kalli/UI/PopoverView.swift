@@ -286,11 +286,14 @@ struct PopoverView: View {
             Button {
                 updater.checkForUpdates()
             } label: {
-                Label("Updates", systemImage: "arrow.down.circle")
+                // Hat eine automatische Prüfung etwas gefunden, sagt der Knopf
+                // es — die zweite Stelle neben der Mitteilung, falls die aus ist.
+                Label(updater.bereitesUpdate.map { "Update \($0)" } ?? "Updates",
+                      systemImage: updater.bereitesUpdate == nil ? "arrow.down.circle" : "arrow.down.circle.fill")
                     .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
             }
             .disabled(!updater.canCheck)
-            .help("Nach Updates suchen")
+            .help(updater.bereitesUpdate == nil ? "Nach Updates suchen" : "Update ansehen und installieren")
 
             Spacer()
             Button("Beenden") { NSApplication.shared.terminate(nil) }

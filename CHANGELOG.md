@@ -2,6 +2,31 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.9] — 2026-09-24
+
+### Behoben
+
+- **Das Update-Fenster lag hinter anderen Apps.** Michael: „Das Update-Fenster
+  bei Tippi und Kalli fokussiert immer noch nicht im Vordergrund. Das
+  irritiert!"
+
+  Sparkle beschreibt es selbst: Findet eine **automatische** Prüfung ein Update,
+  zeigt es das Fenster bei Apps ohne Dock-Symbol „immediately, but behind other
+  running applications". macOS lässt eine App ohne vorherige Nutzeraktion nicht
+  nach vorn. Sparkle schrieb die Lücke sogar ins Protokoll: *„Background app
+  automatically schedules for update checks but does not implement gentle
+  reminders."*
+
+  Jetzt: **kein Fenster mehr bei automatischer Prüfung**, sondern eine Mitteilung
+  „Kalli … ist da" und der Knopf zeigt „Update …". Ein Klick auf eins von beiden
+  öffnet das Fenster — als Nutzeraktion, also vorn. Das gilt auch direkt nach
+  dem Start: Dort meinte Sparkle, das Fenster komme nach vorn; gemessen lag es
+  (an Tippi) auf Platz 3 hinter anderen Fenstern.
+
+  Gemessen statt angenommen: Testversion mit Versionsnummer 0.4.7 gegen das
+  echte 0.4.8, Protokoll „sanfte Erinnerung statt Fenster", Klick auf die
+  Mitteilung → Fenster vorn.
+
 ## [0.4.8] — 2026-09-22
 
 ### Behoben
