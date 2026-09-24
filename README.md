@@ -252,6 +252,10 @@ Kalli aktualisiert sich über **Sparkle** — aber nur, wenn du es erlaubst.
 - **Ab Werk aus.** Beim ersten Mal fragt Sparkle, ob automatisch gesucht werden
   darf. Sagst du nein, gibt es keinen Netzwerkzugriff.
 - **Von Hand** jederzeit über den Knopf **„Updates“** unten im Popover.
+- **Findet die automatische Prüfung ein Update**, öffnet Kalli kein Fenster
+  (das läge bei einer Menüleisten-App hinter anderen Apps), sondern meldet es
+  sanft: eine Mitteilung und der Knopf zeigt **„Update X“**. Ein Klick auf
+  eines von beiden öffnet das Update-Fenster vorn. Seit 0.4.9.
 - **Zwei Signaturen** werden geprüft, bevor etwas ersetzt wird: die
   EdDSA-Signatur des Archivs gegen den in der App eingebauten öffentlichen
   Schlüssel, und Apples Developer-ID-Signatur. Schlägt eine fehl, bricht
