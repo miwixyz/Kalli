@@ -1,0 +1,5 @@
+# Tests: tabellengetriebene Fälle werden spaltenweise ausgerichtet
+# `(true,  false, "x")` und brauchen dafür Tupel mit drei Elementen.
+disabled_rules:
+  - comma
+  - large_tuple

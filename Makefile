@@ -1,4 +1,4 @@
-.PHONY: docs gen build run install clean check-docs release release-dry-run test lock
+.PHONY: docs gen build run install clean check-docs release release-dry-run test lock lint
 
 APP = Kalli
 CONFIG ?= Debug
@@ -73,7 +73,13 @@ test: gen
 		-derivedDataPath $(DERIVED) \
 		-allowProvisioningUpdates test
 
-release:
+# SwiftLint -- Regeln und Begruendungen in .swiftlint.yml. Exit != 0 bei Verstoss.
+lint:
+	@command -v swiftlint >/dev/null || { echo "swiftlint fehlt auf diesem Mac -> brew install swiftlint"; exit 1; }
+	swiftlint lint --quiet --strict
+
+# lint zuerst: ein Release mit Linter-Verstoss geht gar nicht erst los.
+release: lint
 	@bash scripts/release.sh
 
 # Zeigt die Vorbedingungen, ohne etwas zu bauen.

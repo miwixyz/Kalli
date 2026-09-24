@@ -1,0 +1,56 @@
+# SwiftLint — Kalli
+# Eingeführt 2026-09-24. Jede Abweichung vom Default ist bewusst entschieden,
+# Begründung steht dabei. Lauf: `make lint` (oder `swiftlint lint`).
+
+included:
+  - Kalli
+  - KalliTests
+
+excluded:
+  - build
+  - dist
+  - .build
+
+disabled_rules:
+  # Komma nach dem letzten Element macht Diffs sauberer (eine Zeile statt zwei).
+  - trailing_comma
+  # `var x: T? = nil` ist explizit und schadet nicht — reine Stilfrage.
+  - implicit_optional_initialization
+
+identifier_name:
+  # r/g/b bei Farben, v/c in Closures, `.on` als Enum-Fall: kurz ist hier lesbarer.
+  min_length:
+    warning: 1
+    error: 1
+
+line_length:
+  warning: 150
+  error: 250
+  ignores_comments: true
+  ignores_urls: true
+  # Die langen Zeilen sind os_log-Meldungen mit Interpolation — umbrechen macht sie
+  # schlechter lesbar, nicht besser.
+  ignores_interpolated_strings: true
+
+# Sperrklinke statt Refactoring: knapp über dem Stand vom 2026-09-24
+# (CalendarStore 621 Zeilen / 328 Typ-Zeilen). Wächst eine Datei darüber hinaus,
+# ist das der Moment zum Aufteilen — nicht vorher.
+file_length:
+  warning: 650
+  error: 800
+type_body_length:
+  warning: 350
+  error: 450
+
+custom_rules:
+  # Tippi, 2026-09-14: `NSApp.delegate as? AppDelegate` an 21 Stellen. In einer
+  # SwiftUI-App mit @NSApplicationDelegateAdaptor ist NSApp.delegate NICHT die
+  # eigene AppDelegate-Instanz — der Cast liefert immer nil, `?.` verschluckt es,
+  # nichts passiert, kein Fehler. Vier Stunden Fehlersuche.
+  # Stattdessen: AppDelegate-Instanz explizit durchreichen oder ein eigenes
+  # statisches `AppDelegate.shared` setzen.
+  dead_app_delegate_cast:
+    name: "Toter AppDelegate-Cast"
+    regex: 'NSApp(lication\.shared)?\.delegate\s+as[?!]\s*AppDelegate'
+    message: "NSApp.delegate ist unter SwiftUI nicht die eigene AppDelegate — Cast liefert still nil. AppDelegate explizit durchreichen."
+    severity: error
