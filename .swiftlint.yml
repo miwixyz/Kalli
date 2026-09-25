@@ -52,5 +52,11 @@ custom_rules:
   dead_app_delegate_cast:
     name: "Toter AppDelegate-Cast"
     regex: 'NSApp(lication\.shared)?\.delegate\s+as[?!]\s*AppDelegate'
+    # Nur Code, keine Kommentare: Die Warnkommentare, die genau vor diesem Cast
+    # warnen, zitieren ihn — ohne Ausschluss meldete die Regel beim Tippi-Rollout
+    # (2026-09-25) 3 Treffer, alle in solchen Kommentaren.
+    excluded_match_kinds:
+      - comment
+      - doccomment
     message: "NSApp.delegate ist unter SwiftUI nicht die eigene AppDelegate — Cast liefert still nil. AppDelegate explizit durchreichen."
     severity: error
