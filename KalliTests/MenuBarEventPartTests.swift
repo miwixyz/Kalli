@@ -81,6 +81,21 @@ final class MenuBarEventPartTests: XCTestCase {
                                             next: nil, running: nil))
     }
 
+    // MARK: - Leer-Leisten-Schutz (Audit-Fund K-C8, 2026-09-27)
+
+    /// Symbol aus, Datum an, aber leeres Datumsformat: Die Schalter sagen
+    /// „nicht leer", der Text ist es trotzdem. Das Symbol muss bleiben.
+    func testIconShownWhenTextIsEmptyDespiteSwitches() {
+        XCTAssertTrue(MenuBarLabel.showsIcon(preferred: false, text: ""))
+        XCTAssertTrue(MenuBarLabel.showsIcon(preferred: false, text: "  "),
+                      "nur Leerzeichen ist in der Leiste genauso unsichtbar")
+    }
+
+    func testIconFollowsPreferenceWhenTextIsPresent() {
+        XCTAssertFalse(MenuBarLabel.showsIcon(preferred: false, text: "Mo 21. Sep"))
+        XCTAssertTrue(MenuBarLabel.showsIcon(preferred: true, text: "Mo 21. Sep"))
+    }
+
     /// Alle vier Schalterstellungen einmal durchgehen, damit keine Kombination
     /// unbeobachtet bleibt.
     func testAllSwitchCombinationsAreDefined() {

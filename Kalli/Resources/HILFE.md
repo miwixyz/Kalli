@@ -36,6 +36,10 @@ einblenden:
   Laufen mehrere Termine gleichzeitig, steht der in der Leiste, der **zuerst
   endet** — nicht der, der zuerst begann.
 
+  Auch **über Mitternacht**: Ein Nachtdienst 22–06 zeigt um 03:00 seine
+  Restzeit. Ausgenommen sind nur Termine über 12 Stunden — dort sagt eine
+  Restzeit nichts.
+
   **Ganz ohne Termin in der Leiste:** „Termin in der Leiste anzeigen"
   abschalten. Dann erscheint weder ein kommender noch ein laufender — nur
   Symbol und Datum. Der Fortschrittsbalken **im Popover** bleibt davon
@@ -43,8 +47,13 @@ einblenden:
   ist, meint den nächsten Endzeitpunkt. Die Leiste wandert damit von innen nach
   außen: erst der 30-Minuten-Termin, dann der zweistündige, dann der Tagesblock.
 
+Die Leiste zeigt immer, was **jetzt** ansteht — unabhängig davon, welchen Monat
+das Popover gerade zeigt oder ob es seit Tagen nicht geöffnet wurde.
+
 Schaltest du Symbol *und* Datum ab, bliebe der Eintrag leer und Kalli wäre in
-der Leiste nicht mehr auffindbar. Das Symbol bleibt in dem Fall sichtbar.
+der Leiste nicht mehr auffindbar. Das Symbol bleibt in dem Fall sichtbar —
+ebenso, wenn der Text aus einem anderen Grund leer wäre (z. B. ein leeres
+Datumsformat).
 
 ### Prominenter Hinweis vor dem Termin
 
@@ -78,6 +87,11 @@ dem man nicht mehr glaubt.
 > Einstellungen → Mitteilungen → Kalli → *Vorschau anzeigen: Wenn entsperrt*.
 > Details in **Rechtliches**.
 
+Kalli plant die Mitteilungen bei jeder Kalenderänderung, nach dem Aufwachen,
+beim Tageswechsel und stündlich neu. Wurde die Erlaubnis später in den
+Systemeinstellungen entzogen, plant Kalli nichts und zeigt unter Einstellungen →
+Menüleiste einen orangen Hinweis.
+
 Eine Mitteilung kann ausbleiben, wenn der Mac aus ist, schläft oder „Nicht
 stören" aktiv ist. Für Unverzichtbares bleibt der Alarm im Kalender selbst der
 verlässlichere Weg.
@@ -97,7 +111,9 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
   Die Vorlaufzeit ist einstellbar (5 bis 240 Minuten).
 - **Tagesliste** in drei Gruppen:
   - **Ganztägig** (Balken-Marker)
-  - **Termine** mit Uhrzeit (Kreis)
+  - **Termine** mit Uhrzeit (Kreis). Ein Termin über Mitternacht steht an
+    **jedem** Tag, den er berührt; endet er genau um 00:00, nicht mehr am
+    Folgetag.
   - **Aufgaben** aus der Erinnerungen-App (Kreisumriss, abgehakt = durchgestrichen).
     **Ein Klick auf den Kreis hakt die Aufgabe ab** — die Änderung landet sofort in
     der Erinnerungen-App.
@@ -109,6 +125,10 @@ taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster
 
     Sind erledigte Erinnerungen eingeblendet (Einstellungen → Ansicht), bleibt
     die Zeile ohnehin stehen; ein weiterer Klick nimmt das Häkchen zurück.
+
+    **Wiederkehrende Aufgaben** haben kein Rückgängig: Das Abhaken rückt dort
+    womöglich die Fälligkeit auf das nächste Mal, ein Zurücknehmen träfe dann
+    das falsche. Versehentlich abgehakt → in der Erinnerungen-App korrigieren.
 
 **Vergangene Termine anzeigen** (Einstellungen → Ansicht) ist ab Werk an.
 Abgeschaltet räumt sich die Liste im Lauf des Tages auf. Der Filter gilt **nur
@@ -164,9 +184,12 @@ GitHub sieht dabei — wie bei jedem Aufruf einer Webadresse — deine IP-Adress
 und die installierte Version. Nichts darüber hinaus, keine Kalenderdaten.
 Vollständig in **Rechtliches**.
 
-**Warum ein Update sicher ist:** Jedes trägt zwei unabhängige Signaturen, die
-Kalli prüft, **bevor** es etwas ersetzt. Schlägt eine fehl, bricht es ab. Eine
-untergeschobene Datei wird abgelehnt, nicht installiert.
+**Warum ein Update sicher ist:** Jedes trägt zwei Signaturen, die Kalli prüft,
+**bevor** es etwas ersetzt: die Signatur des Archivs und Apples
+Developer-ID-Signatur. Die Archiv-Signatur ist in den Versionen nach 0.4.9
+Pflicht — ohne sie wird ein Update nicht einmal entpackt. Die App-Signatur muss
+unversehrt sein, darf aber bei einem Zertifikatswechsel neu sein. Bis 0.4.9
+genügte eine der beiden; genauer in **Rechtliches**.
 
 **Wenn die automatische Suche etwas findet,** öffnet Kalli **kein** Fenster —
 macOS würde es hinter deine anderen Apps legen, wo man es nicht sieht. Stattdessen
@@ -186,7 +209,8 @@ genau eine Sache: das **Erledigt-Kennzeichen**, wenn du ein Häkchen setzt. Nich
 wird angelegt, umbenannt oder gelöscht.
 
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
-Hinweis mit Direktlink in die Systemeinstellungen.
+Hinweis mit Direktlink in die Systemeinstellungen. Erteilst du ihn dort später,
+lädt Kalli beim nächsten Öffnen des Popovers — ohne Neustart.
 
 **Stand prüfen und neu anstoßen:** Einstellungen → **Kalender**, ganz oben.
 Dort steht für Kalender und Erinnerungen getrennt, ob die Berechtigung erteilt,

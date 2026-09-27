@@ -513,7 +513,11 @@ private struct AgendaRow: View {
 
             // Nur solange die Zeile nachleuchtet: ein Weg zurueck. Danach
             // bleibt der Kreis selbst der Schalter.
-            if isFading {
+            // Nicht bei Serien: Das Abhaken schiebt dort womoeglich die
+            // Faelligkeit weiter, ein Zuruecknehmen traefe dann das naechste
+            // Vorkommen (Audit-Fund K-C9, nicht gemessen — siehe
+            // CalendarStore.completionConfirmed).
+            if isFading && !item.isRecurring {
                 Button("Rückgängig") { onToggle?() }
                     .font(Theme.font(Theme.Size.hint, scale, weight: .medium))
                     .buttonStyle(.plain)

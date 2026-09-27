@@ -86,11 +86,18 @@ statt, außer du drückst den Knopf „Nach Updates suchen" von Hand. Die
 Entscheidung lässt sich jederzeit ändern.
 
 **Wie sichergestellt ist, dass ein Update echt ist:** Jedes Update trägt zwei
-unabhängige Signaturen — eine Signatur des Archivs mit einem Schlüssel, dessen
-öffentlicher Teil in Kalli eingebaut ist, und Apples Developer-ID-Signatur.
-Beide werden geprüft, **bevor** irgendetwas ersetzt wird. Schlägt eine fehl,
-bricht Kalli ab. Eine untergeschobene Datei wird nicht installiert, sondern
-abgelehnt.
+Signaturen — eine Signatur des Archivs (EdDSA) mit einem Schlüssel, dessen
+öffentlicher Teil in Kalli eingebaut ist, und Apples Developer-ID-Signatur der
+App. Beide werden geprüft, **bevor** irgendetwas ersetzt wird.
+
+Die Update-Komponente Sparkle akzeptiert ein Update grundsätzlich schon dann,
+wenn **eine** der beiden Prüfungen besteht — so bleibt ein Schlüsselwechsel
+möglich. Bis Version 0.4.9 stand hier, dass Kalli abbricht, sobald eine
+fehlschlägt; das war falsch. In den Versionen danach ist die Archiv-Signatur
+**Pflicht**: Ohne gültige EdDSA-Signatur wird ein Update nicht einmal entpackt.
+Die App-Signatur muss unversehrt sein, darf aber von einem anderen Zertifikat
+stammen. Das gilt für Updates, die **aus** einer solchen Version heraus
+installiert werden — das Update auf sie selbst prüft noch nach den alten Regeln.
 
 **Kein Doppel-Alarm:** Kalli meldet nur Termine, die im Kalender keinen eigenen
 Alarm tragen.

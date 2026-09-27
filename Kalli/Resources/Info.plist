@@ -44,6 +44,17 @@
 	<key>SUPublicEDKey</key>
 	<string>iE2bazGoslgGEsgo2MJUwphVYlEKkeRcsWdzwbGge4w=</string>
 
+	<!-- EdDSA-Signatur VOR dem Entpacken prüfen. Ohne diesen Schlüssel
+	     akzeptiert Sparkle ein Update, wenn EINE der beiden Prüfungen
+	     (EdDSA oder Code-Signatur) besteht — gedacht für Schlüsselwechsel,
+	     heißt aber: ein Schlüssel genügt (Audit-Fund K-S4, 2026-09-27).
+	     Mit YES ist die EdDSA-Signatur für ZIP-Updates Pflicht. Voraussetzung:
+	     Jedes Appcast-Element trägt sparkle:edSignature (release.sh signiert).
+	     Geht der private EdDSA-Schlüssel verloren, braucht der Wechsel laut
+	     Sparkle-Doku ein Developer-ID-signiertes Disk-Image statt eines ZIP. -->
+	<key>SUVerifyUpdateBeforeExtraction</key>
+	<true/>
+
 	<!-- Ohne diese beiden Texte schlägt der Zugriff STILL fehl (macOS 14+).
 	     Der Nutzer sieht dann keinen Dialog, und die Liste bleibt einfach leer. -->
 	<key>NSCalendarsFullAccessUsageDescription</key>

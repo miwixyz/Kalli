@@ -52,6 +52,15 @@ NOTARY_PROFILE="${NOTARY_PROFILE:-}"
 fail() { echo "✗ $*" >&2; exit 1; }
 step() { echo ""; echo "▶ $*"; }
 
+# Nur 0 oder 1. `[ "$PUBLISH" -eq 0 ]` war bei "no", "false" oder "0 " ein
+# Vergleichsfehler — und damit FALSCH, also wurde veröffentlicht (Audit-Fund
+# K-S2, 2026-09-27). Früh prüfen (nach release.env, das PUBLISH setzen könnte),
+# nicht erst nach Build und Notarisierung.
+case "${PUBLISH}" in
+    0|1) ;;
+    *) fail "PUBLISH muss 0 oder 1 sein, ist aber '${PUBLISH}'" ;;
+esac
+
 # ---------------------------------------------------------------------------
 # 0. Vorbedingungen. Alle messen, keine annehmen.
 # ---------------------------------------------------------------------------
@@ -62,8 +71,12 @@ command -v xcodegen >/dev/null || fail "xcodegen fehlt — brew install xcodegen
 
 # Ein Release aus einem verschmutzten Baum ist nicht reproduzierbar: Das
 # Artefakt enthält Änderungen, die in keinem Commit stehen.
-git diff --quiet && git diff --cached --quiet \
-    || fail "Arbeitsbaum ist nicht sauber. Erst committen, dann releasen."
+# `git status --porcelain` statt `git diff`: Auch UNGETRACKTE Dateien landen
+# im Build (xcodegen nimmt jede .swift unter Kalli/ auf) — `git diff` sah sie
+# nicht (Audit-Fund K-S3, 2026-09-27). Ignorierte Dateien (build/, dist/,
+# release.env) zeigt porcelain nicht an; die sind in Ordnung.
+[ -z "$(git status --porcelain)" ] \
+    || fail "Arbeitsbaum ist nicht sauber (auch ungetrackte Dateien zählen). Erst committen, dann releasen."
 
 VERSION="$(awk -F'"' '/MARKETING_VERSION:/ { print $2; exit }' project.yml)"
 [ -n "${VERSION}" ] || fail "MARKETING_VERSION nicht in project.yml gefunden"
@@ -237,7 +250,7 @@ echo "${SHIPPED}" | grep -q "accepted" \
 rm -rf "${VERIFY_DIR}"
 echo "  ✓ Ausgeliefertes ZIP: $(echo "${SHIPPED}" | awk -F'=' '/source/ { print $2 }')"
 
-if [ "${PUBLISH}" -eq 0 ]; then
+if [ "${PUBLISH}" = "0" ]; then
     echo ""
     echo "🛑 PUBLISH=0 — kein GitHub-Release. Artefakt liegt in ${ZIP}"
     exit 0

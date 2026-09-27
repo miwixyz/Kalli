@@ -30,7 +30,7 @@ final class CalendarStore {
     private(set) var runningEvent: AgendaItem?
 
     /// Längste Dauer, für die ein Fortschritt sinnvoll ist.
-    private static let maxRunningHours: Double = 12
+    nonisolated static let maxRunningHours: Double = 12
 
     /// Messpunkt fuer das Abhaken. Von aussen lesbar mit:
     ///
@@ -62,57 +62,38 @@ final class CalendarStore {
                 await self?.reload()
             }
         }
+        // Aufwachen und Tageswechsel: Nach dem Ruhezustand ist das Leisten-
+        // Fenster veraltet und die Mitteilungs-Planung womöglich auch — bis
+        // 2026-09-27 wurde nur bei `reload()` neu geplant, und das lief allein
+        // bei EventKit-Änderungen oder Popover-Navigation (Audit-Fund K-C4).
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in await self?.reload() }
+        }
+        dayObserver = NotificationCenter.default.addObserver(
+            forName: .NSCalendarDayChanged, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in await self?.reload() }
+        }
     }
+
+    private var wakeObserver: NSObjectProtocol?
+    private var dayObserver: NSObjectProtocol?
 
     // Kein deinit — gleiche Begründung wie in MenuBarLabel: nonisolated deinit
     // kommt an MainActor-Eigenschaften nicht heran, und die Instanz lebt so
     // lange wie die App. Der Block hält `self` schwach.
     func stop() {
         if let observer { NotificationCenter.default.removeObserver(observer) }
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+        if let dayObserver { NotificationCenter.default.removeObserver(dayObserver) }
         observer = nil
+        wakeObserver = nil
+        dayObserver = nil
     }
 
     // MARK: - Berechtigung
-
-    /// Der Zustand **einer** Berechtigung, frisch von macOS gelesen.
-    ///
-    /// Gleiche Haltung wie bei `LoginItem`: Der wahre Zustand liegt bei macOS,
-    /// nicht bei uns. Ein gespiegelter Wert wird beim ersten Eingriff von außen
-    /// falsch — der Nutzer kann den Zugriff jederzeit in den
-    /// Systemeinstellungen entziehen, ohne dass Kalli davon erfährt.
-    enum Permission: Equatable {
-        /// Noch nie gefragt — **nur hier** kann ein Anfragen etwas bewirken.
-        case notDetermined
-        case granted
-        /// Abgelehnt. macOS fragt danach **nie wieder**; der einzige Weg zurück
-        /// sind die Systemeinstellungen.
-        case denied
-        /// Durch Geräteverwaltung gesperrt. Nicht durch den Nutzer änderbar.
-        case restricted
-
-        var label: String {
-            switch self {
-            case .notDetermined: "noch nicht gefragt"
-            case .granted: "erteilt"
-            case .denied: "abgelehnt"
-            case .restricted: "gesperrt (Geräteverwaltung)"
-            }
-        }
-    }
-
-    nonisolated static func permission(_ status: EKAuthorizationStatus) -> Permission {
-        switch status {
-        case .notDetermined: .notDetermined
-        case .fullAccess: .granted
-        case .denied: .denied
-        case .restricted: .restricted
-        // `writeOnly` gibt es nur fuer Kalender und reicht Kalli nicht — es
-        // liest ausschliesslich. Als "abgelehnt" behandeln, damit die Anzeige
-        // nicht "erteilt" behauptet, waehrend die Liste leer bleibt.
-        case .writeOnly: .denied
-        @unknown default: .denied
-        }
-    }
 
     nonisolated var eventPermission: Permission {
         Self.permission(EKEventStore.authorizationStatus(for: .event))
@@ -204,6 +185,44 @@ final class CalendarStore {
         return changed
     }
 
+    /// Liest den Berechtigungsstand frisch von macOS und lädt, wenn er sich
+    /// geändert hat. Aufgerufen bei jedem Öffnen des Popovers.
+    ///
+    /// Audit-Fund K-C7 (2026-09-27): `access` wurde nur beim Start und bei
+    /// einer Anfrage gesetzt. Wer den Zugriff danach in den Systemeinstellungen
+    /// erteilte, sah bis zum Neustart weiter „Kein Zugriff auf Kalender".
+    func refreshAccess() async {
+        let e = EKEventStore.authorizationStatus(for: .event) == .fullAccess
+        let r = EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
+        let fresh = Self.access(events: e, reminders: r)
+        guard fresh != access else { return }
+        Self.log.notice("Berechtigung hat sich geaendert — Kalender \(e, privacy: .public), Erinnerungen \(r, privacy: .public)")
+        let (hadEvents, hadReminders): (Bool, Bool) = switch access {
+        case .granted: (true, true)
+        case .partial(let events, let reminders): (events, reminders)
+        case .denied, .unknown: (false, false)
+        }
+        access = fresh
+        guard e || r else {
+            // Beides entzogen: Nichts Altes stehen lassen — die Leiste zeigte
+            // sonst Termine, die Kalli nicht mehr lesen darf (Review-Fund).
+            // loadSources() hier NICHT: siehe hiddenAfterPrune.
+            items = []
+            barItems = []
+            nextEvent = nil
+            runningEvent = nil
+            return
+        }
+        // Apple, `requestAccess(to:completion:)`: Hat die App vor der Freigabe
+        // schon zugegriffen, „it may be necessary to reset the event store to
+        // ensure data becomes accessible". Kalli hält keine EventKit-Objekte
+        // über diesen Punkt hinaus (nur `AgendaItem`-Werte), also gefahrlos.
+        // Ob es ohne reset() hier auch ginge, ist nicht gemessen.
+        if (e && !hadEvents) || (r && !hadReminders) { store.reset() }
+        loadSources()
+        await reload()
+    }
+
     private func requestEvents() async -> Bool {
         do { return try await store.requestFullAccessToEvents() } catch { return false }
     }
@@ -239,7 +258,10 @@ final class CalendarStore {
         sources = found.sorted {
             ($0.sourceTitle, $0.title) < ($1.sourceTitle, $1.title)
         }
-        prefs.pruneHidden(to: Set(found.map(\.id)))
+        prefs.pruneHidden(to: Self.hiddenAfterPrune(
+            prefs.hiddenSourceIDs, found: Set(found.map(\.id)),
+            eventsReadable: EKEventStore.authorizationStatus(for: .event) == .fullAccess,
+            remindersReadable: EKEventStore.authorizationStatus(for: .reminder) == .fullAccess))
     }
 
     /// `nonisolated`, weil diese Funktion auch aus EventKit-Callbacks auf
@@ -254,13 +276,11 @@ final class CalendarStore {
 
     // MARK: - Laden
 
-    /// Lädt den sichtbaren Monat plus Rand, damit das Raster vollständig ist.
+    /// Lädt genau die Tage, die das Raster zeigt — dieselbe Funktion wie
+    /// `MonthGrid` (`MonthRaster`), damit beide nicht auseinanderlaufen.
     func load(month: Date, calendar: Calendar) async {
-        guard let monthStart = calendar.dateInterval(of: .month, for: month)?.start,
-              let monthEnd = calendar.dateInterval(of: .month, for: month)?.end else { return }
-        let from = calendar.date(byAdding: .day, value: -7, to: monthStart) ?? monthStart
-        let to = calendar.date(byAdding: .day, value: 7, to: monthEnd) ?? monthEnd
-        loadedRange = DateInterval(start: from, end: to)
+        guard let range = MonthRaster.interval(for: month, calendar: calendar) else { return }
+        loadedRange = range
         await reload()
     }
 
@@ -268,12 +288,38 @@ final class CalendarStore {
         guard let range = loadedRange else { return }
         var collected = await fetchEvents(in: range)
         collected += await fetchReminders(in: range)
+        // Überlappende Läufe (Review-Fund): Hat während des Wartens ein
+        // Monatswechsel den Zeitraum geändert, gehört dieses Ergebnis zum
+        // alten Monat — verwerfen, der neuere Lauf übernimmt alles Weitere.
+        // Bewusst kein Generationszähler: Der ließe auch den Lauf aus
+        // `setCompleted` verfallen, dessen Nachprüfung genau diese Liste braucht.
+        guard range == loadedRange else { return }
         items = collected.sorted { lhs, rhs in
             (lhs.start ?? .distantFuture) < (rhs.start ?? .distantFuture)
         }
+        await refreshBar()
+    }
+
+    /// Nur Leiste und Mitteilungen neu — ohne den Popover-Monat. Für den
+    /// stündlichen Tick: zwei Abfragen statt vier.
+    func refreshBar() async {
+        // Wie reload(): Vor dem ersten Laden (keine Berechtigung) nichts tun —
+        // sonst räumte syncAlerts mit leerem Horizont alle Mitteilungen ab.
+        guard loadedRange != nil else { return }
+        barItems = await fetchEvents(in: Self.barWindow(now: Date()))
         recomputeNextEvent()
         await syncAlerts()
     }
+
+    /// Termine rund um **jetzt** — die Quelle für Leiste, Puls und Popover-Hinweis.
+    ///
+    /// Audit-Fund K-C5 (2026-09-27): `nextEvent`/`runningEvent` wurden aus
+    /// `items` berechnet, also aus dem Monat, den das Popover gerade zeigt.
+    /// Einmal „nächster Monat" geklickt und geschlossen — Leiste leer. Und ohne
+    /// Popover blieb der beim Start geladene Monat stehen: Eine Instanz vom
+    /// 24.09. hätte ab dem 08.10. nichts mehr angezeigt. Gleiche Lehre wie beim
+    /// Mitteilungs-Horizont: `items` ist eine Ansicht, keine Quelle.
+    private var barItems: [AgendaItem] = []
 
     // MARK: - Mitteilungen
 
@@ -288,15 +334,22 @@ final class CalendarStore {
         guard prefs.notifyBeforeNextEvent else {
             await alerts.sync(horizon: [], enabled: false,
                               leadMinutes: prefs.alertLeadMinutes)
+            notificationsBlocked = false
             return
         }
         // Bewusst NICHT `items`: siehe fetchAlertHorizon().
-        await alerts.sync(
+        let planned = await alerts.sync(
             horizon: await fetchAlertHorizon(),
             enabled: true,
             leadMinutes: prefs.alertLeadMinutes
         )
+        notificationsBlocked = !planned
     }
+
+    /// Schalter „Systemmitteilung" ist an, aber macOS erlaubt keine
+    /// Mitteilungen (später entzogen). Die Einstellungen zeigen dann einen
+    /// Hinweis, statt einen Schalter, der „an" zeigt und nichts tut (K-C11).
+    private(set) var notificationsBlocked = false
 
     /// Fragt die Mitteilungs-Berechtigung an. Gibt zurück, ob sie **danach
     /// tatsächlich vorliegt** — nicht, ob der Aufruf durchlief.
@@ -349,16 +402,6 @@ final class CalendarStore {
         eventID(base: ev.eventIdentifier, start: ev.startDate)
     }
 
-    /// Reine Fassung — ohne `EKEvent`, damit sie prüfbar ist. Ein unsaved
-    /// `EKEvent` hat keine setzbare `eventIdentifier`; der interessante Fall
-    /// (gleiche ID, verschiedene Startzeit) wäre über EventKit nicht
-    /// konstruierbar.
-    nonisolated static func eventID(base: String?, start: Date?) -> String {
-        let id = base ?? UUID().uuidString
-        guard let start else { return id }
-        return "\(id)|\(Int(start.timeIntervalSince1970))"
-    }
-
     /// Termine der nächsten 24 Stunden — **unabhängig vom geladenen Monat**.
     ///
     /// Grund (Audit 2026-09-22, schwerster Fund): Die Mitteilungs-Planung hing
@@ -376,7 +419,7 @@ final class CalendarStore {
     }
 
     /// Wie weit voraus Mitteilungen geplant werden.
-    private static let alertHorizon: TimeInterval = 24 * 3600
+    nonisolated static let alertHorizon: TimeInterval = 24 * 3600
 
     private func fetchReminders(in range: DateInterval) async -> [AgendaItem] {
         let cals = store.calendars(for: .reminder).filter { !prefs.isHidden($0.calendarIdentifier) }
@@ -432,7 +475,8 @@ final class CalendarStore {
                 kind: .reminder(completed: rem.isCompleted),
                 sourceID: rem.calendar?.calendarIdentifier ?? "",
                 color: rem.calendar.map(rgba) ?? .fallback,
-                hasAlarms: rem.hasAlarms
+                hasAlarms: rem.hasAlarms,
+                isRecurring: rem.hasRecurrenceRules
             )
         }
     }
@@ -455,6 +499,10 @@ final class CalendarStore {
         }
 
         let listName = reminder.calendar?.title ?? "(ohne Liste)"
+        // VOR dem Speichern festhalten: Beim Abhaken einer Serie verändert
+        // EventKit womöglich dasselbe Objekt (siehe completionConfirmed).
+        let recurring = reminder.hasRecurrenceRules
+        let dueBefore = reminder.dueDateComponents?.date
         reminder.isCompleted = completed
         do {
             try store.save(reminder, commit: true)
@@ -473,7 +521,17 @@ final class CalendarStore {
         // nach drei Sekunden aus, und niemand erfaehrt, dass in Apple
         // Erinnerungen nichts angekommen ist. Genau dieser Fall wurde am
         // 2026-09-22 gemeldet.
-        guard let fresh = items.first(where: { $0.id == item.id }) else {
+        let fresh: (isCompleted: Bool, due: Date?)?
+        if let row = items.first(where: { $0.id == item.id }) {
+            fresh = (row.isCompleted, row.start)
+        } else if recurring, let again = store.calendarItem(withIdentifier: item.id) as? EKReminder {
+            // Die weitergeschobene Fälligkeit liegt womöglich außerhalb des
+            // geladenen Zeitraums — dann direkt nachlesen.
+            fresh = (again.isCompleted, again.dueDateComponents?.date)
+        } else {
+            fresh = nil
+        }
+        guard let fresh else {
             // Kein Beweis moeglich: Die Erinnerung liegt ausserhalb des
             // geladenen Zeitraums. Das ist kein Fehler, aber auch keine
             // Bestaetigung — und wird als das protokolliert, was es ist.
@@ -481,102 +539,31 @@ final class CalendarStore {
             return nil
         }
 
-        if fresh.isCompleted != completed {
-            Self.log.error("Haekchen NICHT angekommen — Liste \(listName, privacy: .public): gesetzt auf \(completed, privacy: .public), zurueckgelesen \(fresh.isCompleted, privacy: .public).")
+        if !Self.completionConfirmed(target: completed, isCompleted: fresh.isCompleted,
+                                     recurring: recurring, dueBefore: dueBefore, dueAfter: fresh.due) {
+            Self.log.error("Haekchen NICHT angekommen — Liste \(listName, privacy: .public): gesetzt auf \(completed, privacy: .public), zurueckgelesen \(fresh.isCompleted, privacy: .public), wiederkehrend \(recurring, privacy: .public).")
             return completed
                 ? "Das Häkchen ist nicht angekommen — Apple Erinnerungen hat es nicht übernommen."
                 : "Das Zurücknehmen ist nicht angekommen — Apple Erinnerungen hat es nicht übernommen."
         }
 
-        Self.log.notice("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public).")
+        Self.log.notice("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public), wiederkehrend \(recurring, privacy: .public).")
         return nil
     }
 
     // MARK: - Abfragen
 
     func items(on day: Date, calendar: Calendar) -> [AgendaItem] {
-        items.filter { item in
-            guard let start = item.start else { return false }
-            if item.isAllDay {
-                // Ganztägige Termine haben KEINE Zeitzone. EventKit liefert sie
-                // in GMT; mit der lokalen Zeitzone verglichen rutschen sie sonst
-                // auf den Vortag. Deshalb wird nur das Kalenderdatum verglichen.
-                var utc = calendar
-                utc.timeZone = TimeZone(secondsFromGMT: 0) ?? calendar.timeZone
-                let dayStart = calendar.startOfDay(for: day)
-                guard let end = item.end else { return utc.isDate(start, inSameDayAs: day) }
-                return start < calendar.date(byAdding: .day, value: 1, to: dayStart)! && end > dayStart
-            }
-            return calendar.isDate(start, inSameDayAs: day)
-        }
+        items.filter { Self.occurs($0, on: day, calendar: calendar) }
     }
 
     func hasItems(on day: Date, calendar: Calendar) -> Bool {
         !items(on: day, calendar: calendar).isEmpty
     }
 
-    private func recomputeNextEvent() {
-        let now = Date()
-        nextEvent = Self.nextEvent(in: items, now: now)
-        runningEvent = Self.runningEvent(in: items, now: now,
-                                         calendar: .current,
-                                         maxHours: Self.maxRunningHours)
-    }
-
-    /// Der nächste noch nicht begonnene Termin.
-    ///
-    /// Bei gleicher Startzeit gewinnt der **kürzere**: „P&O 10:00–10:30" ist
-    /// konkreter als „Abfrage 10:00–12:00". Ein `items.first` nahm hier, was
-    /// EventKit zufällig zuerst lieferte.
-    ///
-    /// `now` wird übergeben statt intern gelesen, damit die Entscheidung ohne
-    /// Uhr und ohne EventKit prüfbar ist.
-    nonisolated static func nextEvent(in items: [AgendaItem], now: Date) -> AgendaItem? {
-        items
-            .filter { item in
-                guard case .event = item.kind, !item.isAllDay,
-                      let start = item.start else { return false }
-                return start > now
-            }
-            .min { lhs, rhs in
-                let ls = lhs.start ?? .distantFuture
-                let rs = rhs.start ?? .distantFuture
-                if ls != rs { return ls < rs }
-                return (lhs.end ?? .distantFuture) < (rhs.end ?? .distantFuture)
-            }
-    }
-
-    /// Der laufende Termin für die Fortschrittsanzeige.
-    ///
-    /// Vier Einschränkungen, jede aus einem echten Befund:
-    ///   1. Ganztägige laufen per Definition den ganzen Tag — ein Fortschritt
-    ///      daran wäre die Uhrzeit, keine Information über den Termin.
-    ///   2. Der Termin muss **am selben Tag wie `now`** begonnen haben.
-    ///      `start <= now && end > now` ist formal richtig, trifft aber auch
-    ///      mehrtägige Termine, deren Ende zufällig in der Zukunft liegt
-    ///      (Befund 2026-09-21: ein Termin von *gestern* galt als laufend).
-    ///   3. Termine über `maxHours` sind eher Zustände als Termine (Urlaub,
-    ///      Bereitschaft) — ein Prozentwert darauf ist Rauschen.
-    ///   4. Laufen **mehrere** gleichzeitig, gewinnt der, der **zuerst endet**.
-    ///      `items.first` nahm den frühesten Start — und damit bei
-    ///      „Praxis 08:00–16:00" acht Stunden lang die Praxis, obwohl um 10:00
-    ///      ein 30-Minuten-Termin darin lag (Befund 2026-09-22). Wer wissen
-    ///      will, wann er wieder frei ist, meint den nächsten Endzeitpunkt.
-    ///
-    /// Zu 2.: Der Vergleich läuft gegen `now`, nicht gegen `isDateInToday`.
-    /// Letzteres fragt die Systemuhr und wäre in einem Test mit fest gesetztem
-    /// `now` nicht prüfbar — in der Anwendung sind beide identisch.
-    nonisolated static func runningEvent(in items: [AgendaItem], now: Date,
-                                         calendar: Calendar, maxHours: Double) -> AgendaItem? {
-        items
-            .filter { item in
-                guard case .event = item.kind, !item.isAllDay,
-                      let start = item.start, let end = item.end else { return false }
-                guard start <= now, end > now else { return false }
-                guard calendar.isDate(start, inSameDayAs: now) else { return false }
-                return end.timeIntervalSince(start) <= maxHours * 3600
-            }
-            .min { ($0.end ?? .distantFuture) < ($1.end ?? .distantFuture) }
+    private func recomputeNextEvent(now: Date = Date()) {
+        // `barItems`, nicht `items` — siehe dort (K-C5).
+        (nextEvent, runningEvent) = Self.barState(from: barItems, now: now)
     }
 
     /// Lädt beim App-Start — aber nur, wenn die Berechtigung schon erteilt ist.
@@ -617,5 +604,14 @@ final class CalendarStore {
     }
 
     /// Von außen aufrufbar, damit der Menüleisten-Text mitwandert, ohne alles neu zu laden.
-    func refreshNextEvent() { recomputeNextEvent() }
+    func refreshNextEvent(now: Date = Date()) { recomputeNextEvent(now: now) }
+
+    #if DEBUG
+    /// Nur für Tests: beide Listen setzen, ohne EventKit. Damit prüfbar ist,
+    /// dass die Leiste aus `barItems` rechnet und nicht aus `items`.
+    func setListsForTesting(items: [AgendaItem], barItems: [AgendaItem]) {
+        self.items = items
+        self.barItems = barItems
+    }
+    #endif
 }

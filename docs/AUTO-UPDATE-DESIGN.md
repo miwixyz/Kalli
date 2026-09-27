@@ -53,7 +53,7 @@ Drei Grenzüberschreitungen, drei Kontrollpunkte:
 | Grenze | Was sie trägt | Kontrolle |
 |---|---|---|
 App → Appcast | XML, vollständig angreifergesteuert, falls der Kanal fällt | EdDSA-Signatur **pro Archiv**; TLS; kein `eval`-Pfad in XML |
-App → Release-Asset | ZIP, ausführbarer Inhalt | EdDSA-Signatur **und** Developer-ID-Signatur, beide von Sparkle geprüft |
+App → Release-Asset | ZIP, ausführbarer Inhalt | EdDSA-Signatur (Pflicht, vor dem Entpacken) und unversehrte Code-Signatur — siehe STRIDE „Tampering" |
 Entwickler-Mac → Kanal | Signatur + Veröffentlichung | Schlüsselbund; GitHub-Konto mit 2FA |
 
 ---
@@ -197,8 +197,15 @@ Ohne ihn gibt es keinen Weg, eine Prüfung willentlich auszulösen.
 
 ### App → Release-Asset (Netz)
 
-- **Tampering:** Bösartiges ZIP → EdDSA-Prüfung **und** Developer-ID-Prüfung.
-  Zwei unabhängige Vertrauensanker; ein Angreifer bräuchte beide Schlüssel.
+- **Tampering:** Bösartiges ZIP → EdDSA-Prüfung und Code-Signatur-Prüfung.
+  **Korrigiert 2026-09-27 (Audit-Fund K-S4):** Hier stand „ein Angreifer
+  bräuchte beide Schlüssel". Sparkle 2.10 akzeptiert ohne weitere Einstellung,
+  wenn **eine** der beiden Prüfungen besteht (`SUUpdateValidator.m`: „Either
+  DSA must be valid, or Apple Code Signing must be valid") — für
+  Schlüsselwechsel. Seit `SUVerifyUpdateBeforeExtraction = YES` ist die
+  EdDSA-Signatur für ZIP-Updates Pflicht (geprüft vor dem Entpacken); die
+  Code-Signatur muss unversehrt sein, aber nicht vom selben Zertifikat stammen.
+  Wirksam ab Updates **aus** der ersten Version mit diesem Schlüssel.
 - **Elevation of privilege:** Das Ersetzen der App ist der Übernahmepunkt.
   Gegenprüfung in der Umsetzung: Sparkle darf **nicht** mit erhöhten Rechten
   laufen, kein Installer-Skript, kein `pkg` — nur App-Ersetzung.

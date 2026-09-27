@@ -96,4 +96,50 @@ final class AlertCandidateTests: XCTestCase {
     func testEmptyHorizonYieldsNothing() {
         XCTAssertTrue(EventAlerts.candidates(in: [], now: now, lead: lead).isEmpty)
     }
+
+    // MARK: - Aufräumen (Audit-Fund K-C3, 2026-09-27)
+
+    private func pendingID(_ item: AgendaItem) -> String { EventAlerts.prefix + item.id }
+
+    /// Der Fund: Ein Termin bekommt nachträglich einen eigenen Kalender-Alarm.
+    /// Er steht weiter im Horizont — bis 2026-09-27 galt er damit als „bekannt",
+    /// Kallis Mitteilung blieb stehen, und es klingelte doch zweimal.
+    func testEventThatGainedOwnAlarmIsCleanedUp() {
+        let armed = Fixture.event(id: "A", start: Fixture.at(60), end: Fixture.at(90), hasAlarms: true)
+
+        let stale = EventAlerts.staleIdentifiers(pending: [pendingID(armed)], horizon: [armed])
+
+        XCTAssertEqual(stale, [pendingID(armed)])
+    }
+
+    func testEventThatBecameAllDayIsCleanedUp() {
+        let allDay = Fixture.event(id: "B", start: Fixture.at(60), end: Fixture.at(600), isAllDay: true)
+
+        XCTAssertEqual(EventAlerts.staleIdentifiers(pending: [pendingID(allDay)], horizon: [allDay]),
+                       [pendingID(allDay)])
+    }
+
+    /// Termin aus dem Horizont verschwunden (gelöscht, verschoben, Kalender
+    /// ausgeblendet — ausgeblendete fragt fetchEvents gar nicht erst ab).
+    func testVanishedEventIsCleanedUp() {
+        XCTAssertEqual(EventAlerts.staleIdentifiers(pending: [EventAlerts.prefix + "weg"], horizon: []),
+                       [EventAlerts.prefix + "weg"])
+    }
+
+    /// Die alte Regel bleibt: **Nie eine bereits fällige Mitteilung
+    /// abräumen.** Ein berechtigter Termin, dessen Vorlauf schon begonnen hat,
+    /// ist kein Kandidat mehr — seine Mitteilung bleibt trotzdem stehen.
+    func testEligibleEventInsideLeadWindowIsKept() {
+        let soon = Fixture.event(id: "C", start: Fixture.at(5), end: Fixture.at(35))
+
+        XCTAssertTrue(EventAlerts.candidates(in: [soon], now: now, lead: lead).isEmpty,
+                      "Vorbedingung: der Termin ist kein Kandidat mehr")
+        XCTAssertTrue(EventAlerts.staleIdentifiers(pending: [pendingID(soon)], horizon: [soon]).isEmpty)
+    }
+
+    /// Fremde Mitteilungen (z. B. die Update-Erinnerung) sind tabu.
+    func testForeignIdentifiersAreNeverTouched() {
+        XCTAssertTrue(EventAlerts.staleIdentifiers(pending: [Updater.erinnerungsID, "fremd"],
+                                                   horizon: []).isEmpty)
+    }
 }

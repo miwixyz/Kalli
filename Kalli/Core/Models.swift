@@ -54,6 +54,9 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     /// Kalli meldet dann nicht zusaetzlich. Zwei Klingeln fuer denselben Termin
     /// sind kein doppelter Hinweis, sondern einer, dem man nicht mehr glaubt.
     let hasAlarms: Bool
+    /// Wiederkehrende Erinnerung? Dann bietet die Tagesliste kein „Rückgängig"
+    /// an — siehe `CalendarStore.completionConfirmed` (K-C9).
+    var isRecurring: Bool = false
 
     var isReminder: Bool {
         if case .reminder = kind { return true }

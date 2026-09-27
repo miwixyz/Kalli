@@ -43,8 +43,13 @@ struct KalliApp: App {
                     CalendarStore.logPopoverOpened(canPrompt: store.canPrompt)
                     if store.canPrompt {
                         await store.requestAccess()
-                        label.update()
+                    } else {
+                        // Zwischendurch in den Systemeinstellungen erteilt oder
+                        // entzogen? Frisch lesen statt bis zum Neustart falsch
+                        // anzeigen (Audit-Fund K-C7).
+                        await store.refreshAccess()
                     }
+                    label.update()
                 }
         } label: {
             // Symbol IMMER zeichnen. Ein reines Text-Label verschwindet

@@ -16,9 +16,15 @@
 #      die Doku überhaupt bewegt, während der Code es tat? Über den Inhalt
 #      urteilt es nicht — das kann kein Script.
 #
-# Jede Regel darf übergangen werden, aber nur laut:
+# Jede Regel darf übergangen werden, aber nur laut — vor demselben Befehl,
+# der das Gate ausgelöst hat:
 #
-#   DOCS_WAIVER="Grund" make install
+#   DOCS_WAIVER="Grund" make release
+#   DOCS_WAIVER="Grund" make install   # nur ohne Release-Kalli in /Applications
+#
+# `make install` verweigert seit 2026-09-27 das Überschreiben einer
+# Developer-ID-signierten Kalli (install-guard im Makefile) — ein Waiver für
+# dieses Gate hebt das nicht auf.
 #
 # Der Grund landet in der Ausgabe. Ein übersprungenes Gate hinterlässt damit
 # eine Spur statt Stille.
@@ -76,7 +82,7 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
             note "❌ $CHANGED Swift-Datei(en) geändert, seit die Doku zuletzt angefasst wurde"
             git diff --name-only "$LAST_DOC"..HEAD -- '*.swift' 2>/dev/null | sed 's/^/     /' | head -8
             note "   → ZU TUN: CHANGELOG-Eintrag ergänzen, oder HILFE.md prüfen."
-            note "   → Oder bewusst übergehen: DOCS_WAIVER=\"Grund\" make install"
+            note "   → Oder bewusst übergehen: DOCS_WAIVER=\"Grund\" vor denselben Befehl (make release / make install)"
             FAIL=1
         else
             note "✓ Doku ist so aktuell wie der Code"
@@ -106,6 +112,7 @@ if [ -n "${DOCS_WAIVER:-}" ]; then
     exit 0
 fi
 
-echo "🚫 Doku-Gate nicht bestanden. Installation abgebrochen."
-echo "   Bewusst übergehen: DOCS_WAIVER=\"Grund\" make install"
+echo "🚫 Doku-Gate nicht bestanden. Abgebrochen."
+echo "   Bewusst übergehen: DOCS_WAIVER=\"Grund\" vor denselben Befehl (make release / make install)."
+echo "   make install läuft nur, wenn in /Applications keine Release-Kalli liegt."
 exit 1

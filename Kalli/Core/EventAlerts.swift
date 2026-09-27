@@ -27,7 +27,7 @@ final class EventAlerts {
 
     /// Alles, was Kalli plant, traegt dieses Praefix. Damit lassen sich eigene
     /// Mitteilungen von fremden unterscheiden, ohne eine Liste zu fuehren.
-    private static let prefix = "kalli.termin."
+    nonisolated static let prefix = "kalli.termin."
 
     private let center = UNUserNotificationCenter.current()
     private let presenter = Presenter()
@@ -91,11 +91,14 @@ final class EventAlerts {
     /// Bringt die geplanten Mitteilungen auf den Stand der übergebenen Termine.
     ///
     /// Idempotent: Mehrfaches Aufrufen mit denselben Terminen ändert nichts.
-    /// Wird minütlich aufgerufen — deshalb ist die Regel wichtig, **nie** eine
-    /// bereits fällige Mitteilung abzuräumen: Ein Entfernen um 09:59:59 und ein
-    /// Neuplanen mit einem Auslöser in der Vergangenheit hieße, dass sie nie
-    /// erscheint. Entfernt wird ausschließlich, was zu einem Termin gehört, den
-    /// es nicht mehr gibt.
+    /// Aufgerufen über `CalendarStore.refreshBar()` — bei jedem `reload()`
+    /// (EventKit-Änderungen, Popover-Navigation, Aufwachen, Tageswechsel) und
+    /// stündlich aus dem Minutentimer der Leiste. (Bis 2026-09-27 stand hier „minütlich";
+    /// das stimmte nie — Audit-Fund K-C4.) Weil es jederzeit laufen kann, ist
+    /// die Regel wichtig, **nie** eine bereits fällige Mitteilung abzuräumen:
+    /// Ein Entfernen um 09:59:59 und ein Neuplanen mit einem Auslöser in der
+    /// Vergangenheit hieße, dass sie nie erscheint. Entfernt wird
+    /// ausschließlich, was zu keinem meldeberechtigten Termin mehr gehört.
     /// `horizon` muss die Termine der **nächsten 24 Stunden** sein, eigens
     /// abgefragt — nicht die Liste, die die Oberfläche gerade anzeigt.
     ///
@@ -103,10 +106,22 @@ final class EventAlerts {
     /// Oberflächen-Liste genügte ein Klick auf „nächster Monat", damit die
     /// heutigen Termine fehlten, als gelöscht galten und ihre bereits geplanten
     /// Mitteilungen entfernt wurden. Das Feature schaltete sich still ab.
-    func sync(horizon: [AgendaItem], enabled: Bool, leadMinutes: Int) async {
+    ///
+    /// Gibt zurück, ob geplant werden **durfte**. `false` heißt: eingeschaltet,
+    /// aber macOS erlaubt keine Mitteilungen (Audit-Fund K-C11) — bis
+    /// 2026-09-27 wurde das nur beim Einschalten geprüft, danach still ins
+    /// Leere geplant.
+    @discardableResult
+    func sync(horizon: [AgendaItem], enabled: Bool, leadMinutes: Int) async -> Bool {
         guard enabled else {
             await removeAll()
-            return
+            return true
+        }
+
+        guard await isAuthorized() else {
+            // Kein Termininhalt im Protokoll — nur der Zustand.
+            Self.log.notice("Mitteilungen eingeschaltet, aber von macOS nicht erlaubt — nichts geplant")
+            return false
         }
 
         let now = Date()
@@ -114,14 +129,8 @@ final class EventAlerts {
 
         let candidates = Self.candidates(in: horizon, now: now, lead: lead)
 
-        // Aufräumen gegen den Horizont: Was dort nicht mehr vorkommt, gibt es
-        // nicht mehr (abgesagt, verschoben, Kalender ausgeblendet) oder hat
-        // längst begonnen. Beides heißt: die geplante Mitteilung ist gegenstandslos.
-        let known = Set(horizon.map { Self.prefix + $0.id })
         let pending = await center.pendingNotificationRequests()
-        let stale = pending
-            .map(\.identifier)
-            .filter { $0.hasPrefix(Self.prefix) && !known.contains($0) }
+        let stale = Self.staleIdentifiers(pending: pending.map(\.identifier), horizon: horizon)
         if !stale.isEmpty {
             center.removePendingNotificationRequests(withIdentifiers: stale)
             Self.log.notice("\(stale.count, privacy: .public) gegenstandslose Mitteilung(en) abgeräumt")
@@ -133,6 +142,32 @@ final class EventAlerts {
         }
 
         Self.log.notice("Geplant: \(candidates.count, privacy: .public) Mitteilung(en), Vorlauf \(leadMinutes, privacy: .public) Min., Horizont \(horizon.count, privacy: .public) Termin(e)")
+        return true
+    }
+
+    /// Darf dieser Termin überhaupt eine Mitteilung bekommen — unabhängig vom
+    /// Zeitpunkt? Gemeinsame Grundlage für Planen und Aufräumen.
+    nonisolated static func isEligible(_ item: AgendaItem) -> Bool {
+        guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
+              item.start != nil else { return false }
+        return true
+    }
+
+    /// Welche geplanten Kalli-Mitteilungen gegenstandslos sind.
+    ///
+    /// „Bekannt" ist nur, was **meldeberechtigt** ist — nicht alles im
+    /// Horizont. Bis 2026-09-27 zählte der ganze Horizont (Audit-Fund K-C3):
+    /// Bekam ein Termin nachträglich einen eigenen Kalender-Alarm oder wurde er
+    /// ganztägig, blieb Kallis Mitteilung stehen — es klingelte doch zweimal.
+    ///
+    /// Bewusst **nicht** gegen `candidates` geprüft: Ein berechtigter Termin,
+    /// dessen Vorlauf gerade begonnen hat, ist kein Kandidat mehr, seine
+    /// Mitteilung aber womöglich fällig. Die bleibt stehen.
+    /// Sichtbarkeit des Kalenders steckt im Horizont selbst: ausgeblendete
+    /// Kalender fragt `fetchEvents` gar nicht erst ab.
+    nonisolated static func staleIdentifiers(pending: [String], horizon: [AgendaItem]) -> [String] {
+        let known = Set(horizon.filter(isEligible).map { prefix + $0.id })
+        return pending.filter { $0.hasPrefix(prefix) && !known.contains($0) }
     }
 
     /// Welche Termine eine Mitteilung bekommen.
@@ -147,8 +182,7 @@ final class EventAlerts {
     nonisolated static func candidates(in horizon: [AgendaItem], now: Date,
                                        lead: TimeInterval) -> [AgendaItem] {
         horizon.filter { item in
-            guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
-                  let start = item.start else { return false }
+            guard isEligible(item), let start = item.start else { return false }
             return start.addingTimeInterval(-lead) > now
         }
     }
@@ -186,8 +220,10 @@ final class EventAlerts {
         } catch {
             // Nicht schlucken. Eine Mitteilung, die stumm nicht geplant wurde,
             // ist schlimmer als keine — man verlässt sich darauf.
+            // Titel `.private`: Termininhalte gehören nicht lesbar ins
+            // Systemprotokoll (Audit-Fund K-S1). Der Fehlertext reicht zur Diagnose.
             Self.log.error("""
-                Planen fehlgeschlagen für \(item.title, privacy: .public): \
+                Planen fehlgeschlagen für \(item.title, privacy: .private): \
                 \(error.localizedDescription, privacy: .public)
                 """)
         }

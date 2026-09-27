@@ -1,5 +1,40 @@
 import SwiftUI
 
+/// Welche Tage das Monatsraster zeigt — **eine** Stelle für Raster und Ladebereich.
+///
+/// Audit-Fund K-C1 (2026-09-27): `CalendarStore.load` lud „Monat ±7 Tage", das
+/// Raster zeigt aber 42 Tage ab Wochenbeginn. Im September 2026 fehlten damit
+/// 08.–11.10., im Februar 2027 08.–14.03.: sichtbare Tage ohne Punkt und mit
+/// leerer Tagesliste. Zwei Formeln für dieselbe Frage laufen auseinander — also
+/// eine.
+enum MonthRaster {
+    /// 6 Wochen × 7 Tage, fest — damit das Popover nicht in der Höhe springt.
+    static let dayCount = 42
+
+    /// Die 42 Tage ab Beginn der Woche, in der der Monat beginnt.
+    static func days(for month: Date, calendar: Calendar) -> [Date] {
+        guard let interval = calendar.dateInterval(of: .month, for: month),
+              let firstWeek = calendar.dateInterval(of: .weekOfMonth, for: interval.start)
+        else { return [] }
+
+        var days: [Date] = []
+        var cursor = firstWeek.start
+        for _ in 0..<dayCount {
+            days.append(cursor)
+            cursor = calendar.date(byAdding: .day, value: 1, to: cursor) ?? cursor
+        }
+        return days
+    }
+
+    /// Vom ersten Rastertag 00:00 bis zum Tag nach dem letzten, 00:00.
+    static func interval(for month: Date, calendar: Calendar) -> DateInterval? {
+        let days = days(for: month, calendar: calendar)
+        guard let first = days.first, let last = days.last,
+              let end = calendar.date(byAdding: .day, value: 1, to: last) else { return nil }
+        return DateInterval(start: first, end: end)
+    }
+}
+
 /// Monatsraster. Immer sechs Zeilen, damit das Popover beim Monatswechsel nicht
 /// in der Höhe springt.
 struct MonthGrid: View {
@@ -16,17 +51,9 @@ struct MonthGrid: View {
     private var weekW: CGFloat { 30 * scale }
 
     private var weeks: [[Date]] {
-        guard let interval = calendar.dateInterval(of: .month, for: month),
-              let firstWeek = calendar.dateInterval(of: .weekOfMonth, for: interval.start)
-        else { return [] }
-
-        var days: [Date] = []
-        var cursor = firstWeek.start
-        for _ in 0..<42 {                      // 6 Wochen × 7 Tage, fest
-            days.append(cursor)
-            cursor = calendar.date(byAdding: .day, value: 1, to: cursor) ?? cursor
-        }
-        return stride(from: 0, to: 42, by: 7).map { Array(days[$0..<$0 + 7]) }
+        let days = MonthRaster.days(for: month, calendar: calendar)
+        guard days.count == MonthRaster.dayCount else { return [] }
+        return stride(from: 0, to: MonthRaster.dayCount, by: 7).map { Array(days[$0..<$0 + 7]) }
     }
 
     private var weekdaySymbols: [String] {

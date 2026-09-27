@@ -188,6 +188,9 @@ final class Preferences {
     /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.
     /// Die App liefe weiter, wäre aber nicht mehr auffindbar. Genau das ist am
     /// 2026-09-21 passiert, bevor es das Symbol gab.
+    ///
+    /// Nur die Schalter-Sicht (für den Hinweis in den Einstellungen). Den Fall
+    /// „Schalter an, Text trotzdem leer" fängt `MenuBarLabel.showsIcon`.
     var menuBarWouldBeEmpty: Bool { !showIconInMenuBar && !showDateInMenuBar }
 
     func isHidden(_ id: String) -> Bool { hiddenSourceIDs.contains(id) }

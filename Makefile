@@ -1,4 +1,4 @@
-.PHONY: docs gen build run install clean check-docs release release-dry-run test lock lint
+.PHONY: docs gen build run install install-guard clean check-docs release release-dry-run test lock lint
 
 APP = Kalli
 CONFIG ?= Debug
@@ -41,14 +41,36 @@ run: build
 	codesign --force --deep --sign - $(DERIVED)/Build/Products/$(CONFIG)/$(APP).app
 	open $(DERIVED)/Build/Products/$(CONFIG)/$(APP).app
 
-# Autostart (SMAppService) verlangt einen festen Ort und eine stabile Signatur.
-# Aus dem build-Ordner heraus vergisst macOS die Registrierung beim nächsten Build.
 # Reihenfolge ist wesentlich: Erst spiegeln, dann pruefen. Andersherum prueft
 # das Gate gegen einen Zustand, den es selbst noch nicht hergestellt hat.
 check-docs: docs
 	@bash scripts/docs-gate.sh
 
-install: check-docs build
+# make install -- NUR fuer Entwicklungs-Macs ohne Release-Kalli.
+#
+# Autostart (SMAppService) verlangt einen festen Ort; aus dem build-Ordner heraus
+# vergisst macOS die Registrierung beim naechsten Build. Die Signatur hier ist
+# aber AD-HOC und ohne Hardened Runtime -- sie aendert sich mit jedem Build, TCC
+# fragt danach ggf. neu. (Bis 2026-09-27 stand hier "stabile Signatur" -- falsch,
+# Audit-Fund K-St1.)
+#
+# Deshalb bricht install ab, wenn in /Applications eine Developer-ID-signierte
+# Kalli liegt: Sie wuerde durch einen ad-hoc-Build ersetzt (andere TCC-Identitaet,
+# kein Hardened Runtime), und ein wartendes Sparkle-Update koennte ihn beim
+# Beenden wieder ueberschreiben. Auf solchen Macs: Updates ueber den Knopf
+# "Updates" bzw. `make release`. Bewusst trotzdem: die Release-Kalli erst selbst
+# aus /Applications entfernen.
+install-guard:
+	@if [ -d "$(DEST)" ] && codesign -dv --verbose=2 "$(DEST)" 2>&1 | grep -q "^Authority=Developer ID Application"; then \
+		echo "✗ In $(DEST) liegt eine Developer-ID-signierte Kalli (Release)."; \
+		echo "  make install wuerde sie durch einen ad-hoc-signierten Build ersetzen."; \
+		echo "  → Aktualisieren ueber den Knopf \"Updates\" im Popover bzw. make release."; \
+		echo "  → Bewusst ersetzen: Release-Kalli zuerst selbst aus /Applications entfernen."; \
+		exit 1; \
+	fi
+
+# Waechter zuerst: bricht ab, bevor gebaut wird.
+install: install-guard check-docs build
 	@pkill -x $(APP) || true
 	@test -d "$(DEST)" && rm -rf "$(DEST)" || true
 	cp -R $(DERIVED)/Build/Products/$(CONFIG)/$(APP).app /Applications/
@@ -87,7 +109,7 @@ release-dry-run:
 	@echo "VERSION:        $$(awk -F'\"' '/MARKETING_VERSION:/ { print $$2; exit }' project.yml)"
 	@printf "NOTARY_PROFILE: "; for c in $${NOTARY_PROFILE:-} kalli-notary notary tippi-notary; do if [ -n "$$c" ] && xcrun notarytool history --keychain-profile "$$c" >/dev/null 2>&1; then echo "$$c"; break; fi; done
 	@printf "DEVELOPER_ID:   "; security find-identity -v -p codesigning | awk -F'\"' '/Developer ID Application/ { print $$2; exit }'
-	@git diff --quiet && git diff --cached --quiet && echo "Arbeitsbaum:    sauber" || echo "Arbeitsbaum:    NICHT sauber"
+	@[ -z "$$(git status --porcelain)" ] && echo "Arbeitsbaum:    sauber" || echo "Arbeitsbaum:    NICHT sauber (inkl. ungetrackter Dateien)"
 
 clean:
 	rm -rf $(DERIVED) $(APP).xcodeproj

@@ -55,16 +55,23 @@ Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
 
 ```bash
 make build     # xcodegen + xcodebuild
-make test      # 43 Tests, unter einer Sekunde
+make test      # 81 Tests, unter einer Sekunde
 make run       # bauen und aus dem build-Ordner starten
-make install   # nach /Applications legen und starten
+make install   # nach /Applications legen und starten (nicht über eine Release-Kalli)
 ```
 
 **`make install` ist nicht optional, wenn du den Autostart willst.**
-`SMAppService` verlangt eine App an einem festen Ort mit stabiler Signatur.
-Aus `build/` heraus vergisst macOS die Registrierung beim nächsten Build —
-der Schalter zeigt das dann ehrlich als „nicht verfügbar" an, statt Erfolg
-zu behaupten.
+`SMAppService` verlangt eine App an einem festen Ort. Aus `build/` heraus
+vergisst macOS die Registrierung beim nächsten Build — der Schalter zeigt das
+dann ehrlich als „nicht verfügbar" an, statt Erfolg zu behaupten.
+
+Die Signatur von `make install` ist **ad-hoc und ohne Hardened Runtime** — sie
+ändert sich mit jedem Build. Liegt in `/Applications` bereits eine
+**Developer-ID-signierte** Kalli (ein Release), bricht `make install` deshalb ab,
+statt sie zu ersetzen: andere TCC-Identität, und ein wartendes Sparkle-Update
+könnte den Build beim Beenden wieder überschreiben. Dort aktualisiert man über
+den Knopf „Updates"; wer bewusst ersetzen will, entfernt die Release-Kalli
+vorher selbst.
 
 Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 
@@ -114,7 +121,7 @@ ein verschobener Tag würde damit auffallen.
 make test
 ```
 
-43 Tests, `KalliTests/`. Sie prüfen **ausschließlich reine Entscheidungslogik** —
+81 Tests, `KalliTests/`. Sie prüfen **ausschließlich reine Entscheidungslogik** —
 welcher Termin in die Leiste kommt, welcher eine Mitteilung bekommt, wie
 Beschriftungen und Kennungen gebildet werden. Kein EventKit, keine
 Berechtigungen, keine Systemuhr: Jede geprüfte Funktion bekommt `now`
@@ -169,7 +176,7 @@ Tag fünf Versionen hinterher.
 
 ### Das Doku-Gate
 
-`make install` läuft nicht, wenn die Doku dem Code hinterherhinkt:
+`make install` und `make release` laufen nicht, wenn die Doku dem Code hinterherhinkt:
 
 ```bash
 bash scripts/docs-gate.sh
@@ -185,7 +192,8 @@ Geprüft wird, was maschinell prüfbar ist — nicht, ob die Prosa gut ist:
 Bewusst übergehen geht — aber nur laut, und die Begründung landet in der Ausgabe:
 
 ```bash
-DOCS_WAIVER="nur Formatierung" make install
+DOCS_WAIVER="nur Formatierung" make release
+DOCS_WAIVER="nur Formatierung" make install   # nur ohne Release-Kalli in /Applications
 ```
 
 Beim allerersten Lauf hat das Gate sofort eine fehlende `LICENSE` gefunden, die
@@ -258,13 +266,19 @@ Kalli aktualisiert sich über **Sparkle** — aber nur, wenn du es erlaubst.
   eines von beiden öffnet das Update-Fenster vorn. Seit 0.4.9.
 - **Zwei Signaturen** werden geprüft, bevor etwas ersetzt wird: die
   EdDSA-Signatur des Archivs gegen den in der App eingebauten öffentlichen
-  Schlüssel, und Apples Developer-ID-Signatur. Schlägt eine fehl, bricht
-  Sparkle ab.
+  Schlüssel, und Apples Developer-ID-Signatur. **Nicht** „schlägt eine fehl,
+  bricht Sparkle ab" — so stand es hier bis 0.4.9, und es war falsch: Sparkle
+  akzeptiert, wenn eine der beiden besteht (für Schlüsselwechsel). Deshalb setzt
+  Kalli seitdem `SUVerifyUpdateBeforeExtraction`: Die EdDSA-Signatur ist für
+  ZIP-Updates Pflicht und wird vor dem Entpacken geprüft; die Code-Signatur
+  muss unversehrt sein, darf aber von einem anderen Zertifikat stammen. Wirksam
+  für Updates **aus** der ersten Version mit diesem Schlüssel heraus.
 - Der **Appcast liegt im Repo** (`appcast.xml`), nicht in einem Gist: Jede
   Änderung daran ist damit ein öffentlicher, datierter Commit — die billigste
   Manipulationserkennung, die zu haben ist.
 
-Auf dem Entwicklungs-Mac weiterhin: `git pull && make install`.
+Auf einem Entwicklungs-Mac **ohne** Release-Kalli weiterhin: `git pull && make install`.
+Liegt dort ein Release, verweigert `make install` das Überschreiben (siehe **Bauen**).
 
 Vollständiger Sicherheitsentwurf — Datenflussdiagramm, STRIDE je
 Vertrauensgrenze, Missbrauchsfälle, verworfene Alternativen und die bewusst

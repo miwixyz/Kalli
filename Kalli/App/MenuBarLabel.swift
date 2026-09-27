@@ -20,6 +20,7 @@ final class MenuBarLabel {
     private let prefs: Preferences
     private let store: CalendarStore
     private var timer: Timer?
+    private var minuteTicks = 0
 
     private let dateFormatter = DateFormatter()
     private let weekdayFormatter: DateFormatter = {
@@ -45,8 +46,18 @@ final class MenuBarLabel {
         // schneller. Sekundengenaues Ticken würde nur Strom kosten.
         let t = Timer(timeInterval: 60, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.store.refreshNextEvent()
-                self?.update()
+                guard let self else { return }
+                // Stündlich neu abfragen: Das Leisten-Fenster (jetzt −12 h …
+                // +24 h) wandert mit, und die Mitteilungen werden neu geplant.
+                // Ohne das hing beides allein an EventKit-Änderungen und
+                // Popover-Navigation (Audit-Fund K-C4). Nur Leiste und
+                // Mitteilungen — der Popover-Monat ändert sich davon nicht.
+                self.minuteTicks += 1
+                if self.minuteTicks % 60 == 0 {
+                    await self.store.refreshBar()
+                }
+                self.store.refreshNextEvent()
+                self.update()
             }
         }
         t.tolerance = 10
@@ -86,7 +97,6 @@ final class MenuBarLabel {
         }
 
         var parts: [String] = []
-        showIcon = prefs.showIconInMenuBar || prefs.menuBarWouldBeEmpty
         if prefs.showDateInMenuBar {
             dateFormatter.dateFormat = prefs.menuBarDateFormat
             parts.append(dateFormatter.string(from: now))
@@ -110,7 +120,19 @@ final class MenuBarLabel {
         // Der Puls steht ganz vorn, damit er auch bei ausgeschaltetem Datum
         // und ausgeschaltetem Termintext noch sichtbar ist.
         text = pulseMarker() + parts.joined(separator: " ")
+        showIcon = Self.showsIcon(preferred: prefs.showIconInMenuBar || prefs.menuBarWouldBeEmpty,
+                                  text: text)
         syncPulseTimer()
+    }
+
+    /// Symbol zeigen, wenn gewünscht — **oder wenn sonst nichts übrig bliebe**.
+    ///
+    /// Audit-Fund K-C8 (2026-09-27): Der Schutz prüfte nur die Schalter
+    /// (`menuBarWouldBeEmpty`). Symbol aus, Datum an, aber ein leeres oder nur
+    /// aus Leerzeichen bestehendes Datumsformat — und der Eintrag war leer,
+    /// also unsichtbar. Maßgeblich ist der Text, der tatsächlich entsteht.
+    nonisolated static func showsIcon(preferred: Bool, text: String) -> Bool {
+        preferred || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Welcher Termintext gehört in die Leiste — oder **keiner**.

@@ -316,7 +316,9 @@ private struct MenuBarSection: View {
                 }
             }
 
-        if notificationDenied {
+        // Zweiter Fall: Erlaubnis war da und wurde später in den
+        // Systemeinstellungen entzogen — `syncAlerts` meldet es (K-C11).
+        if notificationDenied || (prefs.notifyBeforeNextEvent && store.notificationsBlocked) {
             Label("Mitteilungen sind für Kalli nicht erlaubt. "
                   + "→ Systemeinstellungen › Mitteilungen › Kalli",
                   systemImage: "exclamationmark.triangle")
@@ -387,8 +389,8 @@ private struct PopoverSection: View {
         Toggle("Fortschritt laufender Termine", isOn: $prefs.showRunningProgress)
             .onChange(of: prefs.showRunningProgress) { label.update() }
         Text("Balken im Popover, Restzeit in der Menüleiste. Nur für Termine, die "
-             + "heute begonnen haben und unter 12 Stunden dauern — bei mehrtägigen "
-             + "sagt ein Prozentwert nichts.")
+             + "gerade laufen und höchstens 12 Stunden dauern — auch über Mitternacht. "
+             + "Bei mehrtägigen sagt ein Prozentwert nichts.")
             .font(.caption2)
             .foregroundStyle(.secondary)
 

@@ -13,14 +13,28 @@ import UserNotifications
 /// Kein Tracking, keine Kennung, aber Verkehr, wo vorher keiner war. Deshalb
 /// steht es in `RECHTLICHES.md` und in der Hilfe, nicht nur hier.
 ///
-/// **Zwei Vertrauensanker, beide von Sparkle geprüft**, bevor irgendetwas
-/// ersetzt wird:
-///   1. **EdDSA-Signatur** des Archivs gegen `SUPublicEDKey` aus der
-///      `Info.plist`. Der private Teil liegt ausschließlich im Login-
-///      Schlüsselbund des Entwickler-Macs, nie im Repo.
-///   2. **Developer-ID-Signatur** des entpackten Bundles.
-/// Ein Angreifer bräuchte beide Schlüssel. Ein manipulierter Appcast allein
-/// liefert nichts aus.
+/// **Zwei Signaturen, von Sparkle geprüft**, bevor irgendetwas ersetzt wird:
+///   1. **EdDSA-Signatur** des Archivs (`sparkle:edSignature` im Appcast)
+///      gegen `SUPublicEDKey` aus der `Info.plist`. Der private Teil liegt
+///      ausschließlich im Login-Schlüsselbund des Entwickler-Macs, nie im Repo.
+///   2. **Code-Signatur** des entpackten Bundles (Developer ID).
+///
+/// **Das sind keine zwei Schlösser, die beide aufgehen müssen.** Bis
+/// 2026-09-27 stand hier „ein Angreifer bräuchte beide Schlüssel" — falsch
+/// (Audit-Fund K-S4). Sparkle 2.10, `SUUpdateValidator.m`: „Either DSA must be
+/// valid, or Apple Code Signing must be valid. We allow failure of one of them,
+/// because this allows key rotation." Ohne weitere Einstellung genügte also
+/// **einer** der beiden Schlüssel.
+///
+/// Deshalb `SUVerifyUpdateBeforeExtraction = YES` (Info.plist): Die
+/// EdDSA-Signatur wird **vor dem Entpacken** geprüft und ist für Kallis ZIPs
+/// damit Pflicht — der Rückfall auf Developer ID greift laut Sparkle-Doku nur
+/// bei Developer-ID-signierten Disk-Images, die Kalli nicht ausliefert. Danach
+/// muss das Bundle eine unversehrte Code-Signatur tragen; dass sie vom selben
+/// Zertifikat stammt, verlangt Sparkle in diesem Pfad nicht. Wirksam ist das
+/// erst für Updates **aus** einer Version heraus, die den Schlüssel schon trägt
+/// — maßgeblich ist die installierte `Info.plist`, nicht die des Updates.
+/// Ein manipulierter Appcast allein liefert weiterhin nichts aus.
 ///
 /// **`SUEnableAutomaticChecks` ist bewusst NICHT gesetzt.** Sparkle fragt
 /// dadurch beim ersten Mal, ob automatisch gesucht werden darf. Gleiche Haltung
