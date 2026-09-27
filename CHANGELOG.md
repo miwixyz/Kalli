@@ -2,6 +2,55 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.4.10] — 2026-09-27
+
+Ergebnis einer gründlichen Code-Prüfung (vier Prüfer, acht Gegenprüfer, eigener
+Review der Reparatur). Nur Fehlerbehebungen, keine neuen Funktionen.
+
+### Behoben
+
+- **Die Leiste zeigte nach einiger Zeit keinen Termin mehr.** Der nächste und der
+  laufende Termin kamen aus dem Monat, der im Kalender-Fenster zuletzt offen war.
+  Wer weitergeblättert hatte oder Kalli über einen Monatswechsel laufen ließ, sah
+  eine leere Leiste und keinen pulsierenden Punkt. Die Leiste hat jetzt ihren
+  eigenen Zeitraum (die nächsten 24 Stunden), unabhängig vom Kalender-Fenster.
+- **Termine über Mitternacht standen nur am ersten Tag.** Ein Nachtdienst von
+  22 bis 6 Uhr war um 3 Uhr nachts nirgends zu sehen. Jetzt steht ein Termin an
+  jedem Tag, den er berührt, und gilt, solange er läuft, als laufender Termin
+  (bis 12 Stunden Dauer). Endet er genau um Mitternacht, erscheint er nicht mehr
+  am Folgetag.
+- **Die letzten Tage im Monatsraster blieben leer.** Geladen wurde nur bis eine
+  Woche nach Monatsende, das Raster zeigt aber bis zu zwei Wochen des
+  Folgemonats. Im Februar 2027 fehlte die ganze letzte Zeile.
+- **Doppelte Erinnerung möglich.** Bekam ein Termin nachträglich einen eigenen
+  Kalender-Alarm, blieb Kallis schon geplante Mitteilung trotzdem stehen.
+- **Mitteilungen wurden nur bei Kalender-Änderungen neu geplant.** Jetzt auch
+  stündlich, nach dem Aufwachen und beim Tageswechsel.
+- **Entzogene Mitteilungs-Erlaubnis blieb unbemerkt.** Der Schalter zeigte „an",
+  es kam aber nichts. Die Einstellungen zeigen jetzt einen Hinweis.
+- **Später erteilter Kalender-Zugriff wirkte erst nach einem Neustart.**
+- **Teilweise entzogener Zugriff konnte ausgeblendete Listen vergessen.**
+- **Die Leiste konnte ganz verschwinden**, wenn das Symbol aus und das
+  Datumsformat leer war. Jetzt erscheint in dem Fall das Symbol.
+- **Wiederkehrende Erinnerungen meldeten beim Abhaken „nicht angekommen".**
+  Apple verschiebt bei Serien das Fälligkeitsdatum, statt die Erinnerung zu
+  erledigen. Das gilt jetzt als Erfolg. „Rückgängig" gibt es bei Serien nicht.
+
+### Sicherheit und Datenschutz
+
+- Termintitel stehen nicht mehr lesbar im Systemprotokoll.
+- Updates müssen jetzt die EdDSA-Signatur aus dem Update-Feed tragen, geprüft vor
+  dem Entpacken (`SUVerifyUpdateBeforeExtraction`). Die Beschreibung der
+  Signaturprüfung in Hilfe, README und RECHTLICHES war zu stark formuliert und ist
+  korrigiert: Sparkle verlangt eine gültige von zwei Signaturen, nicht beide.
+
+### Intern
+
+- `release.sh`: `PUBLISH` nur 0 oder 1 (vorher veröffentlichte `PUBLISH=no`);
+  Sauberkeitsprüfung zählt auch ungetrackte Dateien.
+- `make install` ersetzt keine Release-Kalli in `/Applications` mehr.
+- 85 Tests (vorher 55).
+
 ## [0.4.9] — 2026-09-24
 
 ### Behoben
