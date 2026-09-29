@@ -37,9 +37,9 @@ struct PopoverView: View {
     }()
 
     var body: some View {
-        VStack(spacing: 10) {
+        // Keine Trennlinien: Luft trennt die Bereiche (macOS-26-Formensprache).
+        VStack(spacing: 12) {
             header
-            Divider()
 
             if showingSettings {
                 SettingsView()
@@ -82,7 +82,6 @@ struct PopoverView: View {
                     scale: prefs.layoutScale,
                     hasItems: { store.hasItems(on: $0, calendar: calendar) }
                 )
-                Divider()
                 agenda
             }
 
@@ -120,24 +119,35 @@ struct PopoverView: View {
             Text(showingSettings
                  ? "Einstellungen"
                  : monthFormatter.string(from: visibleMonth).capitalized)
-                .font(Theme.font(Theme.Size.monthTitle, prefs.layoutScale, weight: .semibold))
+                .font(Theme.font(Theme.Size.monthTitle + 2, prefs.layoutScale, weight: .bold))
                 .contentTransition(.numericText())
             Spacer()
             if !showingSettings {
-                Button { step(-1) } label: { Image(systemName: "chevron.left") }
-                    .help("Vorheriger Monat")
-                Button {
-                    visibleMonth = Date()
-                    selection = Date()
-                } label: {
-                    Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+                // Glas-Knöpfe in einem Container: Liquid Glass verschmilzt benachbarte
+                // Elemente dann zu einer Gruppe, statt drei Einzelteile zu zeichnen.
+                GlassEffectContainer(spacing: 6) {
+                    HStack(spacing: 6) {
+                        Button { step(-1) } label: { Image(systemName: "chevron.left") }
+                            .buttonBorderShape(.circle)
+                            .help("Vorheriger Monat")
+                        Button {
+                            visibleMonth = Date()
+                            selection = Date()
+                        } label: {
+                            Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale,
+                                                          weight: .medium))
+                        }
+                        .buttonBorderShape(.capsule)
+                        .help("Zurück zum heutigen Tag")
+                        Button { step(1) } label: { Image(systemName: "chevron.right") }
+                            .buttonBorderShape(.circle)
+                            .help("Nächster Monat")
+                    }
                 }
-                .help("Zurück zum heutigen Tag")
-                Button { step(1) } label: { Image(systemName: "chevron.right") }
-                    .help("Nächster Monat")
+                .buttonStyle(.glass)
+                .controlSize(.small)
             }
         }
-        .buttonStyle(.accessoryBar)
     }
 
     private var agenda: some View {
@@ -271,7 +281,20 @@ struct PopoverView: View {
             } label: {
                 Image(systemName: showingSettings ? "chevron.left" : "gearshape")
             }
+            .buttonBorderShape(.circle)
             .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
+
+            // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
+            // den aktuellen Stand (Michael, 2026-09-29).
+            Button {
+                prefs.appearanceMode = prefs.appearanceMode.next
+                prefs.appearanceMode.apply()
+            } label: {
+                Image(systemName: prefs.appearanceMode.symbol)
+                    .contentTransition(.symbolEffect(.replace))
+            }
+            .buttonBorderShape(.circle)
+            .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
 
             // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
             // auszulösen — die automatische Suche ist ab Werk aus, weil sie
@@ -299,7 +322,10 @@ struct PopoverView: View {
             Button("Beenden") { NSApplication.shared.terminate(nil) }
                 .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
         }
-        .buttonStyle(.accessoryBar)
+        .buttonStyle(.glass)
+        .buttonBorderShape(.capsule)
+        .controlSize(.small)
+        .padding(.top, 2)
     }
 
     /// Hakt ab oder nimmt zurueck — mit sichtbarem Nachleuchten.

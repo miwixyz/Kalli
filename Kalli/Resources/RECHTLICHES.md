@@ -28,7 +28,7 @@ Was Kalli liest:
 
 | Quelle | Zugriff | Zweck |
 |---|---|---|
-| Kalender (EventKit) | **nur lesen** | Termine im Raster und in der Tagesliste anzeigen |
+| Kalender (EventKit) | **nur lesen** | Termine im Raster und in der Tagesliste anzeigen. Ab 0.5.0 zusätzlich URL, Ort und Notizen (nur um darin einen Web-Link für „Link öffnen“ zu finden) sowie deinen Teilnahmestatus (abgelehnte Einladungen bekommen keinen Vollbild-Hinweis) |
 | Erinnerungen (EventKit) | lesen **und** Erledigt-Kennzeichen setzen | Aufgaben anzeigen und abhaken |
 | Mitteilungen (macOS) | **schreiben**, nur wenn du sie einschaltest | Hinweis vor einem Termin |
 | GitHub (Netz) | **abrufen**, nur für Updates | Nachsehen, ob eine neuere Fassung vorliegt |
@@ -53,15 +53,27 @@ Mitteilung erscheinen kann. Folgen, die man wissen sollte:
 - Je nach deinen macOS-Einstellungen erscheint der Titel auf dem
   **Sperrbildschirm** — also sichtbar, ohne den Mac zu entsperren.
 
-Das bleibt vollständig auf dem Gerät und geht an keinen Server. Es ist aber der
-einzige Fall, in dem ein Termininhalt Kalli verlässt — deshalb steht er hier und
-nicht im Kleingedruckten. Wer das nicht will, lässt den Schalter aus; dann
+Das bleibt vollständig auf dem Gerät und geht an keinen Server. Neben „Link
+öffnen“ (siehe unten) ist es der einzige Fall, in dem ein Termininhalt Kalli
+verlässt — deshalb steht er hier und nicht im Kleingedruckten. Wer das nicht will, lässt den Schalter aus; dann
 entstehen keine Mitteilungen. Wer ihn will, aber keine Titel auf dem
 Sperrbildschirm: macOS-Einstellungen → Mitteilungen → Kalli → **Vorschau
 anzeigen: Wenn entsperrt**.
 
 Die Mitteilungs-Berechtigung wird **erst beim Einschalten** erfragt, nie beim
 Start, und kann jederzeit in den Systemeinstellungen entzogen werden.
+
+### Vollbild-Hinweis und „Link öffnen“ (ab 0.5.0)
+
+Ist **„Vollbild-Hinweis vor dem Termin“** eingeschaltet (ab Werk **aus**), zeigt
+Kalli Titel und Uhrzeit groß über **allen Bildschirmen**. Wer gerade seinen
+Bildschirm teilt oder präsentiert, zeigt diesen Titel damit auch den anderen.
+
+Steht im Termin ein Web-Link, bietet der Hinweis **„Link öffnen“** an. Erst **auf
+deinen Klick** übergibt Kalli diese eine Adresse an deinen Standardbrowser. Kalli
+selbst ruft sie nicht ab. Geöffnet werden nur `http`- und `https`-Adressen, denn
+Einladungen können von Fremden stammen, und andere Adressarten könnten Programme
+starten. Der Knopf nennt immer die echte Zieladresse (z. B. „zoom.us“).
 
 ### Der einzige Netzwerkzugriff: die Update-Prüfung
 

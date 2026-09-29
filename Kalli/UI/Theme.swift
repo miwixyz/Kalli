@@ -1,3 +1,5 @@
+import AppKit
+import OSLog
 import SwiftUI
 
 /// Kallis Farben und Formen an einer Stelle.
@@ -60,4 +62,51 @@ enum Theme {
     /// Radius für Karten und Hinweisflächen. Großzügiger als der macOS-Standard,
     /// weil Liquid Glass weichere Formen verlangt.
     static let cardRadius: CGFloat = 11
+}
+
+/// Hell, Dunkel oder wie das System (Michael, 2026-09-29).
+///
+/// Gesetzt über `NSApp.appearance` — damit gilt es für **alle** Fenster von Kalli
+/// auf einmal: Popover, Einstellungen und Vollbild-Hinweis. Eine Stelle, kein
+/// Fenster kann abweichen.
+enum AppearanceMode: Int, CaseIterable, Identifiable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .system: "System"
+        case .light: "Hell"
+        case .dark: "Dunkel"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .system: "circle.lefthalf.filled"
+        case .light: "sun.max.fill"
+        case .dark: "moon.fill"
+        }
+    }
+
+    /// Reihenfolge beim Durchschalten mit dem Knopf im Popover.
+    var next: AppearanceMode {
+        AppearanceMode(rawValue: (rawValue + 1) % AppearanceMode.allCases.count) ?? .system
+    }
+
+    @MainActor
+    func apply() {
+        switch self {
+        case .system: NSApp.appearance = nil
+        case .light: NSApp.appearance = NSAppearance(named: .aqua)
+        case .dark: NSApp.appearance = NSAppearance(named: .darkAqua)
+        }
+        // Messpunkt: gewählt vs. tatsächlich wirksam.
+        Logger(subsystem: "com.kalli.app", category: "darstellung").notice(
+            "Erscheinungsbild \(title, privacy: .public) → wirksam: \(NSApp.effectiveAppearance.name.rawValue, privacy: .public)"
+        )
+    }
 }

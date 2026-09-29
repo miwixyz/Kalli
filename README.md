@@ -28,8 +28,8 @@ ansteht, bezahlt das mit Oberfläche.
 - **Popover:** Monatsraster mit Kalenderwochen, Punkt an Tagen mit Einträgen,
   Tagesliste mit Terminen und Erinnerungen
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
-- **Hell/Dunkel** folgt dem System
-- **Liquid Glass** auf dem Popover (macOS 26+)
+- **Hell/Dunkel** folgt dem System, oder fest per Knopf unten im Popover (System → Hell → Dunkel)
+- **Liquid Glass** auf dem Popover (macOS 26+), Glas-Knöpfe, Einstellungen als Karten im Stil der Systemeinstellungen
 - **Tagesliste nach Art gruppiert:** Ganztägig, Termine, Aufgaben — je mit
   eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste.
@@ -42,6 +42,11 @@ ansteht, bezahlt das mit Oberfläche.
   Kalli meldet nur Termine **ohne eigenen Kalender-Alarm** — sonst klingelte es zweimal.
   Die Mitteilung enthält Titel und Uhrzeit; was das für Mitteilungszentrale und
   Sperrbildschirm bedeutet, steht in `Kalli/Resources/RECHTLICHES.md`
+- **Vollbild-Hinweis vor dem Termin** (ab 0.5.0, nach dem Vorbild von „In Your Face“) —
+  Glasfläche über der unteren Bildschirmhälfte auf allen Bildschirmen, bis Esc/Return.
+  Eigener Vorlauf 0/1/2/5 Min., **ab Werk aus**. Gilt für alle Termine mit Uhrzeit,
+  auch mit eigenem Alarm, nicht für ganztägige und abgelehnte. **„Link öffnen“** für
+  den ersten Web-Link im Termin, nur `http`/`https`, nur auf Klick
 - **Start bei der Anmeldung**, abschaltbar
 
 **Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen
@@ -49,7 +54,8 @@ in der Erinnerungen-App. Kalli **liest das Kennzeichen danach zurück** und meld
 angekommen ist: Ein `save()` ohne Fehler heißt nur, dass der Aufruf durchlief.
 
 Ausdrücklich nicht enthalten: Termine anlegen oder ändern, Aufgaben anlegen oder löschen,
-Natural-Language-Eingabe, Zeitzonen, Videokonferenz-Erkennung, Datumsrechner.
+Natural-Language-Eingabe, Zeitzonen, Erkennung einzelner Videokonferenz-Dienste
+(nur „Link öffnen“ für den ersten Web-Link), Datumsrechner.
 
 ## Bauen
 
@@ -156,7 +162,16 @@ weiß es nicht.
 4. **Liquid Glass nur auf dem Popover.** Vollflächige Transluzenz mittelt das
    Hintergrundbild auf seine Durchschnittsfarbe; auf buntem Schreibtisch werden
    Fenster zu farbigem Nebel. Die Einstellungen liegen deshalb im
-   Popover selbst, nicht in einem eigenen Fenster.
+   Popover selbst, nicht in einem eigenen Fenster. Ihre Karten sind nur leicht
+   getönt, kein Glas auf Glas. Die zweite Glasfläche ist der Vollbild-Hinweis:
+   eine kurzlebige, schwebende Fläche, also genau der Einsatzort nach Apples HIG.
+5. **Signierte Testbuilds nie im Build-Ordner.** Ein mit Developer ID signiertes
+   Paket schützt macOS danach vor Änderungen, und weitere Builds scheitern dann
+   still mit „Operation not permitted“. `scripts/dev-signed.sh` baut nach
+   `build-dev/` und signiert eine frische Kopie unter `/tmp`
+   (`./scripts/dev-signed.sh -vollbildDemo` zeigt den Vollbild-Hinweis sofort,
+   nur in Debug-Builds). Das App-Symbol entsteht mit `scripts/make-icon.py` aus
+   `assets/Kalli-App_Icon.png`.
 
 ## Dokumentation
 

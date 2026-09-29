@@ -6,3 +6,5 @@ xcuserdata/
 dist/
 release.env
 release.env.*
+build-dev/
+build-test/

@@ -24,6 +24,9 @@ final class Preferences {
         static let notifyNext = "notifyBeforeNextEvent"
         static let flashNext = "flashNextEventInMenuBar"
         static let alertLead = "alertLeadMinutes"
+        static let fullScreen = "fullScreenBeforeEvent"
+        static let fullScreenLead = "fullScreenLeadMinutes"
+        static let appearance = "appearanceMode"
     }
 
     private let defaults: UserDefaults
@@ -164,6 +167,28 @@ final class Preferences {
         didSet { defaults.set(alertLeadMinutes, forKey: Key.alertLead) }
     }
 
+    /// Vollbild-Hinweis vor Terminen (wie „In Your Face"). Ab Werk aus, aus demselben
+    /// Grund wie die Mitteilung: Eine Unterbrechung wird eingeschaltet, nicht vorausgesetzt.
+    ///
+    /// Gilt für **alle** Termine mit Uhrzeit, auch mit eigenem Kalender-Alarm
+    /// (entschieden mit Michael, 2026-09-29). Der Vollbild-Hinweis ist ein anderer
+    /// Kanal als eine Mitteilung, und gerade wichtige Termine tragen meist einen Alarm.
+    var fullScreenBeforeEvent: Bool {
+        didSet { defaults.set(fullScreenBeforeEvent, forKey: Key.fullScreen) }
+    }
+
+    /// Eigener Vorlauf für den Vollbild-Hinweis (0 = zum Beginn). Bewusst getrennt von
+    /// `alertLeadMinutes`: Die Mitteilung warnt vor, der Vollbild-Hinweis holt einen
+    /// kurz vor Beginn aus der Arbeit (entschieden mit Michael, 2026-09-29).
+    var fullScreenLeadMinutes: Int {
+        didSet { defaults.set(fullScreenLeadMinutes, forKey: Key.fullScreenLead) }
+    }
+
+    /// Hell/Dunkel/System. Ab Werk System. Angewendet wird es in `AppearanceMode.apply()`.
+    var appearanceMode: AppearanceMode {
+        didSet { defaults.set(appearanceMode.rawValue, forKey: Key.appearance) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
@@ -183,6 +208,11 @@ final class Preferences {
         notifyBeforeNextEvent = defaults.object(forKey: Key.notifyNext) as? Bool ?? false
         flashNextEventInMenuBar = defaults.object(forKey: Key.flashNext) as? Bool ?? false
         alertLeadMinutes = defaults.object(forKey: Key.alertLead) as? Int ?? 10
+        fullScreenBeforeEvent = defaults.object(forKey: Key.fullScreen) as? Bool ?? false
+        fullScreenLeadMinutes = defaults.object(forKey: Key.fullScreenLead) as? Int ?? 1
+        appearanceMode = AppearanceMode(
+            rawValue: defaults.object(forKey: Key.appearance) as? Int ?? 0
+        ) ?? .system
     }
 
     /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.

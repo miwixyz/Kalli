@@ -14,6 +14,8 @@ struct KalliApp: App {
         _prefs = State(initialValue: p)
         _store = State(initialValue: s)
         _label = State(initialValue: MenuBarLabel(prefs: p, store: s))
+        // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
+        Task { @MainActor in p.appearanceMode.apply() }
     }
 
     var body: some Scene {

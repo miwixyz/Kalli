@@ -82,8 +82,8 @@ dem man nicht mehr glaubt.
 > **Was die Mitteilung enthält:** Titel und Uhrzeit des Termins. macOS speichert
 > sie bis zur Auslieferung, danach steht sie in der Mitteilungszentrale, und je
 > nach deinen Einstellungen erscheint der Titel **auf dem Sperrbildschirm**.
-> Das ist der einzige Fall, in dem ein Termininhalt Kalli verlässt — nichts geht
-> an einen Server. Wer keine Titel auf dem Sperrbildschirm will: macOS-
+> Neben „Link öffnen“ im Vollbild-Hinweis ist das der einzige Fall, in dem ein
+> Termininhalt Kalli verlässt. Nichts geht an einen Server. Wer keine Titel auf dem Sperrbildschirm will: macOS-
 > Einstellungen → Mitteilungen → Kalli → *Vorschau anzeigen: Wenn entsperrt*.
 > Details in **Rechtliches**.
 
@@ -95,6 +95,36 @@ Menüleiste einen orangen Hinweis.
 Eine Mitteilung kann ausbleiben, wenn der Mac aus ist, schläft oder „Nicht
 stören" aktiv ist. Für Unverzichtbares bleibt der Alarm im Kalender selbst der
 verlässlichere Weg.
+
+### Vollbild-Hinweis vor dem Termin
+
+Der dritte Kanal, für alle, die in der Arbeit versinken und Mitteilungen
+übersehen. **Ab Werk aus**, einzuschalten unter Einstellungen → Menüleiste →
+Vollbild-Hinweis.
+
+- Kurz vor Beginn legt sich über **alle Bildschirme** eine Glasfläche über die
+  untere Hälfte, darüber ein Verlauf. Deine Arbeit bleibt oben sichtbar.
+- Du siehst Titel, Uhrzeit und einen Countdown („Beginnt in 1 Min.“).
+- **Schließen** mit Esc, Return oder dem Knopf „Schließen“.
+- **Eigener Vorlauf:** zum Beginn, 1, 2 oder 5 Minuten. Getrennt vom Vorlauf der
+  Mitteilung, denn die warnt vor, der Vollbild-Hinweis holt dich im letzten
+  Moment aus der Arbeit.
+- Gilt für **alle Termine mit Uhrzeit**, auch mit eigenem Kalender-Alarm. Das
+  ist ein anderer Kanal als eine Mitteilung, und gerade wichtige Termine haben
+  meist einen Alarm. Nicht für ganztägige Termine und **nicht für abgelehnte
+  Einladungen**.
+- Beginnen mehrere Termine gleichzeitig, stehen sie in **einem** Hinweis.
+- Schläft der Mac zum Zeitpunkt, holt Kalli den Hinweis nach dem Aufwachen nach,
+  aber nur bis 5 Minuten nach Beginn.
+
+**„Link öffnen“:** Steht im Termin ein Web-Link (URL-Feld, Ort oder Notizen),
+zeigt der Hinweis einen Knopf mit der Zieladresse, z. B. „Link öffnen · zoom.us“.
+Geöffnet wird nur auf Klick und nur `http`/`https`. Einladungen können von
+Fremden stammen, und andere Adressarten könnten Programme starten. Kalli erkennt
+keine einzelnen Videokonferenz-Dienste, es nimmt den ersten Web-Link.
+
+> **Bildschirm teilen:** Der Hinweis liegt über allem, auch über einer geteilten
+> Präsentation. Wer oft präsentiert, schaltet ihn vorher aus.
 
 Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
 taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
@@ -144,15 +174,24 @@ Termin.
 Die Farbe kommt jeweils vom Kalender, die **Form** von der Art. So bleibt die
 Bedeutung erkennbar, auch wenn zwei Kalender ähnlich eingefärbt sind.
 
+## Hell und Dunkel
+
+Unten links neben dem Zahnrad sitzt ein runder Knopf. Jeder Klick schaltet
+weiter: **System → Hell → Dunkel**. Das Symbol zeigt den aktuellen Stand
+(Halbkreis, Sonne, Mond). Die Wahl gilt für ganz Kalli, also Kalender-Fenster,
+Einstellungen und Vollbild-Hinweis. Dieselbe Wahl steht unter Einstellungen →
+Ansicht → Darstellung.
+
 ## Einstellungen
 
-Zahnrad unten links, drei Reiter:
+Zahnrad unten links, drei Reiter. Jeder Bereich ist eine eigene Karte mit
+farbigem Symbol, wie in den Systemeinstellungen:
 
 | Reiter | Inhalt |
 |---|---|
-| **Kalender** | Jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
-| **Menüleiste** | Symbol, Datum, Datumsformat, nächster Termin, Kürzungslänge |
-| **Ansicht** | Schriftgröße, Kalenderwochen, erledigte Erinnerungen, vergangene Termine, Fortschritt, Hinweis auf Kommendes, Start bei der Anmeldung |
+| **Kalender** | Berechtigungen · jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
+| **Menüleiste** | Anzeige in der Leiste (Symbol, Datum, Format) · Termin in der Leiste · Hinweis vor dem Termin (Mitteilung, Puls) · Vollbild-Hinweis |
+| **Ansicht** | Darstellung (Hell/Dunkel, Schriftgröße, Kalenderwochen) · Tagesliste · Laufend und kommend · System (Start bei der Anmeldung) |
 
 ## Start bei der Anmeldung
 
@@ -238,8 +277,8 @@ Nein findet kein Netzzugriff statt.
 
 Termine anlegen oder ändern · Aufgaben anlegen, umbenennen oder löschen ·
 Eingabe in natürlicher Sprache · Weltzeituhren ·
-Zeitzonen-Umrechnung · Erkennung von Videokonferenz-Links · Datumsrechner ·
-Benachrichtigungen.
+Zeitzonen-Umrechnung · Erkennung einzelner Videokonferenz-Dienste (Kalli
+nimmt nur den ersten Web-Link, siehe Vollbild-Hinweis) · Datumsrechner.
 
 Das ist kein Rückstand, sondern der Zweck. Wer diese Dinge braucht, ist mit
 [Calendr](https://github.com/pakerwreah/Calendr) (kostenlos, MIT) oder

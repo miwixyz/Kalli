@@ -10,6 +10,7 @@ import Observation
 /// Erledigt-Kennzeichen einer Erinnerung. Sonst nichts — keine Termine anlegen,
 /// keine Titel ändern, nichts löschen. Die Einschränkung ist Absicht und in
 /// `RECHTLICHES.md` zugesagt; wer sie erweitert, muss dort nachziehen.
+/// (Nachgezogen 0.5.0: URL, Ort, Notizen und Teilnahmestatus werden gelesen.)
 @MainActor
 @Observable
 final class CalendarStore {
@@ -45,6 +46,7 @@ final class CalendarStore {
 
     private let store = EKEventStore()
     private let alerts = EventAlerts()
+    private let fullScreenAlerts = FullScreenAlerts()
     private var observer: NSObjectProtocol?
     private var loadedRange: DateInterval?
 
@@ -76,6 +78,9 @@ final class CalendarStore {
         ) { [weak self] _ in
             Task { @MainActor [weak self] in await self?.reload() }
         }
+        #if DEBUG
+        Task { @MainActor [weak self] in self?.fullScreenAlerts.showDemoIfRequested() }
+        #endif
     }
 
     private var wakeObserver: NSObjectProtocol?
@@ -308,7 +313,17 @@ final class CalendarStore {
         guard loadedRange != nil else { return }
         barItems = await fetchEvents(in: Self.barWindow(now: Date()))
         recomputeNextEvent()
+        syncFullScreenAlerts()
         await syncAlerts()
+    }
+
+    /// Plant die Vollbild-Hinweise neu. Quelle ist `barItems` (jetzt −12 h … +24 h,
+    /// stündlich und bei jeder EventKit-Änderung frisch abgefragt), nicht `items`:
+    /// gleiche Lehre wie beim Mitteilungs-Horizont, `items` ist nur eine Ansicht.
+    func syncFullScreenAlerts() {
+        fullScreenAlerts.sync(horizon: barItems,
+                              enabled: prefs.fullScreenBeforeEvent,
+                              leadMinutes: prefs.fullScreenLeadMinutes)
     }
 
     /// Termine rund um **jetzt** — die Quelle für Leiste, Puls und Popover-Hinweis.
@@ -394,7 +409,9 @@ final class CalendarStore {
             kind: .event,
             sourceID: ev.calendar?.calendarIdentifier ?? "",
             color: ev.calendar.map(rgba) ?? .fallback,
-            hasAlarms: ev.hasAlarms
+            hasAlarms: ev.hasAlarms,
+            link: MeetingLink.find(url: ev.url, location: ev.location, notes: ev.notes),
+            isDeclined: ev.attendees?.first(where: \.isCurrentUser)?.participantStatus == .declined
         )
     }
 

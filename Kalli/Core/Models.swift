@@ -57,6 +57,13 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     /// Wiederkehrende Erinnerung? Dann bietet die Tagesliste kein „Rückgängig"
     /// an — siehe `CalendarStore.completionConfirmed` (K-C9).
     var isRecurring: Bool = false
+    /// Link zum Beitreten (nur http/https), aus URL-Feld, Ort oder Notizen,
+    /// siehe `MeetingLink`. Kommt aus Kalenderdaten, die aus fremden Einladungen
+    /// stammen können, und wird deshalb nur auf Klick geöffnet.
+    var link: URL? = nil
+    /// Einladung abgelehnt? Dann gibt es keinen Vollbild-Hinweis. Sonst könnte
+    /// eine fremde Einladung (Spam) den Bildschirm sperren.
+    var isDeclined: Bool = false
 
     var isReminder: Bool {
         if case .reminder = kind { return true }

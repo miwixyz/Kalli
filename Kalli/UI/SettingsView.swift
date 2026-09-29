@@ -23,12 +23,13 @@ struct SettingsView: View {
     @State private var tab: Tab = .sources
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Picker("", selection: $tab) {
                 ForEach(Tab.allCases) { Text($0.rawValue).tag($0) }
             }
             .pickerStyle(.segmented)
             .labelsHidden()
+            .controlSize(.large)
 
             // Die Hilfe bringt ihren eigenen Scrollbereich mit (sie rendert
             // lange Dokumente). Zwei ineinander verschachtelte ScrollViews
@@ -38,7 +39,7 @@ struct SettingsView: View {
                 HelpView()
             } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 16) {
                         switch tab {
                         case .sources: SourcesSection()
                         case .menuBar: MenuBarSection()
@@ -48,8 +49,9 @@ struct SettingsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.trailing, 2)
+                    .padding(.bottom, 4)
                 }
-                .frame(height: 400)
+                .frame(height: 440)
             }
         }
     }
@@ -82,23 +84,20 @@ private struct SourcesSection: View {
     }
 
     var body: some View {
-        permissions
+        SettingsGroup(title: "Berechtigungen", symbol: "lock.shield.fill", tint: .green) {
+            permissions
+        }
 
-        Divider()
-
-        Text("Abgewählte Kalender und Listen erscheinen weder im Raster noch in der Tagesliste.")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-
-        group(title: "Kalender", kind: .event)
-        group(title: "Erinnerungen", kind: .reminder)
+        group(title: "Kalender", symbol: "calendar", tint: .red, kind: .event)
+        group(title: "Erinnerungen", symbol: "checklist", tint: .orange, kind: .reminder)
 
         if store.sources.isEmpty {
             // Vorher stand hier eine Frage („fehlt die Berechtigung?"). Der
             // Berechtigungs-Block oben beantwortet sie jetzt.
-            Text("Keine Kalender gefunden. Der Berechtigungs-Stand steht oben.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            SettingsHint("Keine Kalender gefunden. Der Berechtigungs-Stand steht oben.")
+        } else {
+            SettingsHint("Abgewählte Kalender und Listen erscheinen weder im Raster noch in der Tagesliste.")
+                .padding(.leading, 2)
         }
     }
 
@@ -113,14 +112,11 @@ private struct SourcesSection: View {
     /// gespiegelt — wie bei `LoginItem`.
     @ViewBuilder
     private var permissions: some View {
-        Text("Berechtigungen")
-            .font(.headline)
+        permissionRow("Kalender", eventState, reminders: false)
             // Bei jedem Erscheinen frisch von macOS lesen. Der Nutzer kann den
             // Zugriff zwischendurch in den Systemeinstellungen geaendert haben,
             // ohne dass Kalli davon erfaehrt.
             .onAppear { refreshPermissions() }
-
-        permissionRow("Kalender", eventState, reminders: false)
         permissionRow("Erinnerungen", reminderState, reminders: true)
 
         if eventState == .notDetermined || reminderState == .notDetermined {
@@ -181,13 +177,11 @@ private struct SourcesSection: View {
     }
 
     @ViewBuilder
-    private func group(title: String, kind: SourceInfo.Kind) -> some View {
+    private func group(title: String, symbol: String, tint: Color,
+                       kind: SourceInfo.Kind) -> some View {
         let entries = store.sources.filter { $0.kind == kind }
         if !entries.isEmpty {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(title)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+            SettingsGroup(title: title, symbol: symbol, tint: tint) {
                 ForEach(entries) { source in
                     Toggle(isOn: binding(for: source)) {
                         HStack(spacing: 6) {
@@ -203,7 +197,10 @@ private struct SourcesSection: View {
                                 .lineLimit(1)
                         }
                     }
+                    // Häkchen wie in Apples Kalender-App: Eine lange Liste von
+                    // Schaltern wäre unruhig.
                     .toggleStyle(.checkbox)
+                    .controlSize(.regular)
                 }
             }
         }
@@ -233,6 +230,25 @@ private struct MenuBarSection: View {
     @State private var notificationDenied = false
 
     var body: some View {
+        SettingsGroup(title: "Anzeige in der Leiste", symbol: "menubar.rectangle", tint: Theme.accent) {
+            display
+        }
+
+        SettingsGroup(title: "Termin in der Leiste", symbol: "clock.fill", tint: .indigo) {
+            eventInBar
+        }
+
+        SettingsGroup(title: "Hinweis vor dem Termin", symbol: "bell.badge.fill", tint: .red) {
+            reminderChannels
+        }
+
+        SettingsGroup(title: "Vollbild-Hinweis", symbol: "rectangle.bottomhalf.inset.filled", tint: .purple) {
+            fullScreen
+        }
+    }
+
+    @ViewBuilder
+    private var display: some View {
         @Bindable var prefs = prefs
 
         Toggle("Kalli-Symbol anzeigen", isOn: $prefs.showIconInMenuBar)
@@ -254,13 +270,14 @@ private struct MenuBarSection: View {
                 TextField("Datumsformat", text: $prefs.menuBarDateFormat)
                     .textFieldStyle(.roundedBorder)
                     .onChange(of: prefs.menuBarDateFormat) { label.update() }
-                Text("EEE d. MMM → Mo 21. Sep · d.M.yy → 21.9.26")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                SettingsHint("EEE d. MMM → Mo 21. Sep · d.M.yy → 21.9.26")
             }
         }
+    }
 
-        Divider()
+    @ViewBuilder
+    private var eventInBar: some View {
+        @Bindable var prefs = prefs
 
         // Hieß bis 0.4.7 „Nächsten Termin anzeigen" — und das war seit 0.1.1
         // unwahr: Der Schalter zeigte auch den LAUFENDEN Termin, und ihn
@@ -281,21 +298,19 @@ private struct MenuBarSection: View {
             Stepper("Titel kürzen auf \(prefs.nextEventMaxChars) Zeichen",
                     value: $prefs.nextEventMaxChars, in: 8...60)
                 .onChange(of: prefs.nextEventMaxChars) { label.update() }
-            Text("Liegt der nächste Termin weiter weg, bleibt die Leiste schmal. "
+            SettingsHint("Liegt der nächste Termin weiter weg, bleibt die Leiste schmal. "
                  + "Steht nichts an, zeigt die Leiste den laufenden Termin mit Restzeit "
                  + "— und zwar den, der zuerst endet. Ist der nächste Termin nicht heute, "
                  + "steht der Tag davor.\n\n"
                  + "Abgeschaltet erscheint gar kein Termin in der Leiste, weder ein "
                  + "kommender noch ein laufender. Der Fortschrittsbalken im Popover "
                  + "bleibt davon unberührt — der hängt an \u{201E}Fortschritt laufender Termine\u{201C}.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
         }
+    }
 
-        Divider()
-
-        Text("Prominenter Hinweis")
-            .font(.headline)
+    @ViewBuilder
+    private var reminderChannels: some View {
+        @Bindable var prefs = prefs
 
         Toggle("Systemmitteilung vor dem Termin", isOn: $prefs.notifyBeforeNextEvent)
             .onChange(of: prefs.notifyBeforeNextEvent) { _, isOn in
@@ -341,11 +356,32 @@ private struct MenuBarSection: View {
                 Task { await store.syncAlerts() }
             }
 
-            Text("Gilt für beide Kanäle. Kalli meldet nur Termine, die im "
+            SettingsHint("Gilt für beide Kanäle. Kalli meldet nur Termine, die im "
                  + "Kalender keinen eigenen Alarm tragen — sonst klingelte es "
                  + "zweimal für denselben Termin.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var fullScreen: some View {
+        @Bindable var prefs = prefs
+
+        Toggle("Vollbild-Hinweis vor dem Termin", isOn: $prefs.fullScreenBeforeEvent)
+            .onChange(of: prefs.fullScreenBeforeEvent) { store.syncFullScreenAlerts() }
+
+        if prefs.fullScreenBeforeEvent {
+            Picker("Vollbild", selection: $prefs.fullScreenLeadMinutes) {
+                Text("Zum Beginn").tag(0)
+                Text("1 Min. vorher").tag(1)
+                Text("2 Min. vorher").tag(2)
+                Text("5 Min. vorher").tag(5)
+            }
+            .onChange(of: prefs.fullScreenLeadMinutes) { store.syncFullScreenAlerts() }
+
+            SettingsHint("Legt sich über alle Bildschirme, bis du ihn schließt (Esc oder Return). "
+                 + "Gilt für alle Termine mit Uhrzeit, auch mit eigenem Kalender-Alarm — "
+                 + "nicht für ganztägige und abgelehnte. Steht im Termin ein Web-Link, "
+                 + "zeigt der Hinweis \u{201E}Link öffnen\u{201C} mit der Zieladresse.")
         }
     }
 }
@@ -359,7 +395,14 @@ private struct PopoverSection: View {
     var body: some View {
         @Bindable var prefs = prefs
 
-        VStack(alignment: .leading, spacing: 3) {
+        SettingsGroup(title: "Darstellung", symbol: "textformat.size", tint: Theme.accent) {
+            Picker("Erscheinungsbild", selection: $prefs.appearanceMode) {
+                ForEach(AppearanceMode.allCases) { mode in
+                    Label(mode.title, systemImage: mode.symbol).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .onChange(of: prefs.appearanceMode) { prefs.appearanceMode.apply() }
             Picker("Schriftgröße", selection: $prefs.textSizeStep) {
                 Text("Sehr klein").tag(0)
                 Text("Klein").tag(1)
@@ -367,44 +410,35 @@ private struct PopoverSection: View {
                 Text("Groß").tag(3)
                 Text("Sehr groß").tag(4)
             }
-            Text("Skaliert Schrift, Raster und Fensterbreite gemeinsam — sonst "
+            SettingsHint("Skaliert Schrift, Raster und Fensterbreite gemeinsam — sonst "
                  + "wächst der Text und das Raster bleibt stehen.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
         }
 
-        Divider()
-
-        Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
-        Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
-        Toggle("Vergangene Termine anzeigen", isOn: $prefs.showPastEvents)
-        Text("Abgeschaltet räumt sich die Liste im Lauf des Tages auf — aber nur "
-             + "heute. Ganztägige Termine und Aufgaben bleiben in jedem Fall sichtbar: "
-             + "Eine überfällige Aufgabe ist nicht erledigt, sondern das Gegenteil davon.")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-
-        Divider()
-
-        Toggle("Fortschritt laufender Termine", isOn: $prefs.showRunningProgress)
-            .onChange(of: prefs.showRunningProgress) { label.update() }
-        Text("Balken im Popover, Restzeit in der Menüleiste. Nur für Termine, die "
-             + "gerade laufen und höchstens 12 Stunden dauern — auch über Mitternacht. "
-             + "Bei mehrtägigen sagt ein Prozentwert nichts.")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-
-        Divider()
-
-        Toggle("Hinweis auf Kommendes", isOn: $prefs.showUpcomingBanner)
-        if prefs.showUpcomingBanner {
-            Stepper("Ab \(prefs.upcomingLeadMinutes) Min. vorher",
-                    value: $prefs.upcomingLeadMinutes, in: 5...240, step: 5)
+        SettingsGroup(title: "Tagesliste", symbol: "list.bullet", tint: .teal) {
+            Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
+            Toggle("Vergangene Termine anzeigen", isOn: $prefs.showPastEvents)
+            SettingsHint("Abgeschaltet räumt sich die Liste im Lauf des Tages auf — aber nur "
+                 + "heute. Ganztägige Termine und Aufgaben bleiben in jedem Fall sichtbar: "
+                 + "Eine überfällige Aufgabe ist nicht erledigt, sondern das Gegenteil davon.")
         }
 
-        Divider()
+        SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: .green) {
+            Toggle("Fortschritt laufender Termine", isOn: $prefs.showRunningProgress)
+                .onChange(of: prefs.showRunningProgress) { label.update() }
+            SettingsHint("Balken im Popover, Restzeit in der Menüleiste. Nur für Termine, die "
+                 + "gerade laufen und höchstens 12 Stunden dauern — auch über Mitternacht. "
+                 + "Bei mehrtägigen sagt ein Prozentwert nichts.")
+            Toggle("Hinweis auf Kommendes", isOn: $prefs.showUpcomingBanner)
+            if prefs.showUpcomingBanner {
+                Stepper("Ab \(prefs.upcomingLeadMinutes) Min. vorher",
+                        value: $prefs.upcomingLeadMinutes, in: 5...240, step: 5)
+            }
+        }
 
-        LoginItemToggle()
+        SettingsGroup(title: "System", symbol: "power", tint: .gray) {
+            LoginItemToggle()
+        }
     }
 }
 

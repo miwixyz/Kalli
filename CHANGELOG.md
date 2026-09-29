@@ -2,6 +2,34 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.5.0] — 2026-09-29
+
+### Neu
+
+- **Vollbild-Hinweis vor dem Termin** (nach dem Vorbild von „In Your Face“). Kurz
+  vor Beginn legt sich über alle Bildschirme eine Liquid-Glass-Fläche über die
+  untere Hälfte, darüber ein Verlauf. Er bleibt, bis du ihn schließt (Esc, Return
+  oder „Schließen“). Du bekommst Titel, Uhrzeit und Countdown. Eigener Vorlauf:
+  zum Beginn, 1, 2 oder 5 Minuten. Er gilt für alle Termine mit Uhrzeit, auch
+  solche mit eigenem Kalender-Alarm, aber nicht für ganztägige und abgelehnte.
+  Beginnen mehrere Termine gleichzeitig, stehen sie in einem Hinweis. Ab Werk
+  **aus**: Einstellungen › Menüleiste › Vollbild-Hinweis.
+- **„Link öffnen“** im Vollbild-Hinweis, wenn im Termin ein Web-Link steht (URL,
+  Ort oder Notizen). Geöffnet wird nur auf Klick und nur `http`/`https`. Der Knopf
+  nennt die echte Zieladresse.
+- **Hell/Dunkel-Knopf** unten im Kalender-Fenster: System → Hell → Dunkel. Gilt
+  für ganz Kalli. Auch unter Einstellungen › Ansicht › Darstellung.
+- **Neuer Look** im Stil von macOS 26: Glas-Knöpfe im Kalender-Fenster, keine
+  Trennlinien mehr, Einstellungen als Karten mit farbigen Symbolen wie in den
+  Systemeinstellungen, Schalter statt Häkchen.
+- **Neues App-Symbol.** Das bisherige zeigte in allen Größen nur einen Ausschnitt.
+
+### Datenschutz
+
+- Kalli liest zusätzlich URL, Ort, Notizen und deinen Teilnahmestatus eines
+  Termins, nur um einen Link zu finden und abgelehnte Einladungen auszulassen.
+  `RECHTLICHES.md` ist entsprechend ergänzt.
+
 ## [0.4.10] — 2026-09-27
 
 Ergebnis einer gründlichen Code-Prüfung (vier Prüfer, acht Gegenprüfer, eigener

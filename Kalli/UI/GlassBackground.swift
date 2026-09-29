@@ -6,9 +6,9 @@ import SwiftUI
 /// 26.0, ein Fallback wäre also toter Code — deshalb gibt es keinen.
 ///
 /// **Geltungsbereich (Apples HIG):** Liquid Glass gehört in die *funktionale*
-/// Schicht — Bedienelemente, Navigation, kurzlebige Oberflächen. Bei Kalli ist
-/// das genau ein Ort: das Popover am Menüleisten-Icon. Ein Popover ist per
-/// Definition eine schwebende Fläche, also ist es hier richtig platziert.
+/// Schicht — Bedienelemente, Navigation, kurzlebige Oberflächen. Bei Kalli sind
+/// das zwei Orte: das Popover am Menüleisten-Icon und (ab 0.5.0) die untere
+/// Hälfte des Vollbild-Hinweises. Beides sind schwebende, kurzlebige Flächen.
 ///
 /// **Was hier bewusst NICHT passiert** (Lehre aus Tippi, 2026-09-14): Ganze
 /// Fensterinhalte bekommen keine Transluzenz. Vollflächige Transluzenz mittelt
