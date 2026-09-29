@@ -82,6 +82,9 @@ enum FamilyTheme {
     /// Feste Inhaltsfläche (Karte, Editor, Liste). Nie transparent.
     static let card        = Color(light: 0xFFFFFF, dark: 0x1B2130)
     static let cardStroke  = Color(light: 0xE2E5EE, dark: 0x2A3142)
+    /// Tönung für große Glasflächen (siehe `familyTintedGlass`). Mitte des Verlaufs,
+    /// 78 % Deckkraft — ruhig, aber das Glas bleibt als Glas erkennbar.
+    static let glassTint = Color(light: 0xF3F5F9, dark: 0x161A25).opacity(0.78)
     /// Hauptknopf der schwebenden Leiste („+“): dunkel im Hellen, hell im Dunklen.
     static let primaryFill = Color(light: 0x1E2433, dark: 0xECEFF6)
     static let onPrimary   = Color(light: 0xFFFFFF, dark: 0x1E2433)
@@ -160,6 +163,14 @@ extension View {
         }
     }
 
+    /// Schiefer-Tönung ÜBER dem Glas einer großen Fläche (Popover, Vollbild-Hinweis).
+    /// Ohne sie scheint das Schreibtischbild voll durch und färbt alles ein — in Kalli
+    /// 0.6.0-Test gesehen: pinkes Hintergrundbild → rosa Popover (Michael, 29.09.).
+    /// Entspricht der Vorschau (Fläche mit ca. 80 % Deckkraft über Unschärfe).
+    func familyTintedGlass<S: Shape>(in shape: S) -> some View {
+        background(shape.fill(FamilyTheme.glassTint)).familyGlass(in: shape)
+    }
+
     /// Glas-Element (Kapsel, runder Knopf, schwebende Leiste). NUR für Bedienelemente,
     /// die über Inhalt schweben — nie für Inhaltsflächen (siehe Design-System, Regel G1).
     @ViewBuilder
@@ -170,5 +181,49 @@ extension View {
             background(.ultraThinMaterial, in: shape)
                 .overlay { shape.stroke(.white.opacity(0.35), lineWidth: 0.8) }
         }
+    }
+}
+
+// MARK: - Neutraler Glas-Knopf
+
+/// Glas-Kapsel bzw. runder Glas-Knopf wie in der Vorschau: NEUTRAL, Schrift in
+/// `textPrimary`. Apples `.buttonStyle(.glass)` übernimmt dagegen die Akzentfarbe
+/// der App und füllt jeden Knopf blau (Kalli 0.6.0-Test, 29.09.) — für eine Leiste
+/// aus mehreren Knöpfen ist das zu laut. Den Akzent trägt nur der eine aktive Knopf.
+struct FamilyGlassButtonStyle: ButtonStyle {
+    enum Form { case circle, capsule }
+    var form: Form = .capsule
+    /// Durchmesser bzw. Mindesthöhe in Punkten.
+    var size: CGFloat = 26
+
+    func makeBody(configuration: Configuration) -> some View {
+        FamilyGlassButtonLabel(configuration: configuration, form: form, size: size)
+    }
+}
+
+private struct FamilyGlassButtonLabel: View {
+    let configuration: ButtonStyleConfiguration
+    let form: FamilyGlassButtonStyle.Form
+    let size: CGFloat
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        let label = configuration.label
+            .foregroundStyle(FamilyTheme.textPrimary)
+            .opacity(isEnabled ? (configuration.isPressed ? 0.55 : 1) : 0.4)
+            .contentShape(Rectangle())
+        switch form {
+        case .circle:
+            label.frame(width: size, height: size).familyGlass(in: Circle())
+        case .capsule:
+            label.padding(.horizontal, size * 0.42).frame(minHeight: size).familyGlass(in: Capsule())
+        }
+    }
+}
+
+extension ButtonStyle where Self == FamilyGlassButtonStyle {
+    static var familyGlass: FamilyGlassButtonStyle { FamilyGlassButtonStyle() }
+    static func familyGlass(_ form: FamilyGlassButtonStyle.Form, size: CGFloat = 26) -> FamilyGlassButtonStyle {
+        FamilyGlassButtonStyle(form: form, size: size)
     }
 }

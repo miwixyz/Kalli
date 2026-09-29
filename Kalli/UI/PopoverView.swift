@@ -123,13 +123,15 @@ struct PopoverView: View {
                 .contentTransition(.numericText())
             Spacer()
             if !showingSettings {
-                // Glas-Knöpfe in einem Container: Liquid Glass verschmilzt benachbarte
-                // Elemente dann zu einer Gruppe, statt drei Einzelteile zu zeichnen.
+                // Neutrale Glas-Knöpfe (Design-System): `.buttonStyle(.glass)` füllte
+                // sie in der Akzentfarbe — drei blaue Knöpfe waren zu laut (0.6.0-Test).
                 GlassEffectContainer(spacing: 6) {
                     HStack(spacing: 6) {
-                        Button { step(-1) } label: { Image(systemName: "chevron.left") }
-                            .buttonBorderShape(.circle)
-                            .help("Vorheriger Monat")
+                        Button { step(-1) } label: {
+                            Image(systemName: "chevron.left").font(.system(size: 11, weight: .semibold))
+                        }
+                        .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
+                        .help("Vorheriger Monat")
                         Button {
                             visibleMonth = Date()
                             selection = Date()
@@ -137,15 +139,15 @@ struct PopoverView: View {
                             Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale,
                                                           weight: .medium))
                         }
-                        .buttonBorderShape(.capsule)
+                        .buttonStyle(.familyGlass(.capsule, size: 26 * prefs.layoutScale))
                         .help("Zurück zum heutigen Tag")
-                        Button { step(1) } label: { Image(systemName: "chevron.right") }
-                            .buttonBorderShape(.circle)
-                            .help("Nächster Monat")
+                        Button { step(1) } label: {
+                            Image(systemName: "chevron.right").font(.system(size: 11, weight: .semibold))
+                        }
+                        .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
+                        .help("Nächster Monat")
                     }
                 }
-                .buttonStyle(.glass)
-                .controlSize(.small)
             }
         }
     }
@@ -281,7 +283,7 @@ struct PopoverView: View {
             } label: {
                 Image(systemName: showingSettings ? "chevron.left" : "gearshape")
             }
-            .buttonBorderShape(.circle)
+            .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
             .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
 
             // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
@@ -293,7 +295,7 @@ struct PopoverView: View {
                 Image(systemName: prefs.appearanceMode.symbol)
                     .contentTransition(.symbolEffect(.replace))
             }
-            .buttonBorderShape(.circle)
+            .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
             .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
 
             // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
@@ -322,9 +324,8 @@ struct PopoverView: View {
             Button("Beenden") { NSApplication.shared.terminate(nil) }
                 .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
         }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.capsule)
-        .controlSize(.small)
+        // Neutrale Glas-Kapseln (Design-System), Kreise oben einzeln gesetzt.
+        .buttonStyle(.familyGlass(.capsule, size: 26 * prefs.layoutScale))
         .padding(.top, 2)
     }
 

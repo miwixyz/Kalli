@@ -22,8 +22,11 @@ import SwiftUI
 struct GlassBackground<S: Shape>: ViewModifier {
     let shape: S
 
+    /// Ab 0.6.0 mit Schiefer-Tönung über dem Glas (`familyTintedGlass`). Reines Glas
+    /// ließ das Schreibtischbild voll durchscheinen: pinkes Hintergrundbild → rosa
+    /// Popover, weit weg von der Vorschau des Design-Systems (Michael, 29.09.).
     func body(content: Content) -> some View {
-        content.glassEffect(.regular, in: shape)
+        content.familyTintedGlass(in: shape)
     }
 }
 
