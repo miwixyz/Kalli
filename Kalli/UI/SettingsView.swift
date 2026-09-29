@@ -84,12 +84,12 @@ private struct SourcesSection: View {
     }
 
     var body: some View {
-        SettingsGroup(title: "Berechtigungen", symbol: "lock.shield.fill", tint: .green) {
+        SettingsGroup(title: "Berechtigungen", symbol: "lock.shield.fill", tint: Theme.accent) {
             permissions
         }
 
-        group(title: "Kalender", symbol: "calendar", tint: .red, kind: .event)
-        group(title: "Erinnerungen", symbol: "checklist", tint: .orange, kind: .reminder)
+        group(title: "Kalender", symbol: "calendar", tint: Theme.accent, kind: .event)
+        group(title: "Erinnerungen", symbol: "checklist", tint: Theme.accent, kind: .reminder)
 
         if store.sources.isEmpty {
             // Vorher stand hier eine Frage („fehlt die Berechtigung?"). Der
@@ -130,7 +130,7 @@ private struct SourcesSection: View {
             }
             Text("macOS zeigt den Dialog nur einmal. Wurde schon abgelehnt, "
                  + "hilft ausschließlich der Weg über die Systemeinstellungen.")
-                .font(.caption2)
+                .font(Theme.caption)
                 .foregroundStyle(.secondary)
         }
 
@@ -140,17 +140,17 @@ private struct SourcesSection: View {
         if promptHadNoEffect {
             VStack(alignment: .leading, spacing: 4) {
                 Label("macOS hat keinen Dialog gezeigt.", systemImage: "exclamationmark.triangle")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
+                    .font(Theme.caption)
+                    .foregroundStyle(FamilyTheme.warning)
                 Text("Das passiert, wenn die Entscheidung schon einmal getroffen "
                      + "wurde. → ZU TUN: Systemeinstellungen → Datenschutz & "
                      + "Sicherheit → Kalender → Kalli aktivieren.")
-                    .font(.caption2)
+                    .font(Theme.caption)
                     .foregroundStyle(.secondary)
                 Button("Systemeinstellungen öffnen") {
                     CalendarStore.openPrivacySettings()
                 }
-                .font(.caption2)
+                .font(Theme.caption)
             }
             .fixedSize(horizontal: false, vertical: true)
         }
@@ -161,7 +161,7 @@ private struct SourcesSection: View {
                                reminders: Bool) -> some View {
         HStack(spacing: 6) {
             Image(systemName: state == .granted ? "checkmark.circle.fill" : "exclamationmark.circle")
-                .foregroundStyle(state == .granted ? Color.green : .orange)
+                .foregroundStyle(state == .granted ? FamilyTheme.success : FamilyTheme.warning)
             Text("\(title): \(state.label)")
                 .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
             Spacer()
@@ -190,9 +190,9 @@ private struct SourcesSection: View {
                                             green: source.color.g,
                                             blue: source.color.b))
                                 .frame(width: 8, height: 8)
-                            Text(source.title).font(.callout).lineLimit(1)
+                            Text(source.title).font(Theme.callout).lineLimit(1)
                             Text(source.sourceTitle)
-                                .font(.caption2)
+                                .font(Theme.caption)
                                 .foregroundStyle(.tertiary)
                                 .lineLimit(1)
                         }
@@ -234,15 +234,15 @@ private struct MenuBarSection: View {
             display
         }
 
-        SettingsGroup(title: "Termin in der Leiste", symbol: "clock.fill", tint: .indigo) {
+        SettingsGroup(title: "Termin in der Leiste", symbol: "clock.fill", tint: Theme.accent) {
             eventInBar
         }
 
-        SettingsGroup(title: "Hinweis vor dem Termin", symbol: "bell.badge.fill", tint: .red) {
+        SettingsGroup(title: "Hinweis vor dem Termin", symbol: "bell.badge.fill", tint: Theme.accent) {
             reminderChannels
         }
 
-        SettingsGroup(title: "Vollbild-Hinweis", symbol: "rectangle.bottomhalf.inset.filled", tint: .purple) {
+        SettingsGroup(title: "Vollbild-Hinweis", symbol: "rectangle.bottomhalf.inset.filled", tint: Theme.accent) {
             fullScreen
         }
     }
@@ -261,8 +261,8 @@ private struct MenuBarSection: View {
             Label("Ohne Symbol und ohne Datum wäre der Eintrag leer — Kalli wäre "
                   + "in der Leiste nicht mehr auffindbar. Das Symbol bleibt deshalb.",
                   systemImage: "exclamationmark.triangle")
-                .font(.caption2)
-                .foregroundStyle(.orange)
+                .font(Theme.caption)
+                .foregroundStyle(FamilyTheme.warning)
         }
 
         if prefs.showDateInMenuBar {
@@ -337,8 +337,8 @@ private struct MenuBarSection: View {
             Label("Mitteilungen sind für Kalli nicht erlaubt. "
                   + "→ Systemeinstellungen › Mitteilungen › Kalli",
                   systemImage: "exclamationmark.triangle")
-                .font(.caption2)
-                .foregroundStyle(.orange)
+                .font(Theme.caption)
+                .foregroundStyle(FamilyTheme.warning)
                 .fixedSize(horizontal: false, vertical: true)
         }
 
@@ -415,7 +415,7 @@ private struct PopoverSection: View {
             Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
         }
 
-        SettingsGroup(title: "Tagesliste", symbol: "list.bullet", tint: .teal) {
+        SettingsGroup(title: "Tagesliste", symbol: "list.bullet", tint: Theme.accent) {
             Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
             Toggle("Vergangene Termine anzeigen", isOn: $prefs.showPastEvents)
             SettingsHint("Abgeschaltet räumt sich die Liste im Lauf des Tages auf — aber nur "
@@ -423,7 +423,7 @@ private struct PopoverSection: View {
                  + "Eine überfällige Aufgabe ist nicht erledigt, sondern das Gegenteil davon.")
         }
 
-        SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: .green) {
+        SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: Theme.accent) {
             Toggle("Fortschritt laufender Termine", isOn: $prefs.showRunningProgress)
                 .onChange(of: prefs.showRunningProgress) { label.update() }
             SettingsHint("Balken im Popover, Restzeit in der Menüleiste. Nur für Termine, die "
@@ -436,7 +436,7 @@ private struct PopoverSection: View {
             }
         }
 
-        SettingsGroup(title: "System", symbol: "power", tint: .gray) {
+        SettingsGroup(title: "System", symbol: "power", tint: Theme.accent) {
             LoginItemToggle()
         }
     }
@@ -467,23 +467,23 @@ private struct LoginItemToggle: View {
         case .needsApproval:
             VStack(alignment: .leading, spacing: 4) {
                 Label("macOS wartet auf deine Freigabe.", systemImage: "exclamationmark.triangle")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
+                    .font(Theme.caption)
+                    .foregroundStyle(FamilyTheme.warning)
                 Button("Systemeinstellungen oeffnen") { LoginItem.openSystemSettings() }
-                    .font(.caption2)
+                    .font(Theme.caption)
             }
         case .unavailable:
             Text("Autostart ist fuer diesen Build nicht verfuegbar. Er verlangt eine "
                  + "App an einem festen Ort — 'make install' legt Kalli nach "
                  + "/Applications.")
-                .font(.caption2)
+                .font(Theme.caption)
                 .foregroundStyle(.secondary)
         default:
             EmptyView()
         }
 
         if let failure {
-            Text(failure).font(.caption2).foregroundStyle(.red)
+            Text(failure).font(Theme.caption).foregroundStyle(FamilyTheme.danger)
         }
     }
 }

@@ -182,10 +182,19 @@ weiter: **System → Hell → Dunkel**. Das Symbol zeigt den aktuellen Stand
 Einstellungen und Vollbild-Hinweis. Dieselbe Wahl steht unter Einstellungen →
 Ansicht → Darstellung.
 
+## Aussehen (ab 0.6.0)
+
+Kalli trägt das Design der App-Familie, das künftig auch Tippi, TippAI und Qotti
+bekommen: die Farbwelt **„Schiefer“**, ein ruhiges Blaugrau, und die Schrift
+**Plus Jakarta Sans**. Kallis eigener Akzent ist Schieferindigo. Auf dem Akzent
+steht im Hellen weiße, im Dunklen dunkle Schrift, damit beides gut lesbar
+bleibt. Die Schrift ist frei lizenziert (SIL Open Font License), der Lizenztext
+steht unter **Drittanbieter-Lizenzen**.
+
 ## Einstellungen
 
 Zahnrad unten links, drei Reiter. Jeder Bereich ist eine eigene Karte mit
-farbigem Symbol, wie in den Systemeinstellungen:
+Symbol im Kalli-Akzent, im Stil der Systemeinstellungen:
 
 | Reiter | Inhalt |
 |---|---|

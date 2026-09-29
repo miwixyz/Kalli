@@ -22,7 +22,7 @@ struct SettingsGroup<Content: View>: View {
             HStack(spacing: 8) {
                 SymbolTile(symbol: symbol, tint: tint)
                 Text(title)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Theme.font(12, 1, weight: .semibold))
             }
             .padding(.leading, 2)
 
@@ -55,7 +55,7 @@ struct SymbolTile: View {
     var body: some View {
         Image(systemName: symbol)
             .font(.system(size: size * 0.55, weight: .semibold))
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.onAccent)
             .frame(width: size, height: size)
             .background {
                 RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
@@ -72,7 +72,7 @@ struct SettingsHint: View {
 
     var body: some View {
         Text(text)
-            .font(.caption2)
+            .font(Theme.caption)
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
     }

@@ -2,6 +2,26 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.6.0] — 2026-09-29
+
+### Neu
+
+- **Neues Design der App-Familie** (gilt künftig auch für Tippi, TippAI und Qotti):
+  Farbwelt „Schiefer“, ein ruhiges Blaugrau. Kallis Akzent ist jetzt Schieferindigo
+  (hell `#3E4D98`, dunkel `#98A4E1`) statt des bisherigen Blaus `#3070F0`.
+- **Neue Schrift: Plus Jakarta Sans**, modern und gut lesbar, im ganzen Popover, in
+  den Einstellungen und im Vollbild-Hinweis. Symbole bleiben Apples SF Symbols.
+- **Besser lesbar im Dunkelmodus:** Auf dem hellen Akzent (heute im Monatsraster,
+  „Link öffnen“) steht jetzt dunkle Schrift statt weißer.
+- Die Einstellungskarten tragen einheitlich den Kalli-Akzent statt bunter Symbole.
+  Warnungen und Hinweise verwenden die Warnfarbe des Design-Systems.
+- Der Vollbild-Hinweis nimmt die Schiefer-Töne statt reinem Schwarz/Weiß.
+
+### Lizenzen
+
+- Plus Jakarta Sans steht unter der SIL Open Font License 1.1. Der Lizenztext ist in
+  `THIRD-PARTY-LICENSES.md` ergänzt (in der App unter Einstellungen → Hilfe).
+
 ## [0.5.0] — 2026-09-29
 
 ### Neu

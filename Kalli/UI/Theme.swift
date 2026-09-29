@@ -4,17 +4,19 @@ import SwiftUI
 
 /// Kallis Farben und Formen an einer Stelle.
 ///
-/// Warum nicht `Color.accentColor`: Das ist die System-Akzentfarbe, also das
-/// macOS-Standardblau. Es wirkt neben modernen Oberflächen flach und beliebig,
-/// weil es seit Jahren unverändert ist und in jeder App gleich aussieht.
-///
-/// Kalli nutzt stattdessen das Blau aus der Tippi-Familie (`#3070F0`) — kräftiger,
-/// etwas kühler, und es verbindet die beiden Apps auch farblich. Wer lieber die
-/// Systemfarbe will, ändert genau diese eine Zeile.
+/// Ab 0.6.0 kommen Akzent und Schrift aus dem Design-System der App-Familie
+/// (`FamilyTheme.swift`, Quelle der Wahrheit im Vault: „App-Familie
+/// Design-System“): Farbwelt „Schiefer“, Schrift Plus Jakarta Sans, entschieden
+/// mit Michael am 2026-09-29. Vorher: eigenes Blau `#3070F0` und SF Pro.
 enum Theme {
 
-    /// Markenblau, aus `tippi-spec.md` / `kalli-spec.md`.
-    static let accent = Color(red: 0x30 / 255, green: 0x70 / 255, blue: 0xF0 / 255)
+    /// Kalli-Akzent „Schieferindigo“, hell `#3E4D98`, dunkel `#98A4E1`. Dynamisch,
+    /// folgt Hell/Dunkel ohne Neuzeichnen von Hand.
+    static var accent: Color { FamilyTheme.accent }
+
+    /// Text/Symbol auf dem Akzent: hell Weiß, dunkel fast Schwarz — Weiß auf dem
+    /// hellen Dunkelmodus-Akzent wäre kaum lesbar.
+    static var onAccent: Color { FamilyTheme.onAccent }
 
     /// Verlauf für gefüllte Flächen. Ein leichter Verlauf gibt Tiefe, wo eine
     /// Vollfarbe wie ein aufgeklebter Aufkleber wirkt.
@@ -27,7 +29,7 @@ enum Theme {
 
     /// Weicher Schein unter gefüllten Elementen — trägt die Tiefe, ohne einen
     /// harten Schlagschatten zu setzen.
-    static let accentGlow = accent.opacity(0.38)
+    static var accentGlow: Color { accent.opacity(0.38) }
 
     // MARK: - Schrift
 
@@ -54,10 +56,21 @@ enum Theme {
         static let bannerTitle: CGFloat = 13
     }
 
+    /// Plus Jakarta Sans in fester Größe × Kalli-Skalierung (macOS kennt kein
+    /// Dynamic Type, siehe oben). Ist die Schrift nicht registriert, fällt SwiftUI
+    /// still auf die Systemschrift zurück — deshalb protokolliert der App-Start
+    /// das Ergebnis von `FamilyTheme.registerFonts()`.
     static func font(_ size: CGFloat, _ scale: Double,
                      weight: Font.Weight = .regular) -> Font {
-        .system(size: size * scale, weight: weight)
+        .custom(FamilyTheme.fontFamily, fixedSize: size * scale).weight(weight)
     }
+
+    /// Die früheren Systemstile (`.caption2`, `.callout` …) in Plus Jakarta Sans,
+    /// mit den macOS-Größen dieser Stile. Nur für Stellen ohne Skalierung
+    /// (Einstellungen, Hinweise).
+    static let caption = font(10, 1)
+    static let callout = font(12, 1)
+    static let calloutSemibold = font(12, 1, weight: .semibold)
 
     /// Radius für Karten und Hinweisflächen. Großzügiger als der macOS-Standard,
     /// weil Liquid Glass weichere Formen verlangt.

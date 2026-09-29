@@ -68,8 +68,8 @@ struct HelpView: View {
                         .frame(width: 34, height: 34)
                 }
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("Kalli").font(.callout.weight(.semibold))
-                    Text(version).font(.caption2).foregroundStyle(.secondary)
+                    Text("Kalli").font(Theme.calloutSemibold)
+                    Text(version).font(Theme.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
             }

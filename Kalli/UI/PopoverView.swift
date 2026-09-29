@@ -64,7 +64,7 @@ struct PopoverView: View {
                             Text("Eine Berechtigung fehlt — hier prüfen")
                                 .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
                         }
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(FamilyTheme.warning)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
@@ -92,7 +92,7 @@ struct PopoverView: View {
             if let toggleError {
                 Label(toggleError, systemImage: "exclamationmark.triangle")
                     .font(Theme.font(Theme.Size.hint, prefs.layoutScale))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(FamilyTheme.warning)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

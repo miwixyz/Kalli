@@ -1,3 +1,5 @@
+import AppKit
+import OSLog
 import SwiftUI
 
 @main
@@ -9,6 +11,16 @@ struct KalliApp: App {
     @State private var updater = Updater()
 
     init() {
+        // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
+        // Registrierung fällt SwiftUI still auf die Systemschrift zurück — deshalb
+        // wird gemessen, nicht angenommen: Registrierung UND Auflösbarkeit.
+        FamilyTheme.app = .kalli
+        let registered = FamilyTheme.registerFonts()
+        let resolvable = NSFontManager.shared.availableMembers(ofFontFamily: FamilyTheme.fontFamily) != nil
+        Logger(subsystem: "com.kalli.app", category: "darstellung").notice(
+            "Schrift \(FamilyTheme.fontFamily, privacy: .public): registriert \(registered, privacy: .public), auflösbar \(resolvable, privacy: .public)"
+        )
+
         let p = Preferences()
         let s = CalendarStore(prefs: p)
         _prefs = State(initialValue: p)

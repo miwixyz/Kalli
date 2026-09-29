@@ -104,15 +104,15 @@ struct MarkdownView: View {
 
         case .paragraph(let text):
             Text(inline(text))
-                .font(.callout)
+                .font(Theme.callout)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 4)
 
         case .bullet(let text):
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text("•").font(.callout).foregroundStyle(.secondary)
+                Text("•").font(Theme.callout).foregroundStyle(.secondary)
                 Text(inline(text))
-                    .font(.callout)
+                    .font(Theme.callout)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.bottom, 3)
@@ -121,7 +121,7 @@ struct MarkdownView: View {
             HStack(alignment: .top, spacing: 8) {
                 ForEach(Array(cells.enumerated()), id: \.offset) { _, cell in
                     Text(inline(cell))
-                        .font(.caption)
+                        .font(Theme.caption)
                         .fontWeight(isHeader ? .semibold : .regular)
                         .foregroundStyle(isHeader ? .secondary : .primary)
                         .frame(maxWidth: .infinity, alignment: .leading)

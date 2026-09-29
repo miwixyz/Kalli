@@ -30,6 +30,10 @@ ansteht, bezahlt das mit Oberfläche.
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
 - **Hell/Dunkel** folgt dem System, oder fest per Knopf unten im Popover (System → Hell → Dunkel)
 - **Liquid Glass** auf dem Popover (macOS 26+), Glas-Knöpfe, Einstellungen als Karten im Stil der Systemeinstellungen
+- **Design der App-Familie** (ab 0.6.0): Farbwelt „Schiefer“, Akzent Schieferindigo, Schrift
+  **Plus Jakarta Sans** (SIL OFL, mitgeliefert, Lizenz in `THIRD-PARTY-LICENSES.md`). Farben und
+  Schrift kommen aus `Kalli/UI/FamilyTheme.swift`, einer Kopie der Vault-Vorlage
+  „App-Familie Design-System“. Werte dort ändern, nicht in Kalli
 - **Tagesliste nach Art gruppiert:** Ganztägig, Termine, Aufgaben — je mit
   eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste.

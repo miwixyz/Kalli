@@ -120,8 +120,6 @@ struct FullScreenAlertView: View {
     let onClose: () -> Void
     let onOpen: (URL) -> Void
 
-    @Environment(\.colorScheme) private var scheme
-
     /// Weitere gleichzeitige Termine als Karten. Mehr wird nur gezählt.
     private static let maxShown = 4
 
@@ -132,8 +130,9 @@ struct FullScreenAlertView: View {
         return f
     }()
 
-    /// Tönung für den Verlauf: im Dunkelmodus dunkel, im Hellmodus hell.
-    private var veil: Color { scheme == .dark ? .black : .white }
+    /// Tönung für den Verlauf: Schiefer-Hintergrundton (hell bzw. dunkel) statt reinem
+    /// Schwarz/Weiß (Design-System 0.6.0).
+    private var veil: Color { FamilyTheme.backgroundTop }
 
     var body: some View {
         GeometryReader { geo in
@@ -229,6 +228,7 @@ struct FullScreenAlertView: View {
                     // sieht man immer, wohin der Knopf führt.
                     Label("Link öffnen · \(host)", systemImage: "video")
                         .padding(.horizontal, 6)
+                        .foregroundStyle(Theme.onAccent)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(Theme.accent)

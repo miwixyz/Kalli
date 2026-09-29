@@ -155,7 +155,7 @@ private struct DayCell: View {
             if isSelected {
                 Circle()
                     .strokeBorder(
-                        isToday ? AnyShapeStyle(.white.opacity(0.85))
+                        isToday ? AnyShapeStyle(Theme.onAccent.opacity(0.85))
                                 : AnyShapeStyle(Theme.accent.opacity(0.75)),
                         lineWidth: 1.6
                     )
@@ -169,7 +169,7 @@ private struct DayCell: View {
     /// Auf gefülltem Akzenthintergrund muss der Text weiß sein, sonst steht
     /// Blau auf Blau.
     private var todayStyle: AnyShapeStyle {
-        if isToday { return AnyShapeStyle(.white) }
+        if isToday { return AnyShapeStyle(Theme.onAccent) }
         return AnyShapeStyle(isInMonth ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
     }
 
