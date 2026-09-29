@@ -16,6 +16,11 @@ Alle nennenswerten Änderungen an Kalli.
 - Die Einstellungskarten tragen einheitlich den Kalli-Akzent statt bunter Symbole.
   Warnungen und Hinweise verwenden die Warnfarbe des Design-Systems.
 - Der Vollbild-Hinweis nimmt die Schiefer-Töne statt reinem Schwarz/Weiß.
+- **Ruhigeres Glas:** Über dem Glas des Kalender-Fensters liegt eine Schiefer-Tönung.
+  Vorher schien ein buntes Schreibtischbild voll durch und färbte alles ein.
+- **Neutrale Glas-Knöpfe** oben („‹ Heute ›“) und unten (Einstellungen, Hell/Dunkel,
+  Updates, Beenden). Vorher waren alle in der Akzentfarbe gefüllt. Den Akzent trägt
+  jetzt nur noch, was hervorgehoben sein soll, etwa der heutige Tag.
 
 ### Lizenzen
 
