@@ -73,7 +73,8 @@ def main() -> None:
                 px = base * scale
                 name = f"icon_{base}x{base}{'@2x' if scale == 2 else ''}.png"
                 master.resize((px, px), Image.LANCZOS).save(os.path.join(iconset, name))
-        subprocess.run(["iconutil", "-c", "icns", iconset, "-o", ICNS], check=True)
+        # Voller Pfad statt PATH-Suche (rafter R-E617E, 2026-09-29).
+        subprocess.run(["/usr/bin/iconutil", "-c", "icns", iconset, "-o", ICNS], check=True)
     print(f"✓ {os.path.relpath(MASTER, ROOT)} und {os.path.relpath(ICNS, ROOT)} erzeugt")
 
 
