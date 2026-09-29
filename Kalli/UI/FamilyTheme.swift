@@ -110,6 +110,42 @@ enum FamilyTheme {
         Font.custom(fontFamily, size: size, relativeTo: style).weight(weight)
     }
 
+    /// Ersatz für `.font(.caption)`, `.font(.headline)` usw.: gleiche Größe wie der
+    /// Apple-Textstil der Plattform, aber in Plus Jakarta Sans. Auf iPhone/iPad wächst
+    /// sie mit Dynamic Type (`relativeTo:`). Überschrift-Stile sind SemiBold wie bei Apple.
+    static func font(_ style: Font.TextStyle, weight: Font.Weight? = nil) -> Font {
+        let size: CGFloat
+        let defaultWeight: Font.Weight
+        #if os(macOS)
+        switch style {
+        case .largeTitle: size = 26; defaultWeight = .regular
+        case .title: size = 22; defaultWeight = .regular
+        case .title2: size = 17; defaultWeight = .regular
+        case .title3: size = 15; defaultWeight = .regular
+        case .headline: size = 13; defaultWeight = .semibold
+        case .subheadline: size = 11; defaultWeight = .regular
+        case .callout: size = 12; defaultWeight = .regular
+        case .footnote, .caption, .caption2: size = 10; defaultWeight = .regular
+        default: size = 13; defaultWeight = .regular
+        }
+        #else
+        switch style {
+        case .largeTitle: size = 34; defaultWeight = .regular
+        case .title: size = 28; defaultWeight = .regular
+        case .title2: size = 22; defaultWeight = .regular
+        case .title3: size = 20; defaultWeight = .regular
+        case .headline: size = 17; defaultWeight = .semibold
+        case .subheadline: size = 15; defaultWeight = .regular
+        case .callout: size = 16; defaultWeight = .regular
+        case .footnote: size = 13; defaultWeight = .regular
+        case .caption: size = 12; defaultWeight = .regular
+        case .caption2: size = 11; defaultWeight = .regular
+        default: size = 17; defaultWeight = .regular
+        }
+        #endif
+        return font(size, weight: weight ?? defaultWeight, relativeTo: style)
+    }
+
     /// Registriert die Schriftdatei aus dem App-Bundle. Gibt zurück, ob es geklappt hat —
     /// ohne Registrierung fällt SwiftUI still auf die Systemschrift zurück.
     @discardableResult
