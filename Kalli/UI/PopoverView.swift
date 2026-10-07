@@ -6,6 +6,7 @@ struct PopoverView: View {
     @Environment(CalendarStore.self) private var store
     @Environment(MenuBarLabel.self) private var label
     @Environment(Updater.self) private var updater
+    @Environment(OneThing.self) private var oneThing
 
     @State private var visibleMonth = Date()
     @State private var selection = Date()
@@ -40,6 +41,11 @@ struct PopoverView: View {
         // Keine Trennlinien: Luft trennt die Bereiche (macOS-26-Formensprache).
         VStack(spacing: 12) {
             header
+
+            // „Die eine Sache" (0.7.0) — oben, weil sie der Tag ist, nicht ein Termin darin.
+            if !showingSettings {
+                OneThingField(scale: prefs.layoutScale)
+            }
 
             if showingSettings {
                 SettingsView()
@@ -182,7 +188,9 @@ struct PopoverView: View {
                                 showProgress: prefs.showRunningProgress,
                                 scale: prefs.layoutScale,
                                 justCompleted: justCompleted,
-                                onToggle: { item in toggle(item) }
+                                oneThingID: oneThing.reminderID,
+                                onToggle: { item in toggle(item) },
+                                onMakeOneThing: { item in oneThing.set(reminderID: item.id, title: item.title) }
                             )
                         }
                         if hiddenPastCount > 0 {
@@ -397,7 +405,9 @@ private struct AgendaGroup: View {
     let showProgress: Bool
     var scale: Double = 1.0
     var justCompleted: Set<String> = []
+    var oneThingID: String? = nil
     var onToggle: ((AgendaItem) -> Void)? = nil
+    var onMakeOneThing: ((AgendaItem) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -413,8 +423,15 @@ private struct AgendaGroup: View {
                 }
                 AgendaRow(item: item, showProgress: showProgress, scale: scale,
                           isFading: justCompleted.contains(item.id),
+                          isOneThing: item.isReminder && item.id == oneThingID,
                           onToggle: { onToggle?(item) })
                     .padding(.vertical, 5)
+                    .contentShape(Rectangle())
+                    .contextMenu {
+                        if item.isReminder && !item.isCompleted {
+                            Button("Als eine Sache in die Leiste", systemImage: "scope") { onMakeOneThing?(item) }
+                        }
+                    }
             }
         }
     }
@@ -469,6 +486,8 @@ private struct AgendaRow: View {
     let showProgress: Bool
     var scale: Double = 1.0
     var isFading: Bool = false
+    /// Diese Erinnerung steht als „die eine Sache" in der Leiste.
+    var isOneThing: Bool = false
     var onToggle: (() -> Void)? = nil
 
     private let timeFormatter: DateFormatter = {
@@ -512,10 +531,18 @@ private struct AgendaRow: View {
             .frame(width: 10)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(item.title)
-                    .font(Theme.font(Theme.Size.itemTitle, scale))
-                    .strikethrough(item.isCompleted)
-                    .foregroundStyle(item.isCompleted ? .secondary : .primary)
+                HStack(spacing: 4) {
+                    Text(item.title)
+                        .font(Theme.font(Theme.Size.itemTitle, scale))
+                        .strikethrough(item.isCompleted)
+                        .foregroundStyle(item.isCompleted ? .secondary : .primary)
+                    if isOneThing {
+                        Image(systemName: "scope")
+                            .font(.system(size: 10 * scale, weight: .semibold))
+                            .foregroundStyle(Theme.accent)
+                            .help("Steht als die eine Sache in der Menüleiste")
+                    }
+                }
                 let time = item.timeLabel(using: timeFormatter)
                 if !time.isEmpty {
                     HStack(spacing: 6) {

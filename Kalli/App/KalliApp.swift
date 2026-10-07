@@ -9,6 +9,9 @@ struct KalliApp: App {
     @State private var store: CalendarStore
     @State private var label: MenuBarLabel
     @State private var updater = Updater()
+    @State private var oneThing: OneThing
+    /// Hält den Dienste-Anbieter am Leben (NSApp.servicesProvider hält ihn nicht sicher fest).
+    @State private var oneThingService: OneThingService
 
     init() {
         // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
@@ -26,6 +29,15 @@ struct KalliApp: App {
         _prefs = State(initialValue: p)
         _store = State(initialValue: s)
         _label = State(initialValue: MenuBarLabel(prefs: p, store: s))
+        let o = OneThing(lookup: { [s] id in s.reminderLookup(id: id) })
+        let service = OneThingService(oneThing: o)
+        _oneThing = State(initialValue: o)
+        _oneThingService = State(initialValue: service)
+        // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
+        Task { @MainActor in
+            NSApp.servicesProvider = service
+            NSUpdateDynamicServices()
+        }
         // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
         Task { @MainActor in p.appearanceMode.apply() }
     }
@@ -37,6 +49,7 @@ struct KalliApp: App {
                 .environment(store)
                 .environment(label)
                 .environment(updater)
+                .environment(oneThing)
                 .tint(Theme.accent)
                 .task {
                     // Berechtigung erst beim ersten Öffnen erfragen, nicht beim
@@ -75,6 +88,21 @@ struct KalliApp: App {
             if !label.text.isEmpty {
                 Text(label.text)
             }
+        }
+        .menuBarExtraStyle(.window)
+
+        // „Die eine Sache" (0.7.0): eigener Eintrag, nur solange eine gesetzt ist.
+        // Wird er mit ⌘-Ziehen aus der Leiste entfernt, ist die Sache leer.
+        MenuBarExtra(isInserted: Binding(get: { oneThing.isSet },
+                                         set: { if !$0 { oneThing.clear() } })) {
+            OneThingField(scale: prefs.layoutScale)
+                .environment(oneThing)
+                .tint(Theme.accent)
+                .padding(12)
+                .frame(width: 300 * prefs.layoutScale)
+                .glassSurface(in: RoundedRectangle(cornerRadius: 14))
+        } label: {
+            Text(oneThing.barText)
         }
         .menuBarExtraStyle(.window)
     }

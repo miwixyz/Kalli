@@ -129,6 +129,21 @@ keine einzelnen Videokonferenz-Dienste, es nimmt den ersten Web-Link.
 Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
 taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
 
+## Die eine Sache (ab 0.7.0)
+
+Ein Text als **eigener Eintrag in der Menüleiste**, neben dem Datum — die eine Aufgabe,
+um die es gerade geht. Der Eintrag ist nur da, solange eine Sache gesetzt ist.
+
+- **Setzen:** Kalli öffnen, oben ins Feld „Die eine Sache …“ schreiben, **Return**.
+  Ein Klick auf den Eintrag in der Leiste öffnet dasselbe Feld. Das **x** entfernt ihn.
+- **Eine Erinnerung nehmen:** in der Tagesliste **Rechtsklick** auf eine offene Erinnerung →
+  „Als eine Sache in die Leiste“. Sie trägt dann ein Zielsymbol. Sobald du sie
+  **abhakst** — in Kalli oder in der Erinnerungen-App —, verschwindet sie aus der Leiste.
+- **Aus jeder App:** Text markieren → Rechtsklick → **Dienste** → „Als eine Sache in Kalli“.
+  Taucht der Eintrag nicht auf: Kalli einmal neu starten; macOS liest die Dienste beim Start.
+- In der Leiste stehen höchstens 40 Zeichen, der Rest steht im Feld. Zu breite Einträge
+  blendet macOS sonst ohne Hinweis aus.
+
 ## Popover
 
 - **Monatsraster** — heute ist ein gefüllter Kreis in Kallis Blau, der

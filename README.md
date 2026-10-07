@@ -51,6 +51,11 @@ ansteht, bezahlt das mit Oberfläche.
   Eigener Vorlauf 0/1/2/5 Min., **ab Werk aus**. Gilt für alle Termine mit Uhrzeit,
   auch mit eigenem Alarm, nicht für ganztägige und abgelehnte. **„Link öffnen“** für
   den ersten Web-Link im Termin, nur `http`/`https`, nur auf Klick
+- **Die eine Sache** (ab 0.7.0, nach dem Vorbild von [One Thing](https://sindresorhus.com/one-thing)) —
+  ein Text als eigener Leisteneintrag neben dem Datum, nur solange gesetzt. Setzen im Feld oben
+  im Popover, per Rechtsklick auf eine Erinnerung (verschwindet beim Abhaken, auch in der
+  Erinnerungen-App) oder aus jeder App über Dienste → „Als eine Sache in Kalli“
+  (`NSServices`, `Kalli/Core/OneThing.swift`). Höchstens 40 Zeichen in der Leiste
 - **Start bei der Anmeldung**, abschaltbar
 
 **Aufgaben lassen sich direkt abhaken** — ein Klick auf den Kreis setzt das Erledigt-Kennzeichen

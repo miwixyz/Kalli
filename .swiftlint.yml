@@ -60,3 +60,11 @@ custom_rules:
       - doccomment
     message: "NSApp.delegate ist unter SwiftUI nicht die eigene AppDelegate — Cast liefert still nil. AppDelegate explizit durchreichen."
     severity: error
+
+cyclomatic_complexity:
+  # Reine Zuordnungstabellen (`switch` über Textstile in FamilyTheme.font(_:weight:),
+  # gespiegelt aus der Vault-Vorlage 04 Ressourcen/App-Design-System) zählen sonst
+  # jeden `case` als Verzweigung — Komplexität 20 bei null echter Logik. Gleiche
+  # Einstellung wie Tippi. Eingeführt 2026-10-07: der Sync-Commit beb4dd9 hatte
+  # `make lint` und damit `make release` still blockiert.
+  ignores_case_statements: true

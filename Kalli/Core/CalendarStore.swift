@@ -570,6 +570,15 @@ final class CalendarStore {
 
     // MARK: - Abfragen
 
+    /// Stand einer Erinnerung für „Die eine Sache" (0.7.0) — direkt aus EventKit,
+    /// weil sie außerhalb des geladenen Zeitraums liegen kann. Ohne Berechtigung
+    /// `unknown`, nicht `gone`: dann darf nichts gelöscht werden.
+    func reminderLookup(id: String) -> OneThing.ReminderLookup {
+        guard EKEventStore.authorizationStatus(for: .reminder) == .fullAccess else { return .unknown }
+        guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return .gone }
+        return .found(.init(title: reminder.title ?? "", isCompleted: reminder.isCompleted))
+    }
+
     func items(on day: Date, calendar: Calendar) -> [AgendaItem] {
         items.filter { Self.occurs($0, on: day, calendar: calendar) }
     }

@@ -23,6 +23,29 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 
+	<!-- „Als eine Sache in Kalli" (0.7.0): markierter Text aus jeder App → Rechtsklick →
+	     Dienste. NSMessage = Methode von OneThingService, NSPortName = App-Name. -->
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Als eine Sache in Kalli</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>setOneThing</string>
+			<key>NSPortName</key>
+			<string>Kalli</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>public.utf8-plain-text</string>
+			</array>
+			<key>NSRequiredContext</key>
+			<dict/>
+		</dict>
+	</array>
+
 	<!-- Menüleisten-App: kein Dock-Icon, kein Hauptfenster beim Start. -->
 	<key>LSUIElement</key>
 	<true/>

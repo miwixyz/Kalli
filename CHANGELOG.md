@@ -2,6 +2,35 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.7.0] — 2026-10-07
+
+### Neu
+
+- **Die eine Sache** (nach dem Vorbild von [One Thing](https://sindresorhus.com/one-thing)):
+  ein Text, der als **eigener Eintrag in der Menüleiste** neben Kallis Datum steht — die
+  Aufgabe, um die es heute geht. Der Eintrag erscheint nur, solange eine Sache gesetzt ist.
+  - **Setzen:** oben im Kalli-Fenster ins Feld „Die eine Sache …“ schreiben, Return.
+    Klick auf den Eintrag selbst öffnet dasselbe Feld. Das x leert ihn.
+  - **Eine Erinnerung als Sache:** Rechtsklick auf eine offene Erinnerung in der Tagesliste →
+    „Als eine Sache in die Leiste“. Sie trägt dann ein Zielsymbol. **Hakst du sie ab** — in
+    Kalli oder in der Erinnerungen-App —, **verschwindet sie aus der Leiste**; wird sie
+    umbenannt, zieht der Text mit.
+  - **Aus anderen Apps:** Text markieren → Rechtsklick → Dienste → „Als eine Sache in Kalli“.
+    Mehrzeiliges wird zu einer Zeile, höchstens 200 Zeichen.
+  - In der Leiste stehen höchstens 40 Zeichen (sonst „…“): macOS blendet zu breite Einträge
+    ohne Hinweis aus.
+  - Ohne Erinnerungs-Berechtigung bleibt eine gebundene Sache stehen, statt still zu verschwinden.
+
+### Intern
+
+- 107 Tests (9 neu: Bereinigung, Kürzung, Abgleich mit Erinnerungen inkl. „nicht prüfbar“, Speichern, Dienst).
+- SwiftLint: `cyclomatic_complexity.ignores_case_statements` wie bei Tippi. Die gespiegelte
+  Textstil-Tabelle in `FamilyTheme.swift` (Commit `beb4dd9`) hatte `make lint` und damit jedes
+  Release blockiert.
+- Gemessen am echten System (Testkopie, Bedienungshilfen): Dienst angemeldet und per
+  `NSPerformService` ausgelöst → zweiter Leisteneintrag mit dem Text; bleibt nach Neustart;
+  langer Text 40 Zeichen mit „…“; ohne Sache wieder nur ein Eintrag.
+
 ## [0.6.0] — 2026-09-29
 
 ### Neu
