@@ -3,6 +3,16 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.7.0</title>
+            <pubDate>Wed, 07 Oct 2026 19:32:41 +0200</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>65</sparkle:version>
+            <sparkle:shortVersionString>0.7.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.7.0/Kalli-0.7.0.zip" length="3188620" type="application/octet-stream" sparkle:edSignature="VQexzrL4S0gNd3SHU2ONJSeXUAb5iHiWaIv0hioqBWIVNePGDDIzy38mpzIV5zNCWbgCmQa5JwUjhiA/p/8cAg=="/>
+        </item>
+        <item>
             <title>0.6.0</title>
             <pubDate>Tue, 29 Sep 2026 16:31:53 +0200</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -21,16 +31,6 @@
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.5.0/Kalli-0.5.0.zip" length="3078815" type="application/octet-stream" sparkle:edSignature="KWf0cDsu2opSQgGz056fFPhJV22xYsKxWPYLCa+wgfG9OUylUEJg+27LjL9HHr15txvamC+iK2EG2tUYWF+ZAg=="/>
-        </item>
-        <item>
-            <title>0.4.10</title>
-            <pubDate>Sun, 27 Sep 2026 21:22:03 +0200</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>55</sparkle:version>
-            <sparkle:shortVersionString>0.4.10</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.4.10/Kalli-0.4.10.zip" length="1361489" type="application/octet-stream" sparkle:edSignature="VuJslxodUu+PnODxHNZFIxi4E4AmyJWnObFEgBkjvE0NKHuJPfq1b2FyPJJyU6vI5NJ5Xta5dNR15rjyQXYEDA=="/>
         </item>
     </channel>
 </rss>
