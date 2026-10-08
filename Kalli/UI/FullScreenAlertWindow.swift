@@ -21,6 +21,10 @@ final class FullScreenAlertPresenter {
 
     private var panels: [NSPanel] = []
     private var items: [AgendaItem] = []
+    /// „Zum Beginn nochmal" — bekommt die Termine des geschlossenen Hinweises.
+    var onSnooze: (([AgendaItem]) -> Void)?
+    /// Einstellung „Vollbild auf": alle, Hauptbildschirm oder andere.
+    var screens: FullScreenScreens = .all
 
     /// Neue Termine kommen zu einem offenen Hinweis dazu, statt ein zweites Fenster
     /// darüberzulegen.
@@ -34,13 +38,13 @@ final class FullScreenAlertPresenter {
 
     private func present() {
         panels.forEach { $0.orderOut(nil) }
-        panels = NSScreen.screens.map(makePanel)
+        panels = screens.targets(in: NSScreen.screens).map(makePanel)
         panels.forEach { $0.orderFrontRegardless() }
         (panels.first { $0.screen == NSScreen.main } ?? panels.first)?.makeKey()
         // Messpunkt: Ein Hinweis, der still nicht erscheint, ist schlimmer als keiner.
         let visible = panels.filter(\.isVisible).count
         let key = panels.contains(where: \.isKeyWindow)
-        Self.log.notice("Vollbild gezeigt: \(self.items.count, privacy: .public) Termin(e), \(NSScreen.screens.count, privacy: .public) Bildschirm(e), \(visible, privacy: .public)/\(self.panels.count, privacy: .public) Fenster sichtbar, Tastatur: \(key, privacy: .public)")
+        Self.log.notice("Vollbild gezeigt: \(self.items.count, privacy: .public) Termin(e), \(NSScreen.screens.count, privacy: .public) Bildschirm(e), Wahl \(self.screens.title, privacy: .public), \(visible, privacy: .public)/\(self.panels.count, privacy: .public) Fenster sichtbar, Tastatur: \(key, privacy: .public)")
     }
 
     private static let log = Logger(subsystem: "com.kalli.app", category: "vollbild")
@@ -73,7 +77,8 @@ final class FullScreenAlertPresenter {
         let host = NSHostingView(rootView: FullScreenAlertView(
             items: items,
             onClose: { [weak self] in self?.close() },
-            onOpen: { [weak self] url in self?.open(url) }
+            onOpen: { [weak self] url in self?.open(url) },
+            onSnooze: { [weak self] in self?.snooze() }
         ))
         // Die SwiftUI-Ansicht liegt in einer schlichten Hülle, nicht direkt als
         // Fensterinhalt. Direkt als Inhalt verschluckte sie Esc, bevor
@@ -95,6 +100,12 @@ final class FullScreenAlertPresenter {
         panels.forEach { $0.orderOut(nil) }
         panels = []
         items = []
+    }
+
+    private func snooze() {
+        let current = items
+        close()
+        onSnooze?(current)
     }
 
     /// Zweite Prüfung direkt vor dem Öffnen, falls ein Link auf anderem Weg in ein
@@ -119,6 +130,7 @@ struct FullScreenAlertView: View {
     let items: [AgendaItem]
     let onClose: () -> Void
     let onOpen: (URL) -> Void
+    let onSnooze: () -> Void
 
     /// Weitere gleichzeitige Termine als Karten. Mehr wird nur gezählt.
     private static let maxShown = 4
@@ -186,7 +198,7 @@ struct FullScreenAlertView: View {
                     }
                 }
 
-                actions(first)
+                actions(first, now: now)
             }
         }
     }
@@ -220,7 +232,7 @@ struct FullScreenAlertView: View {
         }
     }
 
-    private func actions(_ first: AgendaItem) -> some View {
+    private func actions(_ first: AgendaItem, now: Date) -> some View {
         HStack(spacing: 12) {
             if let link = first.link, let host = link.host {
                 Button { onOpen(link) } label: {
@@ -238,6 +250,13 @@ struct FullScreenAlertView: View {
             }
             .buttonStyle(.glass)
             .keyboardShortcut(.defaultAction)
+            // Nur solange der Beginn noch mindestens `minSnooze` entfernt ist.
+            if !FullScreenAlerts.snoozable(items, now: now).isEmpty {
+                Button(action: onSnooze) {
+                    Label("Zum Beginn nochmal", systemImage: "zzz").padding(.horizontal, 6)
+                }
+                .buttonStyle(.glass)
+            }
             Spacer()
             Text("esc oder return schließt")
                 .font(Theme.font(Theme.Size.hint + 2, 1))

@@ -56,6 +56,79 @@ final class FullScreenAlertTests: XCTestCase {
         XCTAssertEqual(FullScreenAlerts.due(in: [item], now: now, lead: 0, shown: []).count, 1)
     }
 
+    // MARK: Zum Beginn nochmal (Michael, 2026-10-08)
+
+    func testSnoozableOnlyWhenStartAtLeastThirtySecondsAway() {
+        let fiveMin = Fixture.event(start: Fixture.at(5), end: Fixture.at(30))
+        let halfMin = Fixture.event(start: Fixture.at(0.5), end: Fixture.at(30))
+        let tenSec = Fixture.event(start: now.addingTimeInterval(10), end: Fixture.at(30))
+        let running = Fixture.event(start: Fixture.at(-1), end: Fixture.at(30))
+        XCTAssertEqual(Set(FullScreenAlerts.snoozable([fiveMin, halfMin, tenSec, running], now: now)
+                            .map(\.id)), [fiveMin.id, halfMin.id])
+    }
+
+    func testSnoozedComesBackExactlyAtStartNotBefore() {
+        let item = Fixture.event(start: Fixture.at(5), end: Fixture.at(30))
+        let start = item.start!
+        XCTAssertTrue(FullScreenAlerts.snoozeDue(in: [item], now: start.addingTimeInterval(-1),
+                                                 snoozed: [item.id]).isEmpty)
+        XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [item], now: start,
+                                                  snoozed: [item.id]).map(\.id), [item.id])
+    }
+
+    /// Geschlummert ist unabhängig von „schon gezeigt": Der erste Hinweis steht in `shown`,
+    /// trotzdem muss er zum Beginn wiederkommen.
+    func testSnoozedComesBackEvenThoughAlreadyShown() {
+        let item = Fixture.event(start: Fixture.at(0), end: Fixture.at(30))
+        XCTAssertTrue(FullScreenAlerts.due(in: [item], now: now, lead: 300, shown: [item.id]).isEmpty)
+        XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [item], now: now, snoozed: [item.id]).count, 1)
+    }
+
+    func testSnoozeAfterSleepOnlyWithinGrace() {
+        let justStarted = Fixture.event(start: Fixture.at(-4), end: Fixture.at(30))
+        let tooLate = Fixture.event(start: Fixture.at(-6), end: Fixture.at(30))
+        XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [justStarted, tooLate], now: now,
+                                                  snoozed: [justStarted.id, tooLate.id]).map(\.id),
+                       [justStarted.id])
+    }
+
+    func testNotSnoozedOrIneligibleDoesNotComeBack() {
+        let other = Fixture.event(start: Fixture.at(0), end: Fixture.at(30))
+        var declined = Fixture.event(start: Fixture.at(0), end: Fixture.at(30))
+        declined.isDeclined = true
+        XCTAssertTrue(FullScreenAlerts.snoozeDue(in: [other, declined], now: now,
+                                                 snoozed: [declined.id]).isEmpty)
+    }
+
+    // MARK: Bildschirmwahl (Michael, 2026-10-08) — erstes Element = Hauptbildschirm
+
+    func testScreenTargetsWithTwoScreens() {
+        let screens = ["haupt", "zweit"]
+        XCTAssertEqual(FullScreenScreens.all.targets(in: screens), ["haupt", "zweit"])
+        XCTAssertEqual(FullScreenScreens.main.targets(in: screens), ["haupt"])
+        XCTAssertEqual(FullScreenScreens.others.targets(in: screens), ["zweit"])
+    }
+
+    func testOthersWithThreeScreensSkipsOnlyMain() {
+        XCTAssertEqual(FullScreenScreens.others.targets(in: ["haupt", "a", "b"]), ["a", "b"])
+    }
+
+    /// Ohne zweiten Bildschirm darf der Hinweis nicht unsichtbar werden.
+    func testOthersWithSingleScreenFallsBackToMain() {
+        XCTAssertEqual(FullScreenScreens.others.targets(in: ["haupt"]), ["haupt"])
+        XCTAssertTrue(FullScreenScreens.others.targets(in: [String]()).isEmpty)
+    }
+
+    @MainActor
+    func testScreenChoiceDefaultsToAllAndPersists() {
+        let suite = "kalli.test.screens.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertEqual(Preferences(defaults: defaults).fullScreenScreens, .all)
+        Preferences(defaults: defaults).fullScreenScreens = .others
+        XCTAssertEqual(Preferences(defaults: defaults).fullScreenScreens, .others)
+    }
+
     // MARK: Link
 
     func testPrefersUrlFieldThenLocationThenNotes() {

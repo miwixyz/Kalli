@@ -79,7 +79,10 @@ final class CalendarStore {
             Task { @MainActor [weak self] in await self?.reload() }
         }
         #if DEBUG
-        Task { @MainActor [weak self] in self?.fullScreenAlerts.showDemoIfRequested() }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            fullScreenAlerts.showDemoIfRequested(screens: prefs.fullScreenScreens)
+        }
         #endif
     }
 
@@ -323,7 +326,8 @@ final class CalendarStore {
     func syncFullScreenAlerts() {
         fullScreenAlerts.sync(horizon: barItems,
                               enabled: prefs.fullScreenBeforeEvent,
-                              leadMinutes: prefs.fullScreenLeadMinutes)
+                              leadMinutes: prefs.fullScreenLeadMinutes,
+                              screens: prefs.fullScreenScreens)
     }
 
     /// Termine rund um **jetzt** — die Quelle für Leiste, Puls und Popover-Hinweis.

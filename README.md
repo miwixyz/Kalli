@@ -6,6 +6,9 @@ Menüleisten-Kalender für macOS. Bewusst klein.
 
 Zeigt Datum, Monatsraster, Termine und Erinnerungen — und sonst nichts.
 
+**Kurzvorstellung zum Weitergeben:** [docs/ONE-PAGER.md](docs/ONE-PAGER.md) ·
+**Herunterladen:** [neuestes Release](https://github.com/miwixyz/Kalli/releases/latest)
+
 ## Warum es das gibt
 
 Es gibt gute Menüleisten-Kalender. [Calendr](https://github.com/pakerwreah/Calendr)
@@ -47,8 +50,9 @@ ansteht, bezahlt das mit Oberfläche.
   Die Mitteilung enthält Titel und Uhrzeit; was das für Mitteilungszentrale und
   Sperrbildschirm bedeutet, steht in `Kalli/Resources/RECHTLICHES.md`
 - **Vollbild-Hinweis vor dem Termin** (ab 0.5.0, nach dem Vorbild von „In Your Face“) —
-  Glasfläche über der unteren Bildschirmhälfte auf allen Bildschirmen, bis Esc/Return.
-  Eigener Vorlauf 0/1/2/5 Min., **ab Werk aus**. Gilt für alle Termine mit Uhrzeit,
+  Glasfläche über der unteren Bildschirmhälfte, bis Esc/Return. Bildschirme wählbar:
+  alle, Hauptbildschirm oder andere. **„Zum Beginn nochmal“** holt den Hinweis
+  genau zum Terminbeginn zurück. Eigener Vorlauf 0/1/2/5 Min., **ab Werk aus**. Gilt für alle Termine mit Uhrzeit,
   auch mit eigenem Alarm, nicht für ganztägige und abgelehnte. **„Link öffnen“** für
   den ersten Web-Link im Termin, nur `http`/`https`, nur auf Klick
 - **Die eine Sache** (ab 0.7.0, nach dem Vorbild von [One Thing](https://sindresorhus.com/one-thing)) —
@@ -70,7 +74,7 @@ Natural-Language-Eingabe, Zeitzonen, Erkennung einzelner Videokonferenz-Dienste
 
 ```bash
 make build     # xcodegen + xcodebuild
-make test      # 81 Tests, unter einer Sekunde
+make test      # alle Tests, unter einer Sekunde
 make run       # bauen und aus dem build-Ordner starten
 make install   # nach /Applications legen und starten (nicht über eine Release-Kalli)
 ```
@@ -136,7 +140,7 @@ ein verschobener Tag würde damit auffallen.
 make test
 ```
 
-81 Tests, `KalliTests/`. Sie prüfen **ausschließlich reine Entscheidungslogik** —
+Die Tests in `KalliTests/` prüfen **ausschließlich reine Entscheidungslogik** —
 welcher Termin in die Leiste kommt, welcher eine Mitteilung bekommt, wie
 Beschriftungen und Kennungen gebildet werden. Kein EventKit, keine
 Berechtigungen, keine Systemuhr: Jede geprüfte Funktion bekommt `now`
@@ -189,6 +193,7 @@ weiß es nicht.
 | `Kalli/Resources/HILFE.md` | Bedienung — wird **in der App** unter Einstellungen → Hilfe angezeigt |
 | `Kalli/Resources/RECHTLICHES.md` | Lizenz, Datenschutz, Gewährleistung — ebenfalls in der App |
 | `CHANGELOG.md` | Änderungen je Version — in der App unter „Änderungen" |
+| `docs/ONE-PAGER.md` | Kurzvorstellung für Werbezwecke (seit 0.8.0) — bei jeder neuen Funktion mitziehen, nur Gemessenes |
 
 Diese drei Dateien liegen **als Dateien im App-Bundle**, nicht als Zeichenketten
 im Quelltext. `make build` spiegelt das CHANGELOG bei jedem Durchlauf frisch,

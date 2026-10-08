@@ -378,7 +378,14 @@ private struct MenuBarSection: View {
             }
             .onChange(of: prefs.fullScreenLeadMinutes) { store.syncFullScreenAlerts() }
 
-            SettingsHint("Legt sich über alle Bildschirme, bis du ihn schließt (Esc oder Return). "
+            Picker("Zeigen auf", selection: $prefs.fullScreenScreens) {
+                ForEach(FullScreenScreens.allCases) { Text($0.title).tag($0) }
+            }
+            .onChange(of: prefs.fullScreenScreens) { store.syncFullScreenAlerts() }
+
+            SettingsHint("Bleibt stehen, bis du ihn schließt (Esc oder Return). "
+                 + "\u{201E}Zum Beginn nochmal\u{201C} holt ihn genau zum Terminbeginn zurück. "
+                 + "Ist bei \u{201E}Andere Bildschirme\u{201C} nur einer angeschlossen, erscheint er dort. "
                  + "Gilt für alle Termine mit Uhrzeit, auch mit eigenem Kalender-Alarm — "
                  + "nicht für ganztägige und abgelehnte. Steht im Termin ein Web-Link, "
                  + "zeigt der Hinweis \u{201E}Link öffnen\u{201C} mit der Zieladresse.")

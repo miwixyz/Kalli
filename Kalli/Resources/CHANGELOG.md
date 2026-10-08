@@ -2,6 +2,32 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.8.0] — 2026-10-08
+
+### Neu
+
+- **„Zum Beginn nochmal“ im Vollbild-Hinweis:** schließt den Hinweis und holt ihn **genau
+  zum Terminbeginn** zurück, unabhängig vom eingestellten Vorlauf (bei 5 Min. Vorlauf also
+  in 5 Minuten). Der Knopf erscheint nur, solange der Beginn mindestens 30 Sekunden entfernt
+  ist. Beginnen mehrere Termine gleichzeitig, kommen alle noch nicht begonnenen wieder.
+- **Vollbild-Hinweis: Bildschirme wählbar** — Einstellungen → Menüleiste → „Zeigen auf“:
+  alle Bildschirme (ab Werk, wie bisher), nur der Hauptbildschirm (der mit der Menüleiste)
+  oder nur die anderen. Ist bei „Andere Bildschirme“ nur einer angeschlossen, erscheint der
+  Hinweis dort, statt unsichtbar zu bleiben.
+
+### Intern
+
+- 116 Tests (9 neu: Schlummern ab 30 s, Rückkehr genau zum Beginn, unabhängig von „schon
+  gezeigt“, nach dem Ruhezustand nur bis 5 Min., Bildschirmwahl mit 1/2/3 Bildschirmen,
+  Einstellung speichern).
+- Geschlummerte Termine stehen in einer eigenen Menge, nicht nur in einem Timer: `sync` stellt
+  alle Timer neu (stündlich, bei Kalenderänderungen). Live gemessen: viermal neu geplant,
+  der Hinweis kam trotzdem um 11:03:00,6 bei Beginn 11:03:00.
+- Debug-Demo `-vollbildDemo` übernimmt die Bildschirmwahl direkt aus den Einstellungen,
+  weil sie vor dem ersten Abgleich laufen kann.
+- Neu: `docs/ONE-PAGER.md`, eine Kurzvorstellung zum Weitergeben, oben im README verlinkt.
+  Im README steht keine feste Testzahl mehr (stand bei 81, es waren 107).
+
 ## [0.7.0] — 2026-10-07
 
 ### Neu

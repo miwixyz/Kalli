@@ -102,10 +102,19 @@ Der dritte Kanal, für alle, die in der Arbeit versinken und Mitteilungen
 übersehen. **Ab Werk aus**, einzuschalten unter Einstellungen → Menüleiste →
 Vollbild-Hinweis.
 
-- Kurz vor Beginn legt sich über **alle Bildschirme** eine Glasfläche über die
-  untere Hälfte, darüber ein Verlauf. Deine Arbeit bleibt oben sichtbar.
+- Kurz vor Beginn legt sich eine Glasfläche über die untere Bildschirmhälfte,
+  darüber ein Verlauf. Deine Arbeit bleibt oben sichtbar.
+- **Zeigen auf:** alle Bildschirme (ab Werk), nur den **Hauptbildschirm** (der mit
+  der Menüleiste) oder nur die **anderen Bildschirme**. Ist bei „Andere
+  Bildschirme“ nur ein Bildschirm angeschlossen, etwa am MacBook unterwegs,
+  erscheint der Hinweis dort, statt unsichtbar zu bleiben.
 - Du siehst Titel, Uhrzeit und einen Countdown („Beginnt in 1 Min.“).
 - **Schließen** mit Esc, Return oder dem Knopf „Schließen“.
+- **„Zum Beginn nochmal“** schließt den Hinweis und holt ihn **genau zum
+  Terminbeginn** zurück, egal welcher Vorlauf eingestellt ist. Bei 5 Minuten
+  Vorlauf heißt das: in 5 Minuten noch einmal. Der Knopf fehlt, wenn der Termin
+  in weniger als 30 Sekunden beginnt oder schon läuft. Beim zweiten Mal gibt es
+  ihn deshalb nicht mehr. Beendest du Kalli zwischendurch, ist das Nochmal vergessen.
 - **Eigener Vorlauf:** zum Beginn, 1, 2 oder 5 Minuten. Getrennt vom Vorlauf der
   Mitteilung, denn die warnt vor, der Vollbild-Hinweis holt dich im letzten
   Moment aus der Arbeit.

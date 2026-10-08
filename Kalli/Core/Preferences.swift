@@ -26,6 +26,7 @@ final class Preferences {
         static let alertLead = "alertLeadMinutes"
         static let fullScreen = "fullScreenBeforeEvent"
         static let fullScreenLead = "fullScreenLeadMinutes"
+        static let fullScreenScreens = "fullScreenScreens"
         static let appearance = "appearanceMode"
     }
 
@@ -184,6 +185,11 @@ final class Preferences {
         didSet { defaults.set(fullScreenLeadMinutes, forKey: Key.fullScreenLead) }
     }
 
+    /// Bildschirme für den Vollbild-Hinweis. Ab Werk alle — so verhielt sich Kalli bis 0.7.0.
+    var fullScreenScreens: FullScreenScreens {
+        didSet { defaults.set(fullScreenScreens.rawValue, forKey: Key.fullScreenScreens) }
+    }
+
     /// Hell/Dunkel/System. Ab Werk System. Angewendet wird es in `AppearanceMode.apply()`.
     var appearanceMode: AppearanceMode {
         didSet { defaults.set(appearanceMode.rawValue, forKey: Key.appearance) }
@@ -210,6 +216,9 @@ final class Preferences {
         alertLeadMinutes = defaults.object(forKey: Key.alertLead) as? Int ?? 10
         fullScreenBeforeEvent = defaults.object(forKey: Key.fullScreen) as? Bool ?? false
         fullScreenLeadMinutes = defaults.object(forKey: Key.fullScreenLead) as? Int ?? 1
+        fullScreenScreens = FullScreenScreens(
+            rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0
+        ) ?? .all
         appearanceMode = AppearanceMode(
             rawValue: defaults.object(forKey: Key.appearance) as? Int ?? 0
         ) ?? .system
