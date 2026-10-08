@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Erst erhöhen, wenn diese Seite gegen das Release gelesen wurde (Release-Profil app-release/references/kalli.md). -->
+<meta name="kalli:documented-version" content="0.8.0">
+<title>Kalli: Kalender in der Menüleiste für macOS, bewusst klein</title>
+<meta name="description" content="Kalli zeigt Datum, nächsten Termin und Erinnerungen in der Menüleiste deines Macs. Mit Vollbild-Hinweis vor dem Termin. Kostenlos, Open Source, kein Server.">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F3F5F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1019" media="(prefers-color-scheme: dark)">
+
+<meta property="og:site_name" content="Kalli">
+<meta property="og:title" content="Kalli: Kalender in der Menüleiste, bewusst klein">
+<meta property="og:description" content="Datum, nächster Termin und Erinnerungen in der Menüleiste deines Macs. Mit Vollbild-Hinweis, der genau zum Terminbeginn wiederkommt. Kostenlos und Open Source.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://miwixyz.github.io/Kalli/og-image.png">
+<meta property="og:url" content="https://miwixyz.github.io/Kalli/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kalli-Symbol neben dem Satz: Kalender in der Menüleiste, bewusst klein.">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preload" href="fonts/PlusJakartaSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Linien-Piktogramme (keine Emojis), einmal definiert, per <use> eingesetzt -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-zzz" viewBox="0 0 24 24"><path d="M3 9h6l-6 7h6M13 4h4l-4 5h4M15 14h5l-5 6h5"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.4 10.4 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.39-1.61"/><path d="M2 2l20 20"/></symbol>
+  <symbol id="i-contrast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M12 6a6 6 0 0 1 0 12"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-cloudoff" viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M5.78 5.78A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.31-.2"/><path d="M21.53 15.8A4.5 4.5 0 0 0 17.5 10h-1.79A7 7 0 0 0 9.5 5.06"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></symbol>
+</svg>
+
+<a class="skip-link" href="#content">Zum Inhalt springen</a>
+
+<nav class="top" aria-label="Hauptnavigation">
+  <div class="wrap nav-inner">
+    <a class="brand" href="./">
+      <img src="kalli-icon-224.png" alt="" width="30" height="30">
+      <span>Kalli</span>
+    </a>
+    <div class="nav-links">
+      <a class="anchor" href="#neu">Neu in 0.8</a>
+      <a class="anchor" href="#funktionen">Funktionen</a>
+      <a class="anchor" href="#datenschutz">Datenschutz</a>
+      <a href="https://github.com/miwixyz/Kalli"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg><span class="anchor">GitHub</span><span class="visually-hidden">Kalli auf GitHub</span></a>
+      <a class="nav-cta" href="https://github.com/miwixyz/Kalli/releases/latest">Laden</a>
+    </div>
+  </div>
+</nav>
+
+<main id="content">
+
+<header class="hero">
+  <div class="wrap">
+    <img class="app-icon" src="kalli-icon-224.png" alt="Kalli-Symbol" width="112" height="112">
+    <div><a class="news" href="#neu"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>Neu in 0.8.0: Der Vollbild-Hinweis kommt zum Terminbeginn wieder</a></div>
+    <h1>Dein Kalender in der Menüleiste.<br><span class="accent">Bewusst klein.</span></h1>
+    <p class="sub">Kalli zeigt dir Datum, nächsten Termin und Erinnerungen oben rechts auf deinem Mac. Ein Klick öffnet den Monat und den Tag, und mehr will Kalli nicht sein.</p>
+    <div class="cta-group">
+      <a class="btn" href="https://github.com/miwixyz/Kalli/releases/latest"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Kalli kostenlos laden</a>
+      <a class="btn ghost" href="https://github.com/miwixyz/Kalli"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg>Quellcode ansehen</a>
+    </div>
+    <small>Open Source (MIT) · für macOS 26 · von Apple notarisiert · kein Server, keine Analyse</small>
+
+    <figure class="stage" aria-label="Vereinfachte Darstellung: Kalli in der Menüleiste mit geöffnetem Fenster">
+      <div class="desk">
+        <div class="menubar" aria-hidden="true">
+          <span class="mb-item"><svg class="ico" style="width:13px;height:13px"><use href="#i-target"/></svg>Pitch vorbereiten</span>
+          <span class="mb-item open">Do. 8. Okt.<span class="next">· 10:00 Jour fixe <b>in 13 Min.</b></span></span>
+          <span class="sys"><svg class="ico"><use href="#i-wifi"/></svg><svg class="ico"><use href="#i-search"/></svg></span>
+        </div>
+        <div class="popover" aria-hidden="true">
+          <div class="pop-head">
+            <span class="month">Oktober <span class="year">2026</span></span>
+            <span class="nav"><span><svg class="ico"><use href="#i-left"/></svg></span><span><svg class="ico"><use href="#i-right"/></svg></span></span>
+          </div>
+          <div class="grid">
+            <span class="h">KW</span><span class="h">Mo</span><span class="h">Di</span><span class="h">Mi</span><span class="h">Do</span><span class="h">Fr</span><span class="h">Sa</span><span class="h">So</span>
+            <span class="kw">40</span><span class="d out">28</span><span class="d out">29</span><span class="d out">30</span><span class="d dot">1</span><span class="d">2</span><span class="d">3</span><span class="d">4</span>
+            <span class="kw">41</span><span class="d dot">5</span><span class="d">6</span><span class="d dot">7</span><span class="d today"><span>8</span></span><span class="d dot">9</span><span class="d">10</span><span class="d">11</span>
+            <span class="kw">42</span><span class="d dot">12</span><span class="d">13</span><span class="d dot">14</span><span class="d">15</span><span class="d dot">16</span><span class="d">17</span><span class="d">18</span>
+            <span class="kw">43</span><span class="d">19</span><span class="d dot">20</span><span class="d">21</span><span class="d">22</span><span class="d dot">23</span><span class="d">24</span><span class="d">25</span>
+            <span class="kw">44</span><span class="d">26</span><span class="d">27</span><span class="d dot">28</span><span class="d">29</span><span class="d">30</span><span class="d">31</span><span class="d out">1</span>
+          </div>
+          <div class="daylist">
+            <div class="group">Ganztägig</div>
+            <div class="row"><span class="mark" style="--c:var(--cal-3)"></span><span>Programmwechsel KW 41</span><span class="time">ganztägig</span></div>
+            <div class="group">Termine</div>
+            <div class="row"><span class="mark"></span><span>Fokuszeit</span><span class="time">09:00–10:00</span><span class="bar"><i style="width:78%"></i></span></div>
+            <div class="row"><span class="mark"></span><span>Jour fixe</span><span class="time">10:00–10:30</span></div>
+            <div class="row"><span class="mark" style="--c:var(--cal-2)"></span><span>Rückruf Kino</span><span class="time">14:30</span></div>
+            <div class="group">Aufgaben</div>
+            <div class="row"><span class="mark task"></span><span>Trailer-Paket bestellen</span><span class="time"></span></div>
+          </div>
+          <div class="banner"><svg class="ico"><use href="#i-bell"/></svg>Jour fixe beginnt in 13 Min.</div>
+        </div>
+      </div>
+      <figcaption class="mock-note">Vereinfachte Darstellung mit Beispielterminen. Hell und Dunkel folgen deinem System.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="neu">
+  <div class="wrap">
+    <span class="eyebrow">Neu in 0.8.0</span>
+    <h2>Den Termin nicht mehr verpassen</h2>
+    <p class="lead">Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sich Kalli kurz vor einem Termin über den Bildschirm legen. Deine Arbeit bleibt oben sichtbar, und der Hinweis bleibt stehen, bis du ihn schließt.</p>
+
+    <figure class="alert-stage" aria-label="Vereinfachte Darstellung: Vollbild-Hinweis fünf Minuten vor dem Termin">
+      <div class="work" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="veil" aria-hidden="true"></div>
+      <div class="alert-glass" aria-hidden="true">
+        <div class="alert-inner">
+          <div class="alert-top">
+            <span class="capsule"><svg class="ico"><use href="#i-bell"/></svg>Beginnt in 5 Min.</span>
+            <span class="clock">09:55</span>
+          </div>
+          <div class="alert-title"><span class="dot"></span>Jour fixe</div>
+          <div class="alert-time">10:00–10:30</div>
+          <div class="alert-actions">
+            <span class="pill primary"><svg class="ico"><use href="#i-video"/></svg>Link öffnen · zoom.us</span>
+            <span class="pill">Schließen</span>
+            <span class="pill new"><svg class="ico"><use href="#i-zzz"/></svg>Zum Beginn nochmal</span>
+            <span class="alert-hint">esc oder return schließt</span>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <div class="new-points">
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-zzz"/></svg>Zum Beginn nochmal</h3>
+        <p>Kommt der Hinweis fünf Minuten vorher und du willst erst noch die Mail zu Ende schreiben, schickt ihn dieser Knopf weg. Genau zum Terminbeginn ist er wieder da, auf die Sekunde.</p>
+      </div>
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg>Du wählst die Bildschirme</h3>
+        <p>Der Hinweis erscheint auf allen Bildschirmen, nur auf dem Hauptbildschirm mit der Menüleiste oder nur auf den anderen. Hängt am MacBook unterwegs nur einer, erscheint er trotzdem.</p>
+        <div class="screens" aria-hidden="true"><span>Alle</span><span>Haupt</span><span>Andere</span></div>
+      </div>
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-video"/></svg>Direkt in die Besprechung</h3>
+        <p>Steht im Termin ein Zoom-, Teams- oder anderer Web-Link, bringt dich ein Klick hinein. Der Knopf zeigt dir vorher, wohin er führt.</p>
+      </div>
+    </div>
+    <p class="mock-note">Vorlauf zum Beginn, 1, 2 oder 5 Minuten vorher. Ab Werk ist der Vollbild-Hinweis aus.</p>
+  </div>
+</section>
+
+<section id="funktionen">
+  <div class="wrap">
+    <h2>Was Kalli kann</h2>
+    <p class="lead">Alles, was du brauchst, um zu wissen, welcher Tag ist und was ansteht.</p>
+    <div class="features">
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg></div>
+        <h3>Auf einen Blick in der Leiste</h3>
+        <p>Das Datum im Format deiner Wahl, auf Wunsch mit dem nächsten Termin und einem Countdown. Lange Titel werden gekürzt, damit die Leiste nicht springt.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg></div>
+        <h3>Monat und Tag sortiert</h3>
+        <p>Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen. Darunter der Tag, getrennt nach ganztägig, Terminen und Aufgaben.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></div>
+        <h3>Aufgaben abhaken</h3>
+        <p>Ein Klick auf den Kreis hakt die Erinnerung ab. Kalli prüft danach nach, ob das Häkchen in der Erinnerungen-App angekommen ist, und sagt es dir, wenn nicht.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-timer"/></svg></div>
+        <h3>Wie lange läuft das noch?</h3>
+        <p>Ein Fortschrittsbalken im Fenster und die Restzeit in der Leiste zeigen dir, wann der laufende Termin endet.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-bell"/></svg></div>
+        <h3>Erinnert, wie du willst</h3>
+        <p>Drei Wege nach Wahl: eine Mitteilung, ein pulsierender Punkt in der Leiste und der Vollbild-Hinweis. Alle drei sind ab Werk aus.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg></div>
+        <h3>Die eine Sache</h3>
+        <p>Die wichtigste Aufgabe des Tages steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-eyeoff"/></svg></div>
+        <h3>Nur, was zählt</h3>
+        <p>Jeder Kalender und jede Erinnerungsliste lässt sich einzeln ausblenden, nach Konto gruppiert.</p>
+      </div>
+      <div class="feature card">
+        <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-contrast"/></svg></div>
+        <h3>Sieht aus wie macOS selbst</h3>
+        <p>Liquid Glass im Fenster, Hell und Dunkel nach System oder fest per Knopf unten im Fenster.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="without card">
+      <div class="tile-icon"><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg></div>
+      <h3>Was bewusst fehlt</h3>
+      <p>Kalli legt keine Termine an und ändert keine. Für all das gibt es gute, größere Apps. Kalli bleibt das kleine Fenster, das du nebenbei öffnest.</p>
+      <div class="chips" aria-label="Nicht enthalten"><span>Termine anlegen</span><span>Eingabe in natürlicher Sprache</span><span>Zeitzonen</span><span>Datumsrechner</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="datenschutz">
+  <div class="wrap">
+    <h2>Deine Daten bleiben auf deinem Mac</h2>
+    <p class="lead">Kalli braucht kein Konto und schickt nichts an einen Server.</p>
+    <div class="privacy-grid">
+      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span><p><strong>Kalender nur lesen</strong>Bei Erinnerungen setzt Kalli ausschließlich das Erledigt-Häkchen, und nur, wenn du klickst. Nichts wird angelegt, umbenannt oder gelöscht.</p></div>
+      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-cloudoff"/></svg></span><p><strong>Kein Server, keine Analyse</strong>Es gibt keine Kennungen und keine Nutzungsstatistik. Gespeichert werden nur deine Einstellungen.</p></div>
+      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg></span><p><strong>Updates nur mit deinem Ja</strong>Den einzigen Netzwerkzugriff, die Suche nach Updates bei GitHub, erlaubst du beim ersten Mal selbst. Sagst du nein, geht nichts ins Netz.</p></div>
+      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg></span><p><strong>Geprüft und offen</strong>Jede Version ist von Apple notarisiert. Der Quellcode liegt offen auf GitHub, unter der MIT-Lizenz.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="installieren">
+  <div class="wrap">
+    <h2>In einer Minute eingerichtet</h2>
+    <p class="lead">Du brauchst einen Mac mit macOS 26.</p>
+    <div class="steps">
+      <div class="step card"><div class="n">1</div><h3>Laden</h3><p>Lade das neueste Release von <a href="https://github.com/miwixyz/Kalli/releases/latest">GitHub</a> herunter. Die Datei heißt <em>Kalli-…zip</em>.</p></div>
+      <div class="step card"><div class="n">2</div><h3>Auspacken</h3><p>Öffne die ZIP-Datei per Doppelklick und zieh <strong>Kalli.app</strong> in den Ordner <em>Programme</em>.</p></div>
+      <div class="step card"><div class="n">3</div><h3>Starten</h3><p>Beim ersten Klick auf das Datum fragt macOS nach dem Zugriff auf Kalender und Erinnerungen. Danach ist Kalli bereit.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="fragen">
+  <div class="wrap">
+    <h2>Häufige Fragen</h2>
+    <div class="faq">
+      <details><summary>Was kostet Kalli?</summary><p>Nichts. Kalli ist Open Source unter der MIT-Lizenz, ohne Abo und ohne Werbung.</p></details>
+      <details><summary>Welche Kalender zeigt Kalli?</summary><p>Alle, die in der Kalender-App deines Macs eingerichtet sind, zum Beispiel iCloud, Google oder Exchange. Aufgaben kommen aus der Erinnerungen-App.</p></details>
+      <details><summary>Kann ich mit Kalli Termine anlegen?</summary><p>Nein, das ist Absicht. Termine legst du weiter in der Kalender-App an, Kalli zeigt sie dir dann an.</p></details>
+      <details><summary>Wie kommen Updates?</summary><p>Kalli fragt beim ersten Mal, ob es selbst nach Updates suchen darf. Du kannst auch jederzeit über den Knopf „Updates“ unten im Fenster nachsehen. Vor der Installation prüft Kalli zwei Signaturen.</p></details>
+      <details><summary>Läuft Kalli auf älteren macOS-Versionen?</summary><p>Nein, Kalli braucht macOS 26. Das Fenster nutzt Liquid Glass, das es erst ab dieser Version gibt.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <img class="app-icon" src="kalli-icon-224.png" alt="" width="72" height="72">
+    <h2>Probier Kalli aus</h2>
+    <p class="lead">Kostenlos, ohne Konto, in einer Minute eingerichtet.</p>
+    <div class="cta-group">
+      <a class="btn" href="https://github.com/miwixyz/Kalli/releases/latest"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Kalli kostenlos laden</a>
+    </div>
+    <p class="family">Aus derselben App-Familie: <a href="https://tippi.mwlr.dev/">Tippi</a>, der KI-Schreibassistent für den Mac.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Kalli von Michael Wildenauer · Open Source unter der MIT-Lizenz · <a href="https://github.com/miwixyz/Kalli">GitHub</a></p>
+    <p><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

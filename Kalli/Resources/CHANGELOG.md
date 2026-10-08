@@ -2,6 +2,18 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unveröffentlicht]
+
+### Behoben
+
+- **Rechtliches:** Der Abschnitt zum Vollbild-Hinweis sprach noch von „allen Bildschirmen“. Seit 0.8.0
+  gilt die Wahl unter „Zeigen auf“ (ab Werk alle). In der App von 0.8.0 steht noch der alte Satz.
+
+### Intern
+
+- **Website** unter [miwixyz.github.io/Kalli](https://miwixyz.github.io/Kalli/) (GitHub Pages aus `docs/`):
+  Design der App-Familie wie tippi.mwlr.dev, deutsch, hell und dunkel, mit Impressum und Datenschutz.
+
 ## [0.8.0] — 2026-10-08
 
 ### Neu

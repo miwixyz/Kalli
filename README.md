@@ -6,6 +6,7 @@ Menüleisten-Kalender für macOS. Bewusst klein.
 
 Zeigt Datum, Monatsraster, Termine und Erinnerungen — und sonst nichts.
 
+**Website:** [miwixyz.github.io/Kalli](https://miwixyz.github.io/Kalli/) ·
 **Kurzvorstellung zum Weitergeben:** [docs/ONE-PAGER.md](docs/ONE-PAGER.md) ·
 **Herunterladen:** [neuestes Release](https://github.com/miwixyz/Kalli/releases/latest)
 
@@ -194,6 +195,7 @@ weiß es nicht.
 | `Kalli/Resources/RECHTLICHES.md` | Lizenz, Datenschutz, Gewährleistung — ebenfalls in der App |
 | `CHANGELOG.md` | Änderungen je Version — in der App unter „Änderungen" |
 | `docs/ONE-PAGER.md` | Kurzvorstellung für Werbezwecke (seit 0.8.0) — bei jeder neuen Funktion mitziehen, nur Gemessenes |
+| `docs/index.html` + `style.css` | Website (GitHub Pages aus `docs/`), Design der App-Familie; `impressum.html`, `datenschutz.html` daneben. `<meta name="kalli:documented-version">` erst erhöhen, wenn die Seite gegen das Release gelesen ist |
 
 Diese drei Dateien liegen **als Dateien im App-Bundle**, nicht als Zeichenketten
 im Quelltext. `make build` spiegelt das CHANGELOG bei jedem Durchlauf frisch,

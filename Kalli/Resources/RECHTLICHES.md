@@ -66,8 +66,10 @@ Start, und kann jederzeit in den Systemeinstellungen entzogen werden.
 ### Vollbild-Hinweis und „Link öffnen“ (ab 0.5.0)
 
 Ist **„Vollbild-Hinweis vor dem Termin“** eingeschaltet (ab Werk **aus**), zeigt
-Kalli Titel und Uhrzeit groß über **allen Bildschirmen**. Wer gerade seinen
-Bildschirm teilt oder präsentiert, zeigt diesen Titel damit auch den anderen.
+Kalli Titel und Uhrzeit groß auf den Bildschirmen, die du unter „Zeigen auf“
+wählst (ab Werk **alle**, seit 0.8.0 auch nur der Hauptbildschirm oder nur die
+anderen). Wer gerade einen dieser Bildschirme teilt oder präsentiert, zeigt
+diesen Titel damit auch den anderen.
 
 Steht im Termin ein Web-Link, bietet der Hinweis **„Link öffnen“** an. Erst **auf
 deinen Klick** übergibt Kalli diese eine Adresse an deinen Standardbrowser. Kalli
