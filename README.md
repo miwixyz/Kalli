@@ -82,8 +82,9 @@ make install   # nach /Applications legen und starten (nicht über eine Release-
 
 **`make install` ist nicht optional, wenn du den Autostart willst.**
 `SMAppService` verlangt eine App an einem festen Ort. Aus `build/` heraus
-vergisst macOS die Registrierung beim nächsten Build — der Schalter zeigt das
-dann ehrlich als „nicht verfügbar" an, statt Erfolg zu behaupten.
+vergisst macOS die Registrierung beim nächsten Build. Scheitert die Anmeldung,
+zeigt der Schalter den Fehler von macOS an, statt Erfolg zu behaupten. (`.notFound`
+heißt dabei nur „noch nie angemeldet“ und sperrt den Schalter seit 0.8.1 nicht mehr.)
 
 Die Signatur von `make install` ist **ad-hoc und ohne Hardened Runtime** — sie
 ändert sich mit jedem Build. Liegt in `/Applications` bereits eine

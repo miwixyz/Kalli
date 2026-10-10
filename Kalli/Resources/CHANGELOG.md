@@ -2,9 +2,14 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unveröffentlicht]
+## [0.8.1] — 2026-10-10
 
 ### Behoben
+
+- **„Start bei der Anmeldung“ ließ sich nicht einschalten.** Der Schalter war ausgegraut mit dem
+  Hinweis „Autostart ist für diesen Build nicht verfügbar“, obwohl Kalli in /Applications lag.
+  macOS meldet vor der allerersten Anmeldung „nicht gefunden“, Kalli hielt das für „geht nicht“.
+  Jetzt lässt sich der Schalter einschalten (gefunden in Seam, gemessen 10.10.).
 
 - **Rechtliches:** Der Abschnitt zum Vollbild-Hinweis sprach noch von „allen Bildschirmen“. Seit 0.8.0
   gilt die Wahl unter „Zeigen auf“ (ab Werk alle). In der App von 0.8.0 steht noch der alte Satz.

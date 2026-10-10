@@ -235,8 +235,9 @@ Erscheint ein oranger Hinweis „macOS wartet auf deine Freigabe", musst du den
 Eintrag einmal in den Systemeinstellungen bestätigen; der Knopf führt direkt
 dorthin.
 
-Steht dort „Autostart ist für diesen Build nicht verfügbar", liegt Kalli nicht
-an einem festen Ort. `make install` legt die App nach `/Applications`.
+Klappt das Einschalten nicht, zeigt Kalli die Fehlermeldung von macOS unter dem
+Schalter. Am zuverlässigsten funktioniert der Autostart, wenn Kalli in
+`/Applications` liegt. (Bis 0.8.0 war der Schalter dort fälschlich ausgegraut.)
 
 ## Updates
 

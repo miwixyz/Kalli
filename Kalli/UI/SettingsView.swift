@@ -480,9 +480,7 @@ private struct LoginItemToggle: View {
                     .font(Theme.caption)
             }
         case .unavailable:
-            Text("Autostart ist fuer diesen Build nicht verfuegbar. Er verlangt eine "
-                 + "App an einem festen Ort — 'make install' legt Kalli nach "
-                 + "/Applications.")
+            Text("macOS meldet einen unbekannten Autostart-Status.")
                 .font(Theme.caption)
                 .foregroundStyle(.secondary)
         default:
