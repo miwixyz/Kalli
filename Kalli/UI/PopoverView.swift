@@ -86,7 +86,8 @@ struct PopoverView: View {
                     calendar: calendar,
                     showWeekNumbers: prefs.showWeekNumbers,
                     scale: prefs.layoutScale,
-                    hasItems: { store.hasItems(on: $0, calendar: calendar) }
+                    hasItems: { store.hasItems(on: $0, calendar: calendar) },
+                    highlight: { prefs.highlight(for: $0, calendar: calendar)?.color }
                 )
                 agenda
             }

@@ -2,6 +2,20 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.9.0] — 2026-10-12
+
+### Neu
+
+- **Wochentage hervorheben:** Einstellungen → Ansicht → „Wochentage hervorheben“. Für jeden
+  Wochentag lässt sich eine Farbe wählen (Rot, Orange, Grün, Blau, Lila, Rosa), z. B. jeder
+  Donnerstag rot. Die Tageszahl steht dann im Monatsraster in dieser Farbe. Ab Werk ist kein
+  Tag hervorgehoben; heute bleibt immer im Kalli-Blau.
+
+### Intern
+
+- **Website und One-Pager:** Abschnitt „Neu in 0.9“ mit vereinfachtem Monatsraster, der
+  Vollbild-Hinweis steht weiter als „Seit 0.8“ darunter. Vorschaubild für geteilte Links neu.
+
 ## [0.8.1] — 2026-10-10
 
 ### Behoben

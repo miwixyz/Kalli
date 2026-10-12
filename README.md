@@ -31,6 +31,7 @@ ansteht, bezahlt das mit Oberfläche.
   keiner**
 - **Popover:** Monatsraster mit Kalenderwochen, Punkt an Tagen mit Einträgen,
   Tagesliste mit Terminen und Erinnerungen
+- **Wochentage hervorheben** in einer wählbaren Farbe (z. B. jeder Donnerstag rot)
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
 - **Hell/Dunkel** folgt dem System, oder fest per Knopf unten im Popover (System → Hell → Dunkel)
 - **Liquid Glass** auf dem Popover (macOS 26+), Glas-Knöpfe, Einstellungen als Karten im Stil der Systemeinstellungen

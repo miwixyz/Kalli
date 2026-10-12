@@ -45,6 +45,8 @@ struct MonthGrid: View {
     let showWeekNumbers: Bool
     var scale: Double = 1.0
     let hasItems: (Date) -> Bool
+    /// Farbe der Tageszahl für hervorgehobene Wochentage, `nil` = normal.
+    var highlight: (Date) -> Color? = { _ in nil }
 
     private var cellW: CGFloat { 44 * scale }
     private var cellH: CGFloat { 40 * scale }
@@ -95,6 +97,7 @@ struct MonthGrid: View {
                             isSelected: calendar.isDate(day, inSameDayAs: selection),
                             isInMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
                             hasItems: hasItems(day),
+                            highlight: highlight(day),
                             dayNumber: calendar.component(.day, from: day),
                             width: cellW, height: cellH, scale: scale
                         )
@@ -112,6 +115,7 @@ private struct DayCell: View {
     let isSelected: Bool
     let isInMonth: Bool
     let hasItems: Bool
+    let highlight: Color?
     let dayNumber: Int
     let width: CGFloat
     let height: CGFloat
@@ -167,9 +171,12 @@ private struct DayCell: View {
     }
 
     /// Auf gefülltem Akzenthintergrund muss der Text weiß sein, sonst steht
-    /// Blau auf Blau.
+    /// Blau auf Blau — deshalb schlägt „heute" auch die Hervorhebung.
+    /// Hervorgehobene Tage außerhalb des Monats bleiben farbig, aber blass wie
+    /// ihre Nachbarn.
     private var todayStyle: AnyShapeStyle {
         if isToday { return AnyShapeStyle(Theme.onAccent) }
+        if let highlight { return AnyShapeStyle(highlight.opacity(isInMonth ? 1 : 0.35)) }
         return AnyShapeStyle(isInMonth ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
     }
 

@@ -161,6 +161,9 @@ um die es gerade geht. Der Eintrag ist nur da, solange eine Sache gesetzt ist.
   Schrift, Rasterzellen und Fensterbreite **gemeinsam** — sonst wüchse der Text
   und das Raster bliebe stehen.
 - **Kalenderwochen** links, abschaltbar
+- **Wochentage hervorheben** — z. B. jeder Donnerstag rot (Einstellungen → Ansicht →
+  „Wochentage hervorheben“, je Wochentag eine Farbe oder „Keine“). Die Tageszahl
+  steht dann in dieser Farbe; heute bleibt im Kalli-Blau.
 - **Hinweis oben** — was gerade läuft oder bald beginnt, mit Fortschrittsbalken.
   Die Vorlaufzeit ist einstellbar (5 bis 240 Minuten).
 - **Tagesliste** in drei Gruppen:
@@ -224,7 +227,7 @@ Symbol im Kalli-Akzent, im Stil der Systemeinstellungen:
 |---|---|
 | **Kalender** | Berechtigungen · jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
 | **Menüleiste** | Anzeige in der Leiste (Symbol, Datum, Format) · Termin in der Leiste · Hinweis vor dem Termin (Mitteilung, Puls) · Vollbild-Hinweis |
-| **Ansicht** | Darstellung (Hell/Dunkel, Schriftgröße, Kalenderwochen) · Tagesliste · Laufend und kommend · System (Start bei der Anmeldung) |
+| **Ansicht** | Darstellung (Hell/Dunkel, Schriftgröße, Kalenderwochen) · Wochentage hervorheben · Tagesliste · Laufend und kommend · System (Start bei der Anmeldung) |
 
 ## Start bei der Anmeldung
 

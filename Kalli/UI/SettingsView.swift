@@ -422,6 +422,12 @@ private struct PopoverSection: View {
             Toggle("Kalenderwochen anzeigen", isOn: $prefs.showWeekNumbers)
         }
 
+        SettingsGroup(title: "Wochentage hervorheben", symbol: "paintpalette.fill", tint: Theme.accent) {
+            WeekdayHighlightPickers()
+            SettingsHint("Die Tageszahl steht im Monatsraster in der gewählten Farbe. "
+                 + "Heute bleibt immer im Kalli-Blau.")
+        }
+
         SettingsGroup(title: "Tagesliste", symbol: "list.bullet", tint: Theme.accent) {
             Toggle("Erledigte Erinnerungen anzeigen", isOn: $prefs.showCompletedReminders)
             Toggle("Vergangene Termine anzeigen", isOn: $prefs.showPastEvents)
@@ -446,6 +452,40 @@ private struct PopoverSection: View {
         SettingsGroup(title: "System", symbol: "power", tint: Theme.accent) {
             LoginItemToggle()
         }
+    }
+}
+
+// MARK: - Wochentage hervorheben
+
+/// Ein Auswahlmenü je Wochentag, in der Reihenfolge des Monatsrasters (ab Wochenbeginn).
+/// Der Name des Wochentags steht selbst in der gewählten Farbe — das ist die Vorschau.
+private struct WeekdayHighlightPickers: View {
+    @Environment(Preferences.self) private var prefs
+
+    private var weekdays: [Int] {
+        let first = Calendar.current.firstWeekday
+        return (0..<7).map { (first - 1 + $0) % 7 + 1 }
+    }
+
+    var body: some View {
+        ForEach(weekdays, id: \.self) { weekday in
+            Picker(selection: binding(for: weekday)) {
+                Text("Keine").tag(HighlightColor?.none)
+                ForEach(HighlightColor.allCases) { color in
+                    Text(color.title).tag(HighlightColor?.some(color))
+                }
+            } label: {
+                Text(Calendar.current.weekdaySymbols[weekday - 1])
+                    .foregroundStyle(prefs.weekdayHighlights[weekday]?.color ?? .primary)
+            }
+        }
+    }
+
+    private func binding(for weekday: Int) -> Binding<HighlightColor?> {
+        Binding(
+            get: { prefs.weekdayHighlights[weekday] },
+            set: { prefs.weekdayHighlights[weekday] = $0 }
+        )
     }
 }
 

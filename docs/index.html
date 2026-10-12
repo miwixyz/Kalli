@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Erst erhöhen, wenn diese Seite gegen das Release gelesen wurde (Release-Profil app-release/references/kalli.md). -->
-<meta name="kalli:documented-version" content="0.8.0">
+<meta name="kalli:documented-version" content="0.9.0">
 <title>Kalli: Kalender in der Menüleiste für macOS, bewusst klein</title>
 <meta name="description" content="Kalli zeigt Datum, nächsten Termin und Erinnerungen in der Menüleiste deines Macs. Mit Vollbild-Hinweis vor dem Termin. Kostenlos, Open Source, kein Server.">
 <link rel="icon" href="favicon.png" type="image/png">
@@ -65,7 +65,7 @@
       <span>Kalli</span>
     </a>
     <div class="nav-links">
-      <a class="anchor" href="#neu">Neu in 0.8</a>
+      <a class="anchor" href="#neu">Neu in 0.9</a>
       <a class="anchor" href="#funktionen">Funktionen</a>
       <a class="anchor" href="#datenschutz">Datenschutz</a>
       <a href="https://github.com/miwixyz/Kalli"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg><span class="anchor">GitHub</span><span class="visually-hidden">Kalli auf GitHub</span></a>
@@ -79,7 +79,7 @@
 <header class="hero">
   <div class="wrap">
     <img class="app-icon" src="kalli-icon-224.png" alt="Kalli-Symbol" width="112" height="112">
-    <div><a class="news" href="#neu"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>Neu in 0.8.0: Der Vollbild-Hinweis kommt zum Terminbeginn wieder</a></div>
+    <div><a class="news" href="#neu"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>Neu in 0.9: Wochentage in deiner Farbe</a></div>
     <h1>Dein Kalender in der Menüleiste.<br><span class="accent">Bewusst klein.</span></h1>
     <p class="sub">Kalli zeigt dir Datum, nächsten Termin und Erinnerungen oben rechts auf deinem Mac. Ein Klick öffnet den Monat und den Tag, und mehr will Kalli nicht sein.</p>
     <div class="cta-group">
@@ -128,7 +128,45 @@
 
 <section id="neu">
   <div class="wrap">
-    <span class="eyebrow">Neu in 0.8.0</span>
+    <span class="eyebrow">Neu in 0.9</span>
+    <h2>Jeder Donnerstag in Rot</h2>
+    <p class="lead">Donnerstags ist Training, sonntags kommt die Familie? Dann gib diesen Tagen eine Farbe. Kalli schreibt ihre Tageszahl im Monat in genau dieser Farbe, und beim Öffnen siehst du sofort, wo sie liegen.</p>
+
+    <figure class="popover hl-stage" aria-label="Vereinfachte Darstellung: Monatsraster mit Donnerstagen in Rot und Sonntagen in Grün">
+      <div class="pop-head" aria-hidden="true">
+        <span class="month">Oktober <span class="year">2026</span></span>
+      </div>
+      <div class="grid" aria-hidden="true">
+        <span class="h">KW</span><span class="h">Mo</span><span class="h">Di</span><span class="h">Mi</span><span class="h">Do</span><span class="h">Fr</span><span class="h">Sa</span><span class="h">So</span>
+        <span class="kw">40</span><span class="d"></span><span class="d"></span><span class="d"></span><span class="d hl-red dot">1</span><span class="d">2</span><span class="d">3</span><span class="d hl-green">4</span>
+        <span class="kw">41</span><span class="d dot">5</span><span class="d">6</span><span class="d dot">7</span><span class="d hl-red">8</span><span class="d dot">9</span><span class="d">10</span><span class="d hl-green">11</span>
+        <span class="kw">42</span><span class="d dot">12</span><span class="d">13</span><span class="d dot">14</span><span class="d today"><span>15</span></span><span class="d dot">16</span><span class="d">17</span><span class="d hl-green">18</span>
+        <span class="kw">43</span><span class="d">19</span><span class="d dot">20</span><span class="d">21</span><span class="d hl-red">22</span><span class="d dot">23</span><span class="d">24</span><span class="d hl-green">25</span>
+        <span class="kw">44</span><span class="d">26</span><span class="d">27</span><span class="d dot">28</span><span class="d hl-red">29</span><span class="d">30</span><span class="d">31</span><span class="d"></span>
+      </div>
+    </figure>
+
+    <div class="new-points">
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Jeder Wochentag für sich</h3>
+        <p>Für jeden Wochentag wählst du eine eigene Farbe oder keine. Zur Auswahl stehen Rot, Orange, Grün, Blau, Lila und Rosa. Gelb fehlt mit Absicht, denn gelbe Zahlen sind auf hellem Grund kaum zu lesen.</p>
+      </div>
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg>Heute bleibt erkennbar</h3>
+        <p>Der heutige Tag behält seinen blauen Kreis. Das gilt auch dann, wenn er auf einen hervorgehobenen Wochentag fällt.</p>
+      </div>
+      <div class="point">
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg>Ab Werk aus</h3>
+        <p>Du findest die Einstellung unter Einstellungen → Ansicht → Wochentage hervorheben. Solange du nichts auswählst, sieht Kalli aus wie bisher.</p>
+      </div>
+    </div>
+    <p class="mock-note">Vereinfachte Darstellung: Donnerstag in Rot, Sonntag in Grün.</p>
+  </div>
+</section>
+
+<section id="vollbild">
+  <div class="wrap">
+    <span class="eyebrow">Seit 0.8</span>
     <h2>Den Termin nicht mehr verpassen</h2>
     <p class="lead">Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sich Kalli kurz vor einem Termin über den Bildschirm legen. Deine Arbeit bleibt oben sichtbar, und der Hinweis bleibt stehen, bis du ihn schließt.</p>
 
@@ -185,7 +223,7 @@
       <div class="feature card">
         <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg></div>
         <h3>Monat und Tag sortiert</h3>
-        <p>Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen. Darunter der Tag, getrennt nach ganztägig, Terminen und Aufgaben.</p>
+        <p>Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen. Darunter der Tag, getrennt nach ganztägig, Terminen und Aufgaben. Einzelne Wochentage hebst du in einer Farbe deiner Wahl hervor.</p>
       </div>
       <div class="feature card">
         <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></div>

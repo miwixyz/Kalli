@@ -28,6 +28,7 @@ final class Preferences {
         static let fullScreenLead = "fullScreenLeadMinutes"
         static let fullScreenScreens = "fullScreenScreens"
         static let appearance = "appearanceMode"
+        static let weekdayHighlights = "weekdayHighlights"
     }
 
     private let defaults: UserDefaults
@@ -195,6 +196,23 @@ final class Preferences {
         didSet { defaults.set(appearanceMode.rawValue, forKey: Key.appearance) }
     }
 
+    /// Hervorgehobene Wochentage: Wochentag (1 = Sonntag … 7 = Samstag, wie
+    /// `Calendar.component(.weekday)`) → Farbe. Ab Werk leer = keine Hervorhebung.
+    ///
+    /// Gespeichert als `[String: String]`, weil UserDefaults keine Int-Schlüssel kennt.
+    var weekdayHighlights: [Int: HighlightColor] {
+        didSet {
+            let stored = Dictionary(uniqueKeysWithValues:
+                weekdayHighlights.map { (String($0.key), $0.value.rawValue) })
+            defaults.set(stored, forKey: Key.weekdayHighlights)
+        }
+    }
+
+    /// Farbe für einen Tag, `nil` = nicht hervorgehoben.
+    func highlight(for day: Date, calendar: Calendar) -> HighlightColor? {
+        weekdayHighlights[calendar.component(.weekday, from: day)]
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
@@ -222,6 +240,15 @@ final class Preferences {
         appearanceMode = AppearanceMode(
             rawValue: defaults.object(forKey: Key.appearance) as? Int ?? 0
         ) ?? .system
+        // Unbekannte Farben oder Wochentage (z. B. aus einer neueren Version) still
+        // überspringen — sie sind keine Hervorhebung, die diese Version zeigen kann.
+        let storedHighlights = defaults.dictionary(forKey: Key.weekdayHighlights) as? [String: String] ?? [:]
+        weekdayHighlights = storedHighlights.reduce(into: [:]) { result, entry in
+            if let weekday = Int(entry.key), (1...7).contains(weekday),
+               let color = HighlightColor(rawValue: entry.value) {
+                result[weekday] = color
+            }
+        }
     }
 
     /// Ohne Symbol UND ohne Datum wäre der Eintrag leer — und damit unsichtbar.

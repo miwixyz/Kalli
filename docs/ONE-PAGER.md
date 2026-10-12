@@ -18,7 +18,17 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.8.0: Den Termin nicht mehr verpassen
+## Neu in 0.9: Jeder Donnerstag in Rot
+
+Donnerstags ist Training, sonntags kommt die Familie? Dann gib diesen Tagen eine Farbe. Kalli schreibt ihre Tageszahl im Monat in genau dieser Farbe, und beim Öffnen siehst du sofort, wo sie liegen.
+
+- Für jeden Wochentag wählst du eine eigene Farbe oder keine. Zur Auswahl stehen Rot, Orange, Grün, Blau, Lila und Rosa. Gelb fehlt mit Absicht, denn gelbe Zahlen sind auf hellem Grund kaum zu lesen.
+- Der heutige Tag behält seinen blauen Kreis. Das gilt auch dann, wenn er auf einen hervorgehobenen Wochentag fällt.
+- Du findest die Einstellung unter Einstellungen → Ansicht → Wochentage hervorheben. Solange du nichts auswählst, sieht Kalli aus wie bisher.
+
+---
+
+## Seit 0.8: Den Termin nicht mehr verpassen
 
 Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sich Kalli kurz vor einem Termin über den Bildschirm legen: unten eine Glasfläche mit Titel, Uhrzeit und Countdown, oben bleibt deine Arbeit sichtbar. Der Hinweis bleibt stehen, bis du ihn schließt.
 
@@ -35,6 +45,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 |---|---|
 | Auf einen Blick sehen, was ansteht | Datum und nächster Termin mit Countdown direkt in der Menüleiste |
 | Den Monat überblicken | Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen |
+| Bestimmte Wochentage sofort finden | Jeder Wochentag bekommt auf Wunsch eine eigene Farbe, zum Beispiel jeder Donnerstag Rot |
 | Den Tag sortiert vor dir haben | Tagesliste getrennt nach ganztägig, Terminen und Aufgaben |
 | Aufgaben erledigen | Ein Klick auf den Kreis hakt die Erinnerung ab. Kalli prüft danach, ob es angekommen ist |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
