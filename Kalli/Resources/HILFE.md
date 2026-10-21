@@ -307,6 +307,12 @@ Ein Klick auf eins von beiden öffnet das Update-Fenster, und zwar vorn.
 Eine Mitteilung über ein Update kann ausbleiben, wenn der Mac aus ist oder
 schläft. Der Knopf funktioniert immer.
 
+**Mit Gnotchi (ab Gnotchi 0.4.0):** Läuft Gnotchi, die Notch-App der Familie, steht ein
+gefundenes Update auch in der Notch, bis es installiert ist. Ein Klick darauf öffnet Kalli
+mit dem Update-Fenster. Kalli meldet Gnotchi dafür nur seinen Namen und die Versionsnummer.
+In Gnotchi lässt sich das unter Einstellungen → Live-Aktivitäten → „Updates der App-Familie“
+abschalten, dann meldet Kalli nichts.
+
 ## Berechtigungen
 
 Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und

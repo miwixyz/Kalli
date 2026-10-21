@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 import OSLog
@@ -49,7 +50,12 @@ final class Updater {
 
     /// Version eines Updates, das eine **automatische** Prüfung gefunden hat
     /// und das noch niemand angesehen hat. Das Popover zeigt es am Update-Knopf.
-    private(set) var bereitesUpdate: String?
+    private(set) var bereitesUpdate: String? {
+        didSet { if bereitesUpdate != oldValue { gnotchi?.update(bereitesUpdate) } }
+    }
+
+    /// Meldet das bereite Update an Gnotchi (0.11.0, Gnotchi G23) und zeigt auf Gnotchis Bitte das Fenster.
+    @ObservationIgnored private var gnotchi: GnotchiUpdateSender?
 
     /// Kennung der Update-Mitteilung — `EventAlerts` erkennt daran den Klick.
     nonisolated static let erinnerungsID = "kalli.update"
@@ -74,6 +80,13 @@ final class Updater {
             userDriverDelegate: e
         )
         e.onChange = { [weak self] version in self?.bereitesUpdate = version }
+        // Klick in Gnotchi öffnet Kalli und bittet um das Update-Fenster – nur mit eigenem bereitem Update.
+        gnotchi = GnotchiUpdateSender(
+            hasUpdate: { [weak self] in self?.bereitesUpdate != nil },
+            showUpdate: { [weak self] in
+                NSApp.activate()
+                self?.checkForUpdates()
+            })
         // Klick auf die Mitteilung -> Update-Fenster. Weil es jetzt eine
         // Nutzeraktion ist, darf es nach vorn (gemessen 2026-09-24: Platz 1).
         NotificationCenter.default.addObserver(

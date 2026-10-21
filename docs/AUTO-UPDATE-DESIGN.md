@@ -262,6 +262,22 @@ Schlüsselwechsel erreicht Altinstallationen nicht | Bekannt, im Vorfall-Ablauf 
 
 ---
 
+## 9a. Meldung an Gnotchi (ab 0.11.0, Gnotchi SECURE-DESIGN G23/G24)
+
+- **Raus** (`GnotchiLink`, `GnotchiUpdateSender`): distnoted `app.mwlr.familie.update`,
+  `{"v":1,"app":"kalli","version":…,"ready":…}` bei „Update gefunden“ (Sparkles sanfte Erinnerung)
+  und `ready:false`, sobald es angesehen/erledigt ist; erneut, wenn Gnotchi startet. Nur wenn ein
+  Gnotchi ≥ 0.4.0 läuft, dessen Signatur über die PID gegen Developer ID + Team LTKJ6Z2VYB + Kennung
+  `dev.mwlr.gnotchi` geprüft ist, und dessen Schalter `familyUpdates` nicht `false` ist (Qotti-Muster).
+  Version nur in der Form, die Gnotchi annimmt, sonst geht nichts raus.
+- **Rein:** nur `app.mwlr.familie.update.show` mit `{"v":1,"app":"kalli"}`. Kalli reagiert **nur mit
+  eigenem bereitem Update** und zeigt dann Sparkles Fenster (`checkForUpdates`), sonst Protokollzeile
+  und nichts. Kein Text, kein Pfad, kein anderer Befehl aus der Meldung.
+- **STRIDE:** S – Fremdprozess täuscht Gnotchis Bitte vor → höchstens Kallis echtes Update-Fenster
+  (hingenommen); S – Fremdprozess gibt sich als Gnotchi aus, um mitzulesen → Signaturprüfung, und
+  ohnehin nur öffentliche Angaben; I – Version mitlesbar (hingenommen, öffentlich); D – Flut von
+  Bitten → je Bitte ein `checkForUpdates`, Sparkle verhindert parallele Sitzungen (`canCheckForUpdates`).
+
 ## 10. Abnahmekriterien vor dem Ausliefern
 
 - [ ] Sparkle exakt festgelegt, `Package.resolved` versioniert

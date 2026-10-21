@@ -2,6 +2,15 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.11.0] — noch nicht veröffentlicht
+
+### Neu
+
+- **Updates in der Notch:** Läuft [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.4.0,
+  steht ein gefundenes Kalli-Update auch dort, bis es installiert ist. Ein Klick in der
+  Notch öffnet Kalli mit dem Update-Fenster. Kalli meldet dafür nur Namen und Versionsnummer
+  und nur an ein echtes, signiertes Gnotchi.
+
 ## [0.10.0] — 2026-10-21
 
 ### Neu
