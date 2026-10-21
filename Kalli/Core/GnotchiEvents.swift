@@ -91,7 +91,7 @@ final class GnotchiEventSender {
     private let requirement: String
     private var fd: Int32 = -1
     private var source: DispatchSourceRead?
-    private var launchObserver: NSObjectProtocol?
+    private var launchWatcher: GnotchiLaunchWatcher?
 
     /// `current`: Kallis nächster Termin (beobachtet). `path`/`requirement` nur im Test anders.
     init(current: @escaping @MainActor () -> AgendaItem?,
@@ -102,15 +102,7 @@ final class GnotchiEventSender {
     }
 
     func start() {
-        launchObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main
-        ) { [weak self] note in
-            let id = (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier
-            guard id == GnotchiEvents.gnotchiBundleID else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + GnotchiEvents.launchDelay) {
-                MainActor.assumeIsolated { self?.sendCurrent() }
-            }
-        }
+        launchWatcher = GnotchiLaunchWatcher(delay: GnotchiEvents.launchDelay) { [weak self] in self?.sendCurrent() }
         observe()
         sendCurrent()
     }

@@ -116,6 +116,7 @@ final class GnotchiUpdateSender {
     private let showUpdate: @MainActor () -> Void
     /// Beobachter leben so lange wie die App (der Sender hängt am Updater, den es einmal gibt).
     private var tokens: [(NotificationCenter, NSObjectProtocol)] = []
+    private var launchWatcher: GnotchiLaunchWatcher?
 
     /// `hasUpdate`: ob Kalli gerade selbst ein Update bereit hat. `showUpdate`: Sparkles Fenster zeigen.
     init(hasUpdate: @escaping @MainActor () -> Bool, showUpdate: @escaping @MainActor () -> Void) {
@@ -127,14 +128,7 @@ final class GnotchiUpdateSender {
             MainActor.assumeIsolated { if forKalli { self?.showRequested() } }
         }))
         // Gnotchi speichert keine Meldungen: Startet es (neu), meldet Kalli sein bereites Update noch einmal.
-        let ws = NSWorkspace.shared.notificationCenter
-        tokens.append((ws, ws.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { [weak self] note in
-            let id = (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier
-            guard id == GnotchiLink.gnotchiBundleID else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + Self.resendDelay) {
-                MainActor.assumeIsolated { self?.resend() }
-            }
-        }))
+        launchWatcher = GnotchiLaunchWatcher(delay: Self.resendDelay) { [weak self] in self?.resend() }
     }
 
     /// Sparkles „bereites Update“ hat sich geändert.
@@ -163,5 +157,21 @@ final class GnotchiUpdateSender {
         DistributedNotificationCenter.default().postNotificationName(
             GnotchiLink.updateName, object: nil, userInfo: message, deliverImmediately: true)
         Self.log.notice("Update an Gnotchi gemeldet (\((message["ready"] as? Bool) == true ? "bereit" : "erledigt", privacy: .public))")
+    }
+}
+
+/// Meldet Gnotchis Start. **Nicht** über `didLaunchApplicationNotification`: macOS schickt sie für Apps ohne
+/// Dock-Symbol (Gnotchi) nicht – gemessen 21.10.: 0 Meldungen, Beobachtung von `runningApplications` 1.
+@MainActor
+final class GnotchiLaunchWatcher {
+    private var observation: NSKeyValueObservation?
+
+    init(delay: TimeInterval, onLaunch: @escaping @MainActor () -> Void) {
+        observation = NSWorkspace.shared.observe(\.runningApplications, options: [.new]) { _, change in
+            guard change.newValue?.contains(where: { $0.bundleIdentifier == GnotchiLink.gnotchiBundleID }) == true else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                MainActor.assumeIsolated { onLaunch() }
+            }
+        }
     }
 }
