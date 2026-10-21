@@ -273,6 +273,12 @@ Schlüsselwechsel erreicht Altinstallationen nicht | Bekannt, im Vorfall-Ablauf 
 - **Rein:** nur `app.mwlr.familie.update.show` mit `{"v":1,"app":"kalli"}`. Kalli reagiert **nur mit
   eigenem bereitem Update** und zeigt dann Sparkles Fenster (`checkForUpdates`), sonst Protokollzeile
   und nichts. Kein Text, kein Pfad, kein anderer Befehl aus der Meldung.
+- **Still geladene Updates (ab 0.11.1):** Bei „Automatisch installieren“ (`SUAutomaticallyUpdate`) ruft
+  Sparkle die sanfte Erinnerung nie, sondern lädt still und installiert beim Beenden. Gemessen 21.10.:
+  Testkopie Build 6, `Autoupdate` lief, an Gnotchi ging nichts. Seitdem meldet `StilleInstallation`
+  (`SPUUpdaterDelegate.updater(_:willInstallUpdateOnQuit:immediateInstallationBlock:)`, gibt `false`
+  zurück = Sparkle behält die Kontrolle) dieselbe Version als bereit. Der Klick in Gnotchi öffnet
+  Sparkles Fenster „Installieren und neu starten“; `immediateInstallHandler` wird nie benutzt.
 - **STRIDE:** S – Fremdprozess täuscht Gnotchis Bitte vor → höchstens Kallis echtes Update-Fenster
   (hingenommen); S – Fremdprozess gibt sich als Gnotchi aus, um mitzulesen → Signaturprüfung, und
   ohnehin nur öffentliche Angaben; I – Version mitlesbar (hingenommen, öffentlich); D – Flut von

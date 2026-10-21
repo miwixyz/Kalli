@@ -67,19 +67,23 @@ final class Updater {
     /// Sparkle hält den Delegate nur schwach — ohne diese Referenz wäre er
     /// sofort weg und die Erinnerung stumm.
     private let erinnerung: SanfteErinnerung
+    private let stilleInstallation: StilleInstallation
 
     init() {
         let e = SanfteErinnerung()
         erinnerung = e
-        // Der Delegate prüft nichts und lockert nichts — er entscheidet nur,
+        let s = StilleInstallation()
+        stilleInstallation = s
+        // Die Delegates prüfen nichts und lockern nichts — sie entscheiden nur,
         // WIE ein gefundenes Update gezeigt wird. Signaturprüfung, Appcast und
         // Installation bleiben Sparkles Standardweg.
         controller = SPUStandardUpdaterController(
             startingUpdater: true,
-            updaterDelegate: nil,
+            updaterDelegate: s,
             userDriverDelegate: e
         )
         e.onChange = { [weak self] version in self?.bereitesUpdate = version }
+        s.onChange = { [weak self] version in self?.bereitesUpdate = version }
         // Klick in Gnotchi öffnet Kalli und bittet um das Update-Fenster – nur mit eigenem bereitem Update.
         gnotchi = GnotchiUpdateSender(
             hasUpdate: { [weak self] in self?.bereitesUpdate != nil },
@@ -202,5 +206,30 @@ private final class SanfteErinnerung: NSObject, @preconcurrency SPUStandardUserD
         let c = UNUserNotificationCenter.current()
         c.removeDeliveredNotifications(withIdentifiers: [Updater.erinnerungsID])
         c.removePendingNotificationRequests(withIdentifiers: [Updater.erinnerungsID])
+    }
+}
+
+/// Still geladenes Update (0.11.1): Bei „Automatisch installieren“ lädt Sparkle
+/// das Update ohne jede Anzeige und installiert es beim Beenden. Die sanfte
+/// Erinnerung oben wird dann nie gerufen — gemessen 2026-10-21: Testkopie
+/// Build 6, Hintergrundprüfung, `Autoupdate` lief, an Gnotchi ging nichts.
+///
+/// Hier wird das Update nur **bekannt gemacht** (Knopf im Popover, Gnotchi).
+/// `false` = Sparkle behält die Kontrolle und installiert wie bisher beim
+/// Beenden; der Klick in Gnotchi öffnet Sparkles Fenster („Installieren und
+/// neu starten“), kein stilles Sofort-Installieren.
+@MainActor
+private final class StilleInstallation: NSObject, @preconcurrency SPUUpdaterDelegate {
+    var onChange: ((String?) -> Void)?
+
+    private static let log = Logger(subsystem: "com.kalli.app", category: "update")
+
+    func updater(
+        _ updater: SPUUpdater, willInstallUpdateOnQuit item: SUAppcastItem,
+        immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
+    ) -> Bool {
+        Self.log.notice("Update \(item.displayVersionString, privacy: .public): still geladen, Installation beim Beenden")
+        onChange?(item.displayVersionString)
+        return false
     }
 }
