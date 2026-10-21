@@ -64,6 +64,11 @@ struct AgendaItem: Identifiable, Sendable, Hashable {
     /// Einladung abgelehnt? Dann gibt es keinen Vollbild-Hinweis. Sonst könnte
     /// eine fremde Einladung (Spam) den Bildschirm sperren.
     var isDeclined: Bool = false
+    /// Erinnerung mit Priorität „Hoch" (EventKit 1–4, RFC 5545). Apples eigenes „Dringend"
+    /// (Wecker) ist über EventKit nicht erreichbar (macOS-27-SDK, 2026-10-21) — „Hoch" ist
+    /// die nächste Stufe, die Kalli lesen und schreiben kann. Rotes Ausrufezeichen in der
+    /// Liste, Vollbild-Hinweis zur Fälligkeit (Michael, 2026-10-21).
+    var isUrgent: Bool = false
 
     var isReminder: Bool {
         if case .reminder = kind { return true }

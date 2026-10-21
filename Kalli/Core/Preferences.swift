@@ -29,9 +29,32 @@ final class Preferences {
         static let fullScreenScreens = "fullScreenScreens"
         static let appearance = "appearanceMode"
         static let weekdayHighlights = "weekdayHighlights"
+        static let collapsedGroups = "collapsedAgendaGroups"
+        static let groupOrder = "agendaGroupOrder"
     }
 
     private let defaults: UserDefaults
+
+    /// Zugeklappte Gruppen der Tagesliste (0.10.0, Michael 2026-10-21): „Ganztägig" und
+    /// „Aufgaben". Bleibt über das Schließen des Popovers und Neustarts hinweg.
+    var collapsedGroups: Set<AgendaGroupKind> {
+        didSet { defaults.set(collapsedGroups.map(\.rawValue).sorted(), forKey: Key.collapsedGroups) }
+    }
+
+    /// Reihenfolge der Gruppen in der Tagesliste (0.10.0, Michael 2026-10-21: „Aufgaben soll oben
+    /// stehen, bzw. in den Einstellungen die Reihenfolge anpassen“). Ab Werk Aufgaben zuerst.
+    var agendaOrder: [AgendaGroupKind] {
+        didSet { defaults.set(agendaOrder.map(\.rawValue), forKey: Key.groupOrder) }
+    }
+
+    /// Eine Gruppe um `offset` Plätze verschieben (−1 = nach oben). Am Rand passiert nichts.
+    func moveGroup(_ group: AgendaGroupKind, by offset: Int) {
+        agendaOrder = AgendaGroupKind.moved(group, by: offset, in: agendaOrder)
+    }
+
+    func toggleCollapsed(_ group: AgendaGroupKind) {
+        if collapsedGroups.contains(group) { collapsedGroups.remove(group) } else { collapsedGroups.insert(group) }
+    }
 
     /// IDs ausgeblendeter Kalender und Erinnerungslisten.
     var hiddenSourceIDs: Set<String> {
@@ -216,6 +239,10 @@ final class Preferences {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         hiddenSourceIDs = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
+        collapsedGroups = Set((defaults.stringArray(forKey: Key.collapsedGroups) ?? [])
+            .compactMap(AgendaGroupKind.init(rawValue:)))
+        agendaOrder = AgendaGroupKind.normalized(
+            (defaults.stringArray(forKey: Key.groupOrder) ?? []).compactMap(AgendaGroupKind.init(rawValue:)))
         showIconInMenuBar = defaults.object(forKey: Key.showIcon) as? Bool ?? true
         showDateInMenuBar = defaults.object(forKey: Key.showDate) as? Bool ?? true
         showNextEventInMenuBar = defaults.object(forKey: Key.showNextEvent) as? Bool ?? true
@@ -273,5 +300,41 @@ final class Preferences {
     func pruneHidden(to existing: Set<String>) {
         let cleaned = hiddenSourceIDs.intersection(existing)
         if cleaned != hiddenSourceIDs { hiddenSourceIDs = cleaned }
+    }
+}
+
+/// Die drei Gruppen der Tagesliste. Zuklappbar sind „Ganztägig" und „Aufgaben".
+enum AgendaGroupKind: String, CaseIterable, Sendable {
+    case allDay, timed, tasks
+
+    var title: String {
+        switch self {
+        case .allDay: "Ganztägig"
+        case .timed: "Termine"
+        case .tasks: "Aufgaben"
+        }
+    }
+
+    var isCollapsible: Bool { self != .timed }
+
+    /// Ab Werk: Aufgaben, Ganztägig, Termine.
+    nonisolated static let defaultOrder: [AgendaGroupKind] = [.tasks, .allDay, .timed]
+
+    /// Jede Gruppe genau einmal: Doppelte raus, Fehlende (z. B. aus einer älteren Version)
+    /// in Werksreihenfolge hinten an. Leer → Werksreihenfolge.
+    nonisolated static func normalized(_ order: [AgendaGroupKind]) -> [AgendaGroupKind] {
+        var seen = Set<AgendaGroupKind>()
+        let unique = order.filter { seen.insert($0).inserted }
+        return unique + defaultOrder.filter { !seen.contains($0) }
+    }
+
+    nonisolated static func moved(_ group: AgendaGroupKind, by offset: Int,
+                                  in order: [AgendaGroupKind]) -> [AgendaGroupKind] {
+        var list = normalized(order)
+        guard let from = list.firstIndex(of: group) else { return list }
+        let to = from + offset
+        guard list.indices.contains(to) else { return list }
+        list.swapAt(from, to)
+        return list
     }
 }

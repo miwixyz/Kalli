@@ -434,6 +434,7 @@ private struct PopoverSection: View {
             SettingsHint("Abgeschaltet räumt sich die Liste im Lauf des Tages auf — aber nur "
                  + "heute. Ganztägige Termine und Aufgaben bleiben in jedem Fall sichtbar: "
                  + "Eine überfällige Aufgabe ist nicht erledigt, sondern das Gegenteil davon.")
+            AgendaOrderEditor()
         }
 
         SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: Theme.accent) {
@@ -530,5 +531,55 @@ private struct LoginItemToggle: View {
         if let failure {
             Text(failure).font(Theme.caption).foregroundStyle(FamilyTheme.danger)
         }
+    }
+}
+
+/// Reihenfolge der Tageslisten-Gruppen (0.10.0): je Zeile Name + Pfeile hoch/runter.
+/// Pfeile statt Ziehen: Ziehen in einem Popover ist fummelig und per Tastatur nicht erreichbar.
+private struct AgendaOrderEditor: View {
+    @Environment(Preferences.self) private var prefs
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Reihenfolge")
+                .font(Theme.font(12, 1))
+            ForEach(Array(prefs.agendaOrder.enumerated()), id: \.element) { index, kind in
+                HStack(spacing: 6) {
+                    Text(verbatim: "\(index + 1).")
+                        .font(Theme.font(11, 1))
+                        .foregroundStyle(.tertiary)
+                        .frame(width: 16, alignment: .trailing)
+                    Text(kind.title)
+                        .font(Theme.font(12, 1))
+                    Spacer()
+                    arrow("chevron.up", enabled: index > 0, help: "\(kind.title) nach oben") {
+                        prefs.moveGroup(kind, by: -1)
+                    }
+                    arrow("chevron.down", enabled: index < prefs.agendaOrder.count - 1,
+                          help: "\(kind.title) nach unten") {
+                        prefs.moveGroup(kind, by: 1)
+                    }
+                }
+                .padding(.vertical, 3)
+                .padding(.horizontal, 8)
+                .background(RoundedRectangle(cornerRadius: 7, style: .continuous).fill(.primary.opacity(0.05)))
+            }
+        }
+    }
+
+    private func arrow(_ symbol: String, enabled: Bool, help: String,
+                       action: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.18)) { action() }
+        } label: {
+            Image(systemName: symbol)
+                .font(.system(size: 10, weight: .semibold))
+                .frame(width: 20, height: 18)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(enabled ? Theme.accent : Color.secondary.opacity(0.35))
+        .disabled(!enabled)
+        .help(help)
     }
 }

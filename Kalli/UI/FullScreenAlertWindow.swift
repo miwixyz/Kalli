@@ -205,7 +205,7 @@ struct FullScreenAlertView: View {
 
     private func header(_ first: AgendaItem, now: Date) -> some View {
         HStack(alignment: .center) {
-            statusCapsule(FullScreenAlertView.status(start: first.start, now: now))
+            statusCapsule(FullScreenAlertView.status(start: first.start, now: now, isReminder: first.isReminder))
             Spacer()
             Text(verbatim: Self.timeFormatter.string(from: now))
                 .font(Theme.font(22, 1, weight: .medium))
@@ -320,9 +320,14 @@ struct FullScreenAlertView: View {
     }
 
     /// „Beginnt in 3 Min." · „Beginnt gleich" · „Hat vor 2 Min. begonnen".
-    nonisolated static func status(start: Date?, now: Date) -> String {
+    /// Dringende Erinnerung (0.10.0): „Dringend · jetzt fällig" · „Dringend · seit 2 Min. fällig".
+    nonisolated static func status(start: Date?, now: Date, isReminder: Bool = false) -> String {
         guard let start else { return "" }
         let seconds = start.timeIntervalSince(now)
+        if isReminder {
+            return seconds > -60 ? "Dringend · jetzt fällig"
+                : "Dringend · seit \(Int((-seconds / 60).rounded(.down))) Min. fällig"
+        }
         if seconds > 60 {
             return "Beginnt in \(Int((seconds / 60).rounded(.up))) Min."
         }

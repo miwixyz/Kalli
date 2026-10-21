@@ -381,3 +381,19 @@ footer a:hover { color: var(--text); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Neu in 0.10: Eingabezeile „Neue Aufgabe“ (vereinfachte Nachbildung) */
+.qf-head { display: flex; justify-content: space-between; align-items: center; }
+.qf-x { color: var(--accent); font-size: 14px; letter-spacing: 0; }
+.qf { background: rgba(var(--accent-rgb), .07); border-radius: var(--radius-field); padding: 10px; margin: 4px 0 8px; display: grid; gap: 7px; }
+.qf-input { background: var(--card); border: 1px solid var(--card-stroke); border-radius: 8px; padding: 6px 9px; font-size: 14px; }
+.qf-hint { color: var(--accent); font-size: 12px; }
+.qf-chips, .qf-foot { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.chip { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; background: rgba(var(--accent-rgb), .08); }
+.chip.on { background: rgba(var(--accent-rgb), .22); color: var(--accent); font-weight: 600; }
+.chip.urgent b, .urgent-mark { color: var(--hl-red); font-weight: 800; }
+.chip.urgent.on { background: rgba(255, 59, 48, .16); color: var(--hl-red); }
+.qf-note { color: var(--text-2); font-size: 11.5px; }
+.qf-save { margin-left: auto; font-size: 12.5px; font-weight: 600; padding: 3px 11px; border-radius: 999px; background: var(--accent-fill); color: var(--on-accent-fill); }
+.daylist .group .count { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: rgba(var(--accent-rgb), .12); letter-spacing: 0; }
+.popover.qf-stage { width: min(400px, calc(100% - 28px)); }

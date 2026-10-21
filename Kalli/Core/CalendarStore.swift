@@ -6,10 +6,11 @@ import Observation
 
 /// Liest Termine und Erinnerungen.
 ///
-/// **Schreibend nur an genau einer Stelle:** `setCompleted(_:for:)` setzt das
-/// Erledigt-Kennzeichen einer Erinnerung. Sonst nichts — keine Termine anlegen,
-/// keine Titel ändern, nichts löschen. Die Einschränkung ist Absicht und in
-/// `RECHTLICHES.md` zugesagt; wer sie erweitert, muss dort nachziehen.
+/// **Schreibend nur an genau zwei Stellen:** `setCompleted(_:for:)` setzt das
+/// Erledigt-Kennzeichen einer Erinnerung, `createReminder(_:)` legt eine neue
+/// Erinnerung in der Standardliste an (0.10.0, Michael 2026-10-21). Sonst nichts —
+/// keine Termine anlegen, keine Titel ändern, nichts löschen. Die Einschränkung ist
+/// Absicht und in `RECHTLICHES.md` zugesagt; wer sie erweitert, muss dort nachziehen.
 /// (Nachgezogen 0.5.0: URL, Ort, Notizen und Teilnahmestatus werden gelesen.)
 @MainActor
 @Observable
@@ -217,6 +218,7 @@ final class CalendarStore {
             // loadSources() hier NICHT: siehe hiddenAfterPrune.
             items = []
             barItems = []
+            urgentReminders = []
             nextEvent = nil
             runningEvent = nil
             return
@@ -272,16 +274,6 @@ final class CalendarStore {
             remindersReadable: EKEventStore.authorizationStatus(for: .reminder) == .fullAccess))
     }
 
-    /// `nonisolated`, weil diese Funktion auch aus EventKit-Callbacks auf
-    /// fremden Queues gerufen wird. Ohne das Schlüsselwort wäre sie
-    /// MainActor-isoliert — `static` in einer `@MainActor`-Klasse erbt die
-    /// Isolation — und der Aufruf von der falschen Queue aus wäre ein Absturz.
-    nonisolated private static func rgba(from cal: EKCalendar) -> RGBA {
-        guard let comps = cal.cgColor?.components, comps.count >= 3 else { return .fallback }
-        return RGBA(r: Double(comps[0]), g: Double(comps[1]), b: Double(comps[2]),
-                    a: Double(comps.count >= 4 ? comps[3] : 1))
-    }
-
     // MARK: - Laden
 
     /// Lädt genau die Tage, die das Raster zeigt — dieselbe Funktion wie
@@ -314,7 +306,11 @@ final class CalendarStore {
         // Wie reload(): Vor dem ersten Laden (keine Berechtigung) nichts tun —
         // sonst räumte syncAlerts mit leerem Horizont alle Mitteilungen ab.
         guard loadedRange != nil else { return }
-        barItems = await fetchEvents(in: Self.barWindow(now: Date()))
+        let window = Self.barWindow(now: Date())
+        barItems = await fetchEvents(in: window)
+        // Dringende Erinnerungen nur für den Vollbild-Hinweis, nicht in `barItems`:
+        // Leiste und Puls zeigen weiter nur Termine (K-C5).
+        urgentReminders = await fetchReminders(in: window).filter(FullScreenAlerts.isEligible)
         recomputeNextEvent()
         syncFullScreenAlerts()
         await syncAlerts()
@@ -324,7 +320,7 @@ final class CalendarStore {
     /// stündlich und bei jeder EventKit-Änderung frisch abgefragt), nicht `items`:
     /// gleiche Lehre wie beim Mitteilungs-Horizont, `items` ist nur eine Ansicht.
     func syncFullScreenAlerts() {
-        fullScreenAlerts.sync(horizon: barItems,
+        fullScreenAlerts.sync(horizon: barItems + urgentReminders,
                               enabled: prefs.fullScreenBeforeEvent,
                               leadMinutes: prefs.fullScreenLeadMinutes,
                               screens: prefs.fullScreenScreens)
@@ -339,6 +335,8 @@ final class CalendarStore {
     /// 24.09. hätte ab dem 08.10. nichts mehr angezeigt. Gleiche Lehre wie beim
     /// Mitteilungs-Horizont: `items` ist eine Ansicht, keine Quelle.
     private var barItems: [AgendaItem] = []
+    /// Offene dringende Erinnerungen mit Uhrzeit im selben Fenster — nur für den Vollbild-Hinweis.
+    private var urgentReminders: [AgendaItem] = []
 
     // MARK: - Mitteilungen
 
@@ -393,36 +391,6 @@ final class CalendarStore {
         return store.events(matching: predicate).map(Self.mapEvent)
     }
 
-    /// `EKEvent` → `AgendaItem`. Eine Stelle, damit die Kennung nicht an zwei
-    /// Orten unterschiedlich gebildet wird.
-    nonisolated private static func mapEvent(_ ev: EKEvent) -> AgendaItem {
-        AgendaItem(
-            // **Kennung aus Termin-ID UND Startzeit.** `eventIdentifier` ist bei
-            // Serienterminen laut EventKit-Vertrag für ALLE Vorkommen identisch.
-            // Mit der ID allein kollidieren zwei Vorkommen desselben Termins:
-            // `ForEach` bekäme doppelte IDs (unbestimmtes Rendering), und eine
-            // Mitteilung pro Vorkommen wäre unmöglich, weil jede die vorige mit
-            // gleicher Kennung ersetzt. Fällt bei täglichen Serien nicht auf,
-            // bei "alle 4 Stunden" sofort. (Audit 2026-09-22.)
-            id: Self.eventID(ev),
-            title: ev.title ?? "(ohne Titel)",
-            start: ev.startDate,
-            end: ev.endDate,
-            isAllDay: ev.isAllDay,
-            hasTime: !ev.isAllDay,
-            kind: .event,
-            sourceID: ev.calendar?.calendarIdentifier ?? "",
-            color: ev.calendar.map(rgba) ?? .fallback,
-            hasAlarms: ev.hasAlarms,
-            link: MeetingLink.find(url: ev.url, location: ev.location, notes: ev.notes),
-            isDeclined: ev.attendees?.first(where: \.isCurrentUser)?.participantStatus == .declined
-        )
-    }
-
-    nonisolated private static func eventID(_ ev: EKEvent) -> String {
-        eventID(base: ev.eventIdentifier, start: ev.startDate)
-    }
-
     /// Termine der nächsten 24 Stunden — **unabhängig vom geladenen Monat**.
     ///
     /// Grund (Audit 2026-09-22, schwerster Fund): Die Mitteilungs-Planung hing
@@ -462,43 +430,6 @@ final class CalendarStore {
                 // EventKits Queue — Swift 6 prüft das zur Laufzeit und bricht ab.
                 continuation.resume(returning: Self.mapReminders(reminders, range: range))
             }
-        }
-    }
-
-    /// Wandelt EKReminder in `Sendable`-Werte um. Läuft auf EventKits Queue.
-    ///
-    /// Muss `nonisolated` sein — siehe Absturz vom 2026-09-21 beim ersten
-    /// Erteilen der Berechtigung: `_dispatch_assert_queue_fail` im compactMap,
-    /// weil das Closure die MainActor-Isolation der Klasse geerbt hatte. Ein
-    /// Kommentar „überquert die Isolationsgrenze nie" ist eine Behauptung;
-    /// `nonisolated` ist die Zusicherung, die der Compiler prüfen kann.
-    nonisolated private static func mapReminders(
-        _ reminders: [EKReminder]?, range: DateInterval
-    ) -> [AgendaItem] {
-        (reminders ?? []).compactMap { rem in
-            // Ohne Fälligkeitsdatum gehört eine Erinnerung an keinen Tag im
-            // Raster. Sie zu behalten hieße, sie entweder an jedem Tag oder an
-            // gar keinem zu zeigen — beides falsch.
-            guard let comps = rem.dueDateComponents,
-                  let due = comps.date,
-                  due >= range.start, due < range.end else { return nil }
-            // hour == nil heißt: nur ein Tag gesetzt, keine Uhrzeit.
-            let hasClockTime = comps.hour != nil
-            return AgendaItem(
-                id: rem.calendarItemIdentifier,
-                title: rem.title ?? "(ohne Titel)",
-                start: due,
-                end: nil,
-                // Eine Erinnerung ohne Uhrzeit ist kein Ganztagstermin, sondern
-                // hat schlicht keine Zeit. Sie erscheint unten in der Tagesliste.
-                isAllDay: false,
-                hasTime: hasClockTime,
-                kind: .reminder(completed: rem.isCompleted),
-                sourceID: rem.calendar?.calendarIdentifier ?? "",
-                color: rem.calendar.map(rgba) ?? .fallback,
-                hasAlarms: rem.hasAlarms,
-                isRecurring: rem.hasRecurrenceRules
-            )
         }
     }
 
@@ -570,6 +501,19 @@ final class CalendarStore {
 
         Self.log.notice("Haekchen bestaetigt — Liste \(listName, privacy: .public), jetzt \(fresh.isCompleted, privacy: .public), wiederkehrend \(recurring, privacy: .public).")
         return nil
+    }
+
+    // MARK: - Schreiben (neue Erinnerung, 0.10.0)
+
+    /// Legt eine Erinnerung in der Standardliste an und liest danach nach, ob sie angekommen
+    /// ist (wie beim Abhaken). Fehlermeldung statt Schweigen. Details: `QuickReminder+EventKit`.
+    func createReminder(_ draft: QuickReminder.Draft, calendar: Calendar = .current) async -> String? {
+        switch QuickReminder.save(draft, in: store, calendar: calendar) {
+        case .failure(let failure): return failure.message
+        case .success(let id):
+            await reload()
+            return QuickReminder.verify(id: id, title: draft.title, in: store)
+        }
     }
 
     // MARK: - Abfragen

@@ -1,6 +1,6 @@
 # Kalli — Hilfe
 
-Kalli zeigt deinen Kalender im Menübalken. Termine werden nur gelesen; Aufgaben lassen sich direkt abhaken.
+Kalli zeigt deinen Kalender im Menübalken. Termine werden nur gelesen; Aufgaben lassen sich direkt abhaken und schnell neu anlegen.
 
 ## Menüleiste
 
@@ -122,6 +122,11 @@ Vollbild-Hinweis.
   ist ein anderer Kanal als eine Mitteilung, und gerade wichtige Termine haben
   meist einen Alarm. Nicht für ganztägige Termine und **nicht für abgelehnte
   Einladungen**.
+- **Dringende Aufgaben (ab 0.10.0):** Eine offene Erinnerung mit Priorität „Hoch“
+  (in Apple Erinnerungen „!!!“, in Kalli ein rotes Ausrufezeichen) **und Uhrzeit**
+  bekommt den Hinweis ebenfalls, und zwar **genau zur Fälligkeit**, ohne Vorlauf. Oben
+  steht dann „Dringend · jetzt fällig“. „Zum Beginn nochmal“ gibt es dafür nicht.
+  Der Schalter „Vollbild-Hinweis“ muss dafür an sein.
 - Beginnen mehrere Termine gleichzeitig, stehen sie in **einem** Hinweis.
 - Schläft der Mac zum Zeitpunkt, holt Kalli den Hinweis nach dem Aufwachen nach,
   aber nur bis 5 Minuten nach Beginn.
@@ -166,7 +171,11 @@ um die es gerade geht. Der Eintrag ist nur da, solange eine Sache gesetzt ist.
   steht dann in dieser Farbe; heute bleibt im Kalli-Blau.
 - **Hinweis oben** — was gerade läuft oder bald beginnt, mit Fortschrittsbalken.
   Die Vorlaufzeit ist einstellbar (5 bis 240 Minuten).
-- **Tagesliste** in drei Gruppen:
+- **Tagesliste** in drei Gruppen. **„Ganztägig“ und „Aufgaben“ lassen sich zuklappen:**
+  Klick auf die Überschrift. Zugeklappt steht die Anzahl dahinter („AUFGABEN 3“).
+  Kalli merkt sich das, auch über einen Neustart. **Reihenfolge** ab Werk: Aufgaben,
+  Ganztägig, Termine — änderbar unter Einstellungen → Ansicht → Tagesliste → Reihenfolge
+  (Pfeile hoch/runter).
   - **Ganztägig** (Balken-Marker)
   - **Termine** mit Uhrzeit (Kreis). Ein Termin über Mitternacht steht an
     **jedem** Tag, den er berührt; endet er genau um 00:00, nicht mehr am
@@ -186,6 +195,29 @@ um die es gerade geht. Der Eintrag ist nur da, solange eine Sache gesetzt ist.
     **Wiederkehrende Aufgaben** haben kein Rückgängig: Das Abhaken rückt dort
     womöglich die Fälligkeit auf das nächste Mal, ein Zurücknehmen träfe dann
     das falsche. Versehentlich abgehakt → in der Erinnerungen-App korrigieren.
+
+### Neue Aufgabe anlegen (ab 0.10.0)
+
+Das **„+“ rechts neben AUFGABEN** öffnet eine Eingabezeile. Die Gruppe steht auch an
+leeren Tagen da, solange Kalli auf Erinnerungen zugreifen darf.
+
+- **Titel** eintippen, **Return** sichert, **Esc** oder das „x“ bricht ab.
+- **Tag:** Heute · Morgen · Nächste Woche (Montag) · oder über das Kalendersymbol ein
+  anderes Datum (es erscheint dann als eigener Knopf, z. B. „31. Okt.“).
+  Vorbelegt ist der Tag, den du im Raster angeklickt hast (liegt er zurück: heute).
+- **Zeit:** Ohne · 9:00 · 12:00 · 18:00 · oder über das Uhrsymbol eine eigene Uhrzeit. Mit Uhrzeit meldet
+  sich Apple Erinnerungen zur Fälligkeit; ohne Uhrzeit gilt die Aufgabe für den Tag.
+- **Tag und Zeit im Text:** „Zahnarzt anrufen morgen 15 Uhr“ stellt Tag und Uhrzeit
+  selbst ein und speichert „Zahnarzt anrufen“. Kalli versteht: heute, morgen,
+  übermorgen, Wochentage („Freitag“, „nächsten Montag“), „nächste Woche“, ein Datum
+  („24.10.“, „24.10.2027“) und Uhrzeiten („15 Uhr“, „15:30“, „15.30 Uhr“, „um 9“).
+  Darunter steht, was erkannt wurde. Was Kalli nicht versteht, bleibt im Titel —
+  dann die Knöpfe nehmen. Ein Klick auf einen Knopf gilt, bis du den Text wieder änderst.
+- **Dringend:** setzt in Apple Erinnerungen die Priorität „Hoch“ („!!!“). Mit Uhrzeit
+  kommt zusätzlich Kallis Vollbild-Hinweis (siehe dort). Apples eigenes „Dringend“
+  (der Wecker) ist für andere Apps nicht erreichbar.
+- Gespeichert wird in deiner **Standardliste** von Apple Erinnerungen. Kalli prüft
+  danach nach, ob die Aufgabe wirklich angekommen ist, und sagt es, wenn nicht.
 
 **Vergangene Termine anzeigen** (Einstellungen → Ansicht) ist ab Werk an.
 Abgeschaltet räumt sich die Liste im Lauf des Tages auf. Der Filter gilt **nur
@@ -312,8 +344,9 @@ Nein findet kein Netzzugriff statt.
 
 ## Was Kalli nicht kann — und nicht können soll
 
-Termine anlegen oder ändern · Aufgaben anlegen, umbenennen oder löschen ·
-Eingabe in natürlicher Sprache · Weltzeituhren ·
+Termine anlegen oder ändern · Aufgaben umbenennen, verschieben oder löschen ·
+freie Eingabe in natürlicher Sprache (nur Tag und Uhrzeit beim Anlegen einer
+Aufgabe, siehe oben) · Weltzeituhren ·
 Zeitzonen-Umrechnung · Erkennung einzelner Videokonferenz-Dienste (Kalli
 nimmt nur den ersten Web-Link, siehe Vollbild-Hinweis) · Datumsrechner.
 

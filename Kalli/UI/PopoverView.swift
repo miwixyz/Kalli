@@ -15,6 +15,8 @@ struct PopoverView: View {
     /// Gerade abgehakte Aufgaben. Sie bleiben kurz stehen, damit das Abhaken
     /// sichtbar wird, bevor der Filter sie entfernt.
     @State private var justCompleted: Set<String> = []
+    /// Eingabezeile „Neue Erinnerung" offen (0.10.0).
+    @State private var addingReminder = false
 
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
@@ -172,7 +174,10 @@ struct PopoverView: View {
                     .foregroundStyle(.tertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 6)
-            } else {
+            }
+            // Auch ohne Einträge: Die Gruppe „Aufgaben" steht mit ihrem „+" da, solange
+            // Kalli Erinnerungen schreiben darf — sonst gäbe es an leeren Tagen keinen Weg.
+            if !groups.isEmpty {
                 // minHeight ist der Punkt: eine ScrollView hat keine eigene
                 // Höhe und schrumpft im VStack sonst auf eine einzige Zeile,
                 // egal wie viele Einträge drinstehen.
@@ -182,10 +187,32 @@ struct PopoverView: View {
                     // in einer durchlaufenden Liste sehen sie gleich aus und
                     // man muss jede Zeile einzeln einordnen.
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(groups, id: \.title) { group in
+                        ForEach(groups, id: \.kind) { group in
                             AgendaGroup(
-                                title: group.title,
+                                title: group.kind.title,
                                 items: group.items,
+                                isCollapsed: group.kind.isCollapsible
+                                    ? prefs.collapsedGroups.contains(group.kind) : nil,
+                                onToggleCollapse: {
+                                    withAnimation(.easeInOut(duration: 0.18)) { prefs.toggleCollapsed(group.kind) }
+                                },
+                                onAdd: group.kind == .tasks && canCreateReminders ? {
+                                    withAnimation(.easeInOut(duration: 0.15)) {
+                                        addingReminder.toggle()
+                                        // Wer etwas anlegt, will die Liste sehen.
+                                        if addingReminder { prefs.collapsedGroups.remove(.tasks) }
+                                    }
+                                } : nil,
+                                isAdding: group.kind == .tasks && addingReminder,
+                                addField: group.kind == .tasks && addingReminder ? AnyView(
+                                    QuickReminderField(
+                                        initialDay: defaultReminderDay,
+                                        calendar: calendar,
+                                        scale: prefs.layoutScale,
+                                        onSave: { draft in await store.createReminder(draft, calendar: calendar) },
+                                        onDone: { withAnimation(.easeInOut(duration: 0.15)) { addingReminder = false } }
+                                    )
+                                ) : nil,
                                 showProgress: prefs.showRunningProgress,
                                 scale: prefs.layoutScale,
                                 justCompleted: justCompleted,
@@ -212,7 +239,8 @@ struct PopoverView: View {
                     .padding(.trailing, 2)
                 }
                 .scrollIndicators(.automatic)
-                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(items.count) * 46, 380)
+                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(visibleRowCount) * 46
+                                      + (addingReminder ? 150 : 0), 380)
                                   * prefs.layoutScale,
                        maxHeight: 560 * prefs.layoutScale)
             }
@@ -255,16 +283,28 @@ struct PopoverView: View {
 
     /// Reihenfolge der Gruppen: erst was den ganzen Tag gilt (der Rahmen),
     /// dann was zu einer Uhrzeit passiert, zuletzt was ohne feste Zeit zu tun ist.
-    private var groups: [(title: String, items: [AgendaItem])] {
+    private var groups: [(kind: AgendaGroupKind, items: [AgendaItem])] {
         let all = visibleItems
         let allDay = all.filter { $0.isAllDay && !$0.isReminder }
         let timed = all.filter { !$0.isAllDay && !$0.isReminder }
         let tasks = all.filter(\.isReminder)
-        return [
-            ("Ganztägig", allDay),
-            ("Termine", timed),
-            ("Aufgaben", tasks),
-        ].filter { !$0.1.isEmpty }
+        let byKind: [AgendaGroupKind: [AgendaItem]] = [.allDay: allDay, .timed: timed, .tasks: tasks]
+        return prefs.agendaOrder.map { ($0, byKind[$0] ?? []) }
+            .filter { !$0.1.isEmpty || ($0.0 == .tasks && canCreateReminders) }
+    }
+
+    /// Zeilen, die gerade sichtbar sind (zugeklappte Gruppen zählen nicht) — für die Mindesthöhe.
+    private var visibleRowCount: Int {
+        groups.filter { !($0.kind.isCollapsible && prefs.collapsedGroups.contains($0.kind)) }
+            .reduce(0) { $0 + $1.items.count }
+    }
+
+    private var canCreateReminders: Bool { store.reminderPermission == .granted }
+
+    /// Vorbelegt mit dem gewählten Tag — liegt der in der Vergangenheit, heute.
+    private var defaultReminderDay: Date {
+        let today = calendar.startOfDay(for: Date())
+        return max(calendar.startOfDay(for: selection), today)
     }
 
     private var accessHint: some View {
@@ -377,7 +417,7 @@ struct PopoverView: View {
 /// Statt `ProgressView(.linear)`: Der Systembalken bringt eigene Höhe, eigene
 /// Einfassung und eine eckige Spur mit — drei Dinge, die sich nicht anpassen
 /// lassen und neben runden Karten fremd wirken.
-private struct ProgressBar: View {
+struct ProgressBar: View {
     let value: Double
     let color: Color
     let height: CGFloat
@@ -395,46 +435,6 @@ private struct ProgressBar: View {
             }
         }
         .frame(height: height)
-    }
-}
-
-/// Eine Gruppe mit Überschrift. Trennlinien nur innerhalb der Gruppe — die
-/// Gruppen selbst trennt der Abstand plus die Überschrift.
-private struct AgendaGroup: View {
-    let title: String
-    let items: [AgendaItem]
-    let showProgress: Bool
-    var scale: Double = 1.0
-    var justCompleted: Set<String> = []
-    var oneThingID: String? = nil
-    var onToggle: ((AgendaItem) -> Void)? = nil
-    var onMakeOneThing: ((AgendaItem) -> Void)? = nil
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title.uppercased())
-                .font(Theme.font(Theme.Size.groupTitle, scale, weight: .semibold))
-                .tracking(0.8)
-                .foregroundStyle(.tertiary)
-                .padding(.bottom, 5)
-
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                if index > 0 {
-                    Divider().opacity(0.22).padding(.leading, 18)
-                }
-                AgendaRow(item: item, showProgress: showProgress, scale: scale,
-                          isFading: justCompleted.contains(item.id),
-                          isOneThing: item.isReminder && item.id == oneThingID,
-                          onToggle: { onToggle?(item) })
-                    .padding(.vertical, 5)
-                    .contentShape(Rectangle())
-                    .contextMenu {
-                        if item.isReminder && !item.isCompleted {
-                            Button("Als eine Sache in die Leiste", systemImage: "scope") { onMakeOneThing?(item) }
-                        }
-                    }
-            }
-        }
     }
 }
 
@@ -479,114 +479,5 @@ private struct UpcomingBanner: View {
                         .strokeBorder(Theme.accent.opacity(0.22), lineWidth: 0.8)
                 }
         }
-    }
-}
-
-private struct AgendaRow: View {
-    let item: AgendaItem
-    let showProgress: Bool
-    var scale: Double = 1.0
-    var isFading: Bool = false
-    /// Diese Erinnerung steht als „die eine Sache" in der Leiste.
-    var isOneThing: Bool = false
-    var onToggle: (() -> Void)? = nil
-
-    private let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "de_DE")
-        f.dateFormat = "HH:mm"
-        return f
-    }()
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 7) {
-            // Drei Arten, drei Formen — nicht dieselbe Form in drei Farben.
-            // Die Form trägt die Bedeutung auch dann, wenn zwei Kalender
-            // zufällig ähnlich eingefärbt sind.
-            Group {
-                if item.isReminder {
-                    // Der Marker ist hier zugleich der Schalter. Ein separater
-                    // Knopf daneben waere eine zweite Stelle fuer dieselbe
-                    // Information -- das Haekchen IST die Handlung.
-                    Button {
-                        onToggle?()
-                    } label: {
-                        Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 12 * scale))
-                            .symbolEffect(.bounce, value: item.isCompleted)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .help(item.isCompleted ? "Häkchen zurücknehmen" : "Als erledigt markieren")
-                } else if item.isAllDay {
-                    // Balken = gilt über die ganze Breite des Tages.
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .frame(width: 9, height: 4)
-                } else {
-                    Circle().frame(width: 7, height: 7)
-                }
-            }
-            .foregroundStyle(Color(
-                red: item.color.r, green: item.color.g, blue: item.color.b
-            ))
-            .frame(width: 10)
-
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 4) {
-                    Text(item.title)
-                        .font(Theme.font(Theme.Size.itemTitle, scale))
-                        .strikethrough(item.isCompleted)
-                        .foregroundStyle(item.isCompleted ? .secondary : .primary)
-                    if isOneThing {
-                        Image(systemName: "scope")
-                            .font(.system(size: 10 * scale, weight: .semibold))
-                            .foregroundStyle(Theme.accent)
-                            .help("Steht als die eine Sache in der Menüleiste")
-                    }
-                }
-                let time = item.timeLabel(using: timeFormatter)
-                if !time.isEmpty {
-                    HStack(spacing: 6) {
-                        Text(time)
-                            .font(Theme.font(Theme.Size.itemTime, scale))
-                            .foregroundStyle(.secondary)
-                        if let remaining = item.remainingLabel() {
-                            Text(remaining)
-                                .font(Theme.font(Theme.Size.hint, scale, weight: .medium))
-                                .foregroundStyle(Theme.accent)
-                        }
-                    }
-                }
-                if showProgress, let progress = item.progress() {
-                    ProgressBar(value: progress,
-                                color: Color(red: item.color.r, green: item.color.g,
-                                             blue: item.color.b),
-                                height: 3)
-                }
-            }
-            Spacer(minLength: 0)
-
-            // Nur solange die Zeile nachleuchtet: ein Weg zurueck. Danach
-            // bleibt der Kreis selbst der Schalter.
-            // Nicht bei Serien: Das Abhaken schiebt dort womoeglich die
-            // Faelligkeit weiter, ein Zuruecknehmen traefe dann das naechste
-            // Vorkommen (Audit-Fund K-C9, nicht gemessen — siehe
-            // CalendarStore.completionConfirmed).
-            if isFading && !item.isRecurring {
-                Button("Rückgängig") { onToggle?() }
-                    .font(Theme.font(Theme.Size.hint, scale, weight: .medium))
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Theme.accent)
-            }
-        }
-        .opacity(isFading ? 0.55 : 1)
-        .background {
-            if isFading {
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Theme.accent.opacity(0.10))
-                    .padding(.horizontal, -4)
-            }
-        }
-        .transition(.opacity.combined(with: .move(edge: .leading)))
     }
 }

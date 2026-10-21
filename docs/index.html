@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Erst erhöhen, wenn diese Seite gegen das Release gelesen wurde (Release-Profil app-release/references/kalli.md). -->
-<meta name="kalli:documented-version" content="0.9.0">
+<meta name="kalli:documented-version" content="0.10.0">
 <title>Kalli: Kalender in der Menüleiste für macOS, bewusst klein</title>
 <meta name="description" content="Kalli zeigt Datum, nächsten Termin und Erinnerungen in der Menüleiste deines Macs. Mit Vollbild-Hinweis vor dem Termin. Kostenlos, Open Source, kein Server.">
 <link rel="icon" href="favicon.png" type="image/png">
@@ -65,7 +65,7 @@
       <span>Kalli</span>
     </a>
     <div class="nav-links">
-      <a class="anchor" href="#neu">Neu in 0.9</a>
+      <a class="anchor" href="#neu">Neu in 0.10</a>
       <a class="anchor" href="#funktionen">Funktionen</a>
       <a class="anchor" href="#datenschutz">Datenschutz</a>
       <a href="https://github.com/miwixyz/Kalli"><svg class="ico" aria-hidden="true"><use href="#i-github"/></svg><span class="anchor">GitHub</span><span class="visually-hidden">Kalli auf GitHub</span></a>
@@ -79,7 +79,7 @@
 <header class="hero">
   <div class="wrap">
     <img class="app-icon" src="kalli-icon-224.png" alt="Kalli-Symbol" width="112" height="112">
-    <div><a class="news" href="#neu"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>Neu in 0.9: Wochentage in deiner Farbe</a></div>
+    <div><a class="news" href="#neu"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg>Neu in 0.10: Aufgaben direkt anlegen</a></div>
     <h1>Dein Kalender in der Menüleiste.<br><span class="accent">Bewusst klein.</span></h1>
     <p class="sub">Kalli zeigt dir Datum, nächsten Termin und Erinnerungen oben rechts auf deinem Mac. Ein Klick öffnet den Monat und den Tag, und mehr will Kalli nicht sein.</p>
     <div class="cta-group">
@@ -109,14 +109,14 @@
             <span class="kw">44</span><span class="d">26</span><span class="d">27</span><span class="d dot">28</span><span class="d">29</span><span class="d">30</span><span class="d">31</span><span class="d out">1</span>
           </div>
           <div class="daylist">
+            <div class="group">Aufgaben</div>
+            <div class="row"><span class="mark task"></span><span>Trailer-Paket bestellen</span><span class="time"></span></div>
             <div class="group">Ganztägig</div>
             <div class="row"><span class="mark" style="--c:var(--cal-3)"></span><span>Programmwechsel KW 41</span><span class="time">ganztägig</span></div>
             <div class="group">Termine</div>
             <div class="row"><span class="mark"></span><span>Fokuszeit</span><span class="time">09:00–10:00</span><span class="bar"><i style="width:78%"></i></span></div>
             <div class="row"><span class="mark"></span><span>Jour fixe</span><span class="time">10:00–10:30</span></div>
             <div class="row"><span class="mark" style="--c:var(--cal-2)"></span><span>Rückruf Kino</span><span class="time">14:30</span></div>
-            <div class="group">Aufgaben</div>
-            <div class="row"><span class="mark task"></span><span>Trailer-Paket bestellen</span><span class="time"></span></div>
           </div>
           <div class="banner"><svg class="ico"><use href="#i-bell"/></svg>Jour fixe beginnt in 13 Min.</div>
         </div>
@@ -128,39 +128,42 @@
 
 <section id="neu">
   <div class="wrap">
-    <span class="eyebrow">Neu in 0.9</span>
-    <h2>Jeder Donnerstag in Rot</h2>
-    <p class="lead">Donnerstags ist Training, sonntags kommt die Familie? Dann gib diesen Tagen eine Farbe. Kalli schreibt ihre Tageszahl im Monat in genau dieser Farbe, und beim Öffnen siehst du sofort, wo sie liegen.</p>
+    <span class="eyebrow">Neu in 0.10</span>
+    <h2>Neue Aufgaben, ohne die Erinnerungen-App zu öffnen</h2>
+    <p class="lead">Klick auf das Plus neben „Aufgaben“, tippe, was zu tun ist, und drück Return. Kalli legt die Erinnerung in deiner Erinnerungen-App an. Tag und Uhrzeit schreibst du einfach dazu.</p>
 
-    <figure class="popover hl-stage" aria-label="Vereinfachte Darstellung: Monatsraster mit Donnerstagen in Rot und Sonntagen in Grün">
-      <div class="pop-head" aria-hidden="true">
-        <span class="month">Oktober <span class="year">2026</span></span>
-      </div>
-      <div class="grid" aria-hidden="true">
-        <span class="h">KW</span><span class="h">Mo</span><span class="h">Di</span><span class="h">Mi</span><span class="h">Do</span><span class="h">Fr</span><span class="h">Sa</span><span class="h">So</span>
-        <span class="kw">40</span><span class="d"></span><span class="d"></span><span class="d"></span><span class="d hl-red dot">1</span><span class="d">2</span><span class="d">3</span><span class="d hl-green">4</span>
-        <span class="kw">41</span><span class="d dot">5</span><span class="d">6</span><span class="d dot">7</span><span class="d hl-red">8</span><span class="d dot">9</span><span class="d">10</span><span class="d hl-green">11</span>
-        <span class="kw">42</span><span class="d dot">12</span><span class="d">13</span><span class="d dot">14</span><span class="d today"><span>15</span></span><span class="d dot">16</span><span class="d">17</span><span class="d hl-green">18</span>
-        <span class="kw">43</span><span class="d">19</span><span class="d dot">20</span><span class="d">21</span><span class="d hl-red">22</span><span class="d dot">23</span><span class="d">24</span><span class="d hl-green">25</span>
-        <span class="kw">44</span><span class="d">26</span><span class="d">27</span><span class="d dot">28</span><span class="d hl-red">29</span><span class="d">30</span><span class="d">31</span><span class="d"></span>
+    <figure class="popover hl-stage qf-stage" aria-label="Vereinfachte Darstellung: Eingabezeile für eine neue Aufgabe mit erkanntem Tag und Uhrzeit">
+      <div class="daylist" aria-hidden="true">
+        <div class="group qf-head">Aufgaben <span class="qf-x">×</span></div>
+        <div class="qf">
+          <div class="qf-input">Zahnarzt anrufen morgen 15 Uhr</div>
+          <div class="qf-hint">Erkannt: Do. 22. Okt. · 15:00</div>
+          <div class="qf-chips"><span class="chip">Heute</span><span class="chip on">Morgen</span><span class="chip">Nächste Woche</span></div>
+          <div class="qf-chips"><span class="chip">Ohne</span><span class="chip">9:00</span><span class="chip">12:00</span><span class="chip">18:00</span><span class="chip on">15:00</span></div>
+          <div class="qf-foot"><span class="chip urgent on"><b>!</b> Dringend</span><span class="qf-note">Vollbild um 15:00</span><span class="qf-save">Sichern</span></div>
+        </div>
+        <div class="row"><span class="mark task"></span><span><b class="urgent-mark">!</b> Steuerberater zurückrufen</span><span class="time">10:30</span></div>
+        <div class="group">Ganztägig <span class="count">2</span></div>
+        <div class="group">Termine</div>
+        <div class="row"><span class="mark"></span><span>Jour fixe</span><span class="time">10:00–10:30</span></div>
       </div>
     </figure>
 
     <div class="new-points">
       <div class="point">
-        <h3><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Jeder Wochentag für sich</h3>
-        <p>Für jeden Wochentag wählst du eine eigene Farbe oder keine. Zur Auswahl stehen Rot, Orange, Grün, Blau, Lila und Rosa. Gelb fehlt mit Absicht, denn gelbe Zahlen sind auf hellem Grund kaum zu lesen.</p>
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>„Morgen 15 Uhr“ reicht</h3>
+        <p>Schreib „Zahnarzt anrufen morgen 15 Uhr“, dann stellt Kalli Tag und Uhrzeit selbst ein und speichert nur „Zahnarzt anrufen“. Kalli versteht heute, morgen, Wochentage, ein Datum wie 24.10. und Uhrzeiten. Was Kalli nicht versteht, bleibt im Titel stehen, und du nimmst die Knöpfe.</p>
       </div>
       <div class="point">
-        <h3><svg class="ico" aria-hidden="true"><use href="#i-target"/></svg>Heute bleibt erkennbar</h3>
-        <p>Der heutige Tag behält seinen blauen Kreis. Das gilt auch dann, wenn er auf einen hervorgehobenen Wochentag fällt.</p>
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-bell"/></svg>Dringend heißt Vollbild</h3>
+        <p>„Dringend“ gibt der Aufgabe in der Erinnerungen-App die Priorität „Hoch“. Hat sie eine Uhrzeit und ist der Vollbild-Hinweis eingeschaltet, holt Kalli dich genau zur Fälligkeit aus der Arbeit.</p>
       </div>
       <div class="point">
-        <h3><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg>Ab Werk aus</h3>
-        <p>Du findest die Einstellung unter Einstellungen → Ansicht → Wochentage hervorheben. Solange du nichts auswählst, sieht Kalli aus wie bisher.</p>
+        <h3><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg>Deine Reihenfolge</h3>
+        <p>Aufgaben stehen jetzt oben. Ein Klick auf die Überschrift klappt Ganztägiges oder Aufgaben zu, und in den Einstellungen legst du fest, welche Gruppe zuerst kommt.</p>
       </div>
     </div>
-    <p class="mock-note">Vereinfachte Darstellung: Donnerstag in Rot, Sonntag in Grün.</p>
+    <p class="mock-note">Vereinfachte Darstellung mit Beispielaufgaben.</p>
   </div>
 </section>
 
@@ -223,12 +226,12 @@
       <div class="feature card">
         <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg></div>
         <h3>Monat und Tag sortiert</h3>
-        <p>Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen. Darunter der Tag, getrennt nach ganztägig, Terminen und Aufgaben. Einzelne Wochentage hebst du in einer Farbe deiner Wahl hervor.</p>
+        <p>Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen. Darunter der Tag, getrennt nach Aufgaben, ganztägig und Terminen. Die Reihenfolge stellst du selbst ein, Ganztägiges und Aufgaben lassen sich zuklappen. Einzelne Wochentage hebst du in einer Farbe hervor.</p>
       </div>
       <div class="feature card">
         <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></div>
-        <h3>Aufgaben abhaken</h3>
-        <p>Ein Klick auf den Kreis hakt die Erinnerung ab. Kalli prüft danach nach, ob das Häkchen in der Erinnerungen-App angekommen ist, und sagt es dir, wenn nicht.</p>
+        <h3>Aufgaben abhaken und anlegen</h3>
+        <p>Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an. Danach liest Kalli nach, ob in der Erinnerungen-App alles angekommen ist, und sagt es dir, wenn nicht.</p>
       </div>
       <div class="feature card">
         <div class="icon"><svg class="ico" aria-hidden="true"><use href="#i-timer"/></svg></div>
@@ -265,7 +268,7 @@
       <div class="tile-icon"><svg class="ico" aria-hidden="true"><use href="#i-minus"/></svg></div>
       <h3>Was bewusst fehlt</h3>
       <p>Kalli legt keine Termine an und ändert keine. Für all das gibt es gute, größere Apps. Kalli bleibt das kleine Fenster, das du nebenbei öffnest.</p>
-      <div class="chips" aria-label="Nicht enthalten"><span>Termine anlegen</span><span>Eingabe in natürlicher Sprache</span><span>Zeitzonen</span><span>Datumsrechner</span></div>
+      <div class="chips" aria-label="Nicht enthalten"><span>Termine anlegen</span><span>Termine ändern</span><span>Zeitzonen</span><span>Datumsrechner</span></div>
     </div>
   </div>
 </section>
@@ -275,7 +278,7 @@
     <h2>Deine Daten bleiben auf deinem Mac</h2>
     <p class="lead">Kalli braucht kein Konto und schickt nichts an einen Server.</p>
     <div class="privacy-grid">
-      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span><p><strong>Kalender nur lesen</strong>Bei Erinnerungen setzt Kalli ausschließlich das Erledigt-Häkchen, und nur, wenn du klickst. Nichts wird angelegt, umbenannt oder gelöscht.</p></div>
+      <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span><p><strong>Kalender nur lesen</strong>Bei Erinnerungen setzt Kalli das Häkchen und legt über das Plus neue an. Beides passiert nur, wenn du klickst. Nichts wird umbenannt oder gelöscht.</p></div>
       <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-cloudoff"/></svg></span><p><strong>Kein Server, keine Analyse</strong>Es gibt keine Kennungen und keine Nutzungsstatistik. Gespeichert werden nur deine Einstellungen.</p></div>
       <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg></span><p><strong>Updates nur mit deinem Ja</strong>Den einzigen Netzwerkzugriff, die Suche nach Updates bei GitHub, erlaubst du beim ersten Mal selbst. Sagst du nein, geht nichts ins Netz.</p></div>
       <div class="privacy-item"><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg></span><p><strong>Geprüft und offen</strong>Jede Version ist von Apple notarisiert. Der Quellcode liegt offen auf GitHub, unter der MIT-Lizenz.</p></div>
@@ -301,7 +304,7 @@
     <div class="faq">
       <details><summary>Was kostet Kalli?</summary><p>Nichts. Kalli ist Open Source unter der MIT-Lizenz, ohne Abo und ohne Werbung.</p></details>
       <details><summary>Welche Kalender zeigt Kalli?</summary><p>Alle, die in der Kalender-App deines Macs eingerichtet sind, zum Beispiel iCloud, Google oder Exchange. Aufgaben kommen aus der Erinnerungen-App.</p></details>
-      <details><summary>Kann ich mit Kalli Termine anlegen?</summary><p>Nein, das ist Absicht. Termine legst du weiter in der Kalender-App an, Kalli zeigt sie dir dann an.</p></details>
+      <details><summary>Kann ich mit Kalli Termine anlegen?</summary><p>Termine nicht, das ist Absicht. Die legst du weiter in der Kalender-App an. Aufgaben schon: Das Plus neben „Aufgaben“ legt eine neue Erinnerung an.</p></details>
       <details><summary>Wie kommen Updates?</summary><p>Kalli fragt beim ersten Mal, ob es selbst nach Updates suchen darf. Du kannst auch jederzeit über den Knopf „Updates“ unten im Fenster nachsehen. Vor der Installation prüft Kalli zwei Signaturen.</p></details>
       <details><summary>Läuft Kalli auf älteren macOS-Versionen?</summary><p>Nein, Kalli braucht macOS 26. Das Fenster nutzt Liquid Glass, das es erst ab dieser Version gibt.</p></details>
     </div>

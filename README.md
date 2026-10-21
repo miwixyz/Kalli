@@ -40,7 +40,9 @@ ansteht, bezahlt das mit Oberfläche.
   Schrift kommen aus `Kalli/UI/FamilyTheme.swift`, einer Kopie der Vault-Vorlage
   „App-Familie Design-System“. Werte dort ändern, nicht in Kalli
 - **Tagesliste nach Art gruppiert:** Ganztägig, Termine, Aufgaben — je mit
-  eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt
+  eigener Markerform, damit die Bedeutung nicht allein an der Kalenderfarbe hängt.
+  „Ganztägig“ und „Aufgaben“ lassen sich zuklappen (ab 0.10.0, Zustand bleibt gespeichert);
+  Reihenfolge einstellbar, ab Werk Aufgaben zuerst
 - **Fortschritt laufender Termine** — Balken im Popover, Restzeit in der Leiste.
   In der Leiste hat der **nächste** Termin Vorrang, sobald er in Vorlaufzeit ist —
   ein Tagesblock würde sonst stundenlang alles verdecken, was dazwischen liegt.
@@ -68,8 +70,16 @@ ansteht, bezahlt das mit Oberfläche.
 in der Erinnerungen-App. Kalli **liest das Kennzeichen danach zurück** und meldet, wenn es nicht
 angekommen ist: Ein `save()` ohne Fehler heißt nur, dass der Aufruf durchlief.
 
-Ausdrücklich nicht enthalten: Termine anlegen oder ändern, Aufgaben anlegen oder löschen,
-Natural-Language-Eingabe, Zeitzonen, Erkennung einzelner Videokonferenz-Dienste
+**Neue Aufgabe schnell anlegen (ab 0.10.0)** — „+“ neben AUFGABEN: Titel, Tag (Heute, Morgen,
+Nächste Woche, Datum), Uhrzeit (9/12/18 Uhr oder eigene), „Dringend“ (Priorität „Hoch“).
+Tag und Uhrzeit werden auch im Titel erkannt („Zahnarzt morgen 15 Uhr“, kleine feste
+Wortliste in `QuickReminder.swift`, kein allgemeiner Parser). Ziel ist die Standardliste von
+Apple Erinnerungen, danach wird zurückgelesen. Dringende Aufgaben mit Uhrzeit bekommen den
+Vollbild-Hinweis genau zur Fälligkeit. Apples „Dringend“ (Wecker) bietet EventKit nicht an
+(macOS-27-SDK geprüft), daher Priorität 1.
+
+Ausdrücklich nicht enthalten: Termine anlegen oder ändern, Aufgaben ändern oder löschen,
+freie Natural-Language-Eingabe (über Tag/Uhrzeit beim Anlegen hinaus), Zeitzonen, Erkennung einzelner Videokonferenz-Dienste
 (nur „Link öffnen“ für den ersten Web-Link), Datumsrechner.
 
 ## Bauen
@@ -101,8 +111,8 @@ Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 
 Beim ersten Öffnen des Popovers fragt macOS nach Zugriff auf Kalender und
 Erinnerungen. Kalender werden **nur gelesen**. Bei Erinnerungen schreibt Kalli
-ausschließlich das **Erledigt-Kennzeichen**, und nur auf Klick — nichts wird
-angelegt, umbenannt oder gelöscht.
+das **Erledigt-Kennzeichen** (nur auf Klick) und legt ab 0.10.0 **neue Erinnerungen**
+an (nur über das „+“) — nichts wird umbenannt, verschoben oder gelöscht.
 
 Wird der Dialog abgelehnt, bleibt die Liste leer. Die App zeigt dann eine
 Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
@@ -126,7 +136,7 @@ Server. Vollständige Offenlegung inklusive Sperrbildschirm:
 ```
 Kalli/
   App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
-  Core/    CalendarStore (EventKit; schreibend nur das Erledigt-Kennzeichen), Preferences, Models,
+  Core/    CalendarStore (EventKit; schreibend: Erledigt-Kennzeichen, neue Erinnerung), QuickReminder, Preferences, Models,
            EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm)
   UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
 KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
@@ -325,8 +335,8 @@ MIT — siehe [LICENSE](LICENSE). Rechtliche Hinweise und Datenschutz stehen in
 Rechtliches.
 
 **Kurz zum Datenschutz:** Kein Server, keine Analyse, keine Kennungen. Kalender
-werden nur gelesen; bei Erinnerungen wird ausschließlich das
-Erledigt-Kennzeichen gesetzt. Gespeichert werden nur die eigenen Einstellungen.
+werden nur gelesen; bei Erinnerungen wird das Erledigt-Kennzeichen gesetzt und
+auf Wunsch eine neue Erinnerung angelegt. Gespeichert werden nur die eigenen Einstellungen.
 
 **Genau ein Netzwerkzugriff:** die Update-Prüfung bei GitHub — ab Werk **aus**,
 beim ersten Mal wird gefragt. GitHub sieht dabei IP-Adresse und installierte

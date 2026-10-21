@@ -29,14 +29,16 @@ Was Kalli liest:
 | Quelle | Zugriff | Zweck |
 |---|---|---|
 | Kalender (EventKit) | **nur lesen** | Termine im Raster und in der Tagesliste anzeigen. Ab 0.5.0 zusätzlich URL, Ort und Notizen (nur um darin einen Web-Link für „Link öffnen“ zu finden) sowie deinen Teilnahmestatus (abgelehnte Einladungen bekommen keinen Vollbild-Hinweis) |
-| Erinnerungen (EventKit) | lesen **und** Erledigt-Kennzeichen setzen | Aufgaben anzeigen und abhaken |
+| Erinnerungen (EventKit) | lesen, Erledigt-Kennzeichen setzen **und** neue Erinnerungen anlegen (ab 0.10.0) | Aufgaben anzeigen, abhaken und über das „+“ neu anlegen |
 | Mitteilungen (macOS) | **schreiben**, nur wenn du sie einschaltest | Hinweis vor einem Termin |
 | GitHub (Netz) | **abrufen**, nur für Updates | Nachsehen, ob eine neuere Fassung vorliegt |
 
-**Was geschrieben wird — vollständig:** ausschließlich das Erledigt-Kennzeichen
-einer Erinnerung, und nur wenn du das Häkchen anklickst. Kalli legt nichts an,
-benennt nichts um, verschiebt nichts und **löscht nichts** — weder Termine noch
-Erinnerungen noch Kalender.
+**Was geschrieben wird — vollständig:** das Erledigt-Kennzeichen einer Erinnerung,
+nur wenn du das Häkchen anklickst, und ab 0.10.0 eine **neue Erinnerung** in deiner
+Standardliste (Titel, Fälligkeit, bei Uhrzeit ein Alarm, bei „Dringend“ die Priorität
+„Hoch“), nur wenn du sie über das „+“ sicherst. Kalli legt keine Termine an, ändert
+keine bestehenden Erinnerungen außer dem Häkchen, verschiebt nichts und **löscht
+nichts** — weder Termine noch Erinnerungen noch Kalender.
 
 Was Kalli speichert: die eigenen Einstellungen in den macOS-UserDefaults unter
 `com.kalli.app` — welche Kalender ausgeblendet sind, das Datumsformat, die

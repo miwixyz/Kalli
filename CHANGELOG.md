@@ -2,6 +2,29 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.10.0] — 2026-10-21
+
+### Neu
+
+- **Ganztägig und Aufgaben zuklappen:** Ein Klick auf die Überschrift klappt die Gruppe zu,
+  dahinter steht dann die Anzahl. Kalli merkt sich das.
+- **Reihenfolge der Tagesliste:** Aufgaben stehen jetzt oben, dann Ganztägig, dann Termine.
+  Unter Einstellungen → Ansicht → Tagesliste → Reihenfolge lässt sich das umstellen.
+- **Neue Aufgabe anlegen:** das „+“ neben AUFGABEN. Titel, Tag (Heute, Morgen, Nächste Woche
+  oder Datum), Uhrzeit (9, 12, 18 Uhr oder eigene) und „Dringend“. Tag und Uhrzeit lassen sich
+  auch einfach mittippen: „Zahnarzt anrufen morgen 15 Uhr“. Gespeichert wird in der
+  Standardliste von Apple Erinnerungen; Kalli prüft nach, ob die Aufgabe angekommen ist.
+- **Dringende Aufgaben:** Priorität „Hoch“ steht in Kalli als rotes Ausrufezeichen. Hat eine
+  dringende Aufgabe eine Uhrzeit und ist der Vollbild-Hinweis an, kommt er genau zur Fälligkeit.
+
+### Intern
+
+- **Rechtliches und Datenschutzseite:** Kalli schreibt jetzt auch neue Erinnerungen, das steht dort.
+- **Website und One-Pager:** Abschnitt „Neu in 0.10“ mit vereinfachter Eingabezeile, Funktionskarten,
+  „Was bewusst fehlt“ und Fragen angepasst, Aufgaben in der Nachbildung oben. Vorschaubild neu.
+- Abbildung EventKit → Liste (`CalendarStore+Abbildung.swift`) und Tageslisten-Zeilen
+  (`AgendaList.swift`) in eigene Dateien verschoben, unverändert (SwiftLint-Längengrenze).
+
 ## [0.9.0] — 2026-10-12
 
 ### Neu

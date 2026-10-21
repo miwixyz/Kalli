@@ -13,7 +13,8 @@ import OSLog
 /// - eigener Vorlauf (`fullScreenLeadMinutes`), ab Werk 1 Min.
 /// - „Link öffnen" nur als einfacher Link-Knopf, keine Erkennung einzelner
 ///   Videokonferenz-Dienste (die stünde weiter unter „Draußen")
-/// - nur Termine, keine Erinnerungen
+/// - nur Termine, keine Erinnerungen — **Ausnahme ab 0.10.0 (Michael, 2026-10-21):** offene
+///   dringende Erinnerungen (Priorität „Hoch") mit Uhrzeit, genau zur Fälligkeit (ohne Vorlauf)
 /// - „Zum Beginn nochmal" (2026-10-08): bringt den Hinweis genau zum Terminbeginn zurück,
 ///   unabhängig vom eingestellten Vorlauf; ab 30 s vor Beginn ausgeblendet
 ///
@@ -69,7 +70,7 @@ final class FullScreenAlerts {
         fire(now: now)
 
         var fireDates = Set(Self.upcoming(in: horizon, now: now, lead: lead).compactMap { item in
-            item.start.map { $0.addingTimeInterval(-lead) }
+            Self.alertDate(item, lead: lead)
         })
         // Geschlummerte Termine: zum Beginn.
         fireDates.formUnion(horizon.compactMap { item in
@@ -138,9 +139,18 @@ final class FullScreenAlerts {
     /// Ganztägig: „beginnt gleich" ist bedeutungslos. Abgelehnt: sonst könnte eine
     /// fremde Einladung den Bildschirm sperren.
     nonisolated static func isEligible(_ item: AgendaItem) -> Bool {
-        guard case .event = item.kind, !item.isAllDay, !item.isDeclined,
-              item.start != nil else { return false }
-        return true
+        guard !item.isAllDay, !item.isDeclined, item.start != nil else { return false }
+        switch item.kind {
+        case .event: return true
+        // Dringende Erinnerung: nur offen und nur mit echter Uhrzeit — ein reines
+        // Fälligkeitsdatum steht auf Mitternacht und hätte keinen sinnvollen Zeitpunkt.
+        case .reminder(let completed): return item.isUrgent && item.hasTime && !completed
+        }
+    }
+
+    /// Wann der Hinweis kommt: Termine mit Vorlauf, Erinnerungen genau zur Fälligkeit.
+    nonisolated static func alertDate(_ item: AgendaItem, lead: TimeInterval) -> Date? {
+        item.start.map { $0.addingTimeInterval(item.isReminder ? 0 : -lead) }
     }
 
     /// Termine, deren Hinweiszeitpunkt noch in der Zukunft liegt (dafür wird ein
@@ -148,8 +158,8 @@ final class FullScreenAlerts {
     nonisolated static func upcoming(in horizon: [AgendaItem], now: Date,
                                      lead: TimeInterval) -> [AgendaItem] {
         horizon.filter { item in
-            guard isEligible(item), let start = item.start else { return false }
-            return start.addingTimeInterval(-lead) > now
+            guard isEligible(item), let at = alertDate(item, lead: lead) else { return false }
+            return at > now
         }
     }
 
@@ -158,9 +168,9 @@ final class FullScreenAlerts {
     nonisolated static func due(in horizon: [AgendaItem], now: Date, lead: TimeInterval,
                                 shown: Set<String>) -> [AgendaItem] {
         horizon.filter { item in
-            guard isEligible(item), let start = item.start,
+            guard isEligible(item), let start = item.start, let at = alertDate(item, lead: lead),
                   !shown.contains(item.id) else { return false }
-            return start.addingTimeInterval(-lead) <= now && now < start.addingTimeInterval(grace)
+            return at <= now && now < start.addingTimeInterval(grace)
         }
         .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
     }

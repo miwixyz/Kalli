@@ -18,13 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.9: Jeder Donnerstag in Rot
+## Neu in 0.10: Neue Aufgaben, ohne die Erinnerungen-App zu öffnen
 
-Donnerstags ist Training, sonntags kommt die Familie? Dann gib diesen Tagen eine Farbe. Kalli schreibt ihre Tageszahl im Monat in genau dieser Farbe, und beim Öffnen siehst du sofort, wo sie liegen.
+Klick auf das Plus neben „Aufgaben“, tippe, was zu tun ist, und drück Return. Kalli legt die Erinnerung in deiner Erinnerungen-App an. Tag und Uhrzeit schreibst du einfach dazu.
 
-- Für jeden Wochentag wählst du eine eigene Farbe oder keine. Zur Auswahl stehen Rot, Orange, Grün, Blau, Lila und Rosa. Gelb fehlt mit Absicht, denn gelbe Zahlen sind auf hellem Grund kaum zu lesen.
-- Der heutige Tag behält seinen blauen Kreis. Das gilt auch dann, wenn er auf einen hervorgehobenen Wochentag fällt.
-- Du findest die Einstellung unter Einstellungen → Ansicht → Wochentage hervorheben. Solange du nichts auswählst, sieht Kalli aus wie bisher.
+- Schreib „Zahnarzt anrufen morgen 15 Uhr“, dann stellt Kalli Tag und Uhrzeit selbst ein und speichert nur „Zahnarzt anrufen“. Kalli versteht heute, morgen, Wochentage, ein Datum wie 24.10. und Uhrzeiten. Was Kalli nicht versteht, bleibt im Titel stehen, und du nimmst die Knöpfe.
+- „Dringend“ gibt der Aufgabe in der Erinnerungen-App die Priorität „Hoch“. Hat sie eine Uhrzeit und ist der Vollbild-Hinweis eingeschaltet, holt Kalli dich genau zur Fälligkeit aus der Arbeit.
+- Aufgaben stehen jetzt oben. Ein Klick auf die Überschrift klappt Ganztägiges oder Aufgaben zu, und in den Einstellungen legst du fest, welche Gruppe zuerst kommt.
 
 ---
 
@@ -46,8 +46,8 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Auf einen Blick sehen, was ansteht | Datum und nächster Termin mit Countdown direkt in der Menüleiste |
 | Den Monat überblicken | Monatsraster mit Kalenderwochen, ein Punkt markiert Tage mit Einträgen |
 | Bestimmte Wochentage sofort finden | Jeder Wochentag bekommt auf Wunsch eine eigene Farbe, zum Beispiel jeder Donnerstag Rot |
-| Den Tag sortiert vor dir haben | Tagesliste getrennt nach ganztägig, Terminen und Aufgaben |
-| Aufgaben erledigen | Ein Klick auf den Kreis hakt die Erinnerung ab. Kalli prüft danach, ob es angekommen ist |
+| Den Tag sortiert vor dir haben | Tagesliste getrennt nach Aufgaben, ganztägig und Terminen. Die Reihenfolge stellst du selbst ein, Ganztägiges und Aufgaben lassen sich zuklappen |
+| Aufgaben erledigen und anlegen | Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an, Tag und Uhrzeit auch mitgetippt. Kalli liest danach nach, ob alles angekommen ist |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
 | Rechtzeitig erinnert werden | Drei Wege nach Wahl: Mitteilung, pulsierender Punkt in der Leiste, Vollbild-Hinweis. Alle sind ab Werk aus |
 | Die eine wichtige Aufgabe des Tages im Blick behalten | „Die eine Sache“ steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst |
@@ -58,13 +58,13 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 
 ## Was bewusst fehlt
 
-Kalli legt keine Termine an und ändert keine. Es gibt keine Eingabe in natürlicher Sprache, keine Zeitzonen und keinen Datumsrechner. Für all das gibt es gute, größere Apps. Kalli bleibt das kleine Fenster, das du nebenbei öffnest.
+Kalli legt keine Termine an und ändert keine. Es gibt keine Zeitzonen und keinen Datumsrechner, und beim Anlegen einer Aufgabe versteht Kalli nur Tag und Uhrzeit, keine freien Sätze. Für all das gibt es gute, größere Apps. Kalli bleibt das kleine Fenster, das du nebenbei öffnest.
 
 ---
 
 ## Deine Daten bleiben auf deinem Mac
 
-- Kalender liest Kalli nur. Bei Erinnerungen setzt es ausschließlich das Erledigt-Häkchen, und nur, wenn du klickst.
+- Kalender liest Kalli nur. Bei Erinnerungen setzt es das Häkchen und legt über das Plus neue an. Beides passiert nur, wenn du klickst.
 - Es gibt keinen Server, keine Analyse und keine Kennungen.
 - Den einzigen Netzwerkzugriff, die Suche nach Updates bei GitHub, erlaubst du beim ersten Mal selbst. Sagst du nein, geht nichts ins Netz.
 
