@@ -34,6 +34,14 @@ final class GnotchiEventsTests: XCTestCase {
         XCTAssertTrue(GnotchiEvents.payload(item(start: nil))["event"] is NSNull)
     }
 
+    func testLongTitleIsCutSoTheFrameStillFits() throws {
+        let long = AgendaItem(id: "1", title: String(repeating: "Ä", count: 5000), start: Date(), end: nil, isAllDay: false,
+                              hasTime: true, kind: .event, sourceID: "k", color: .fallback, hasAlarms: false)
+        let p = GnotchiEvents.payload(long)
+        XCTAssertEqual(((p["event"] as? [String: Any])?["title"] as? String)?.count, GnotchiEvents.maxTitle)
+        XCTAssertNotNil(GnotchiEvents.frame(p), "Nachricht passt in den Rahmen")
+    }
+
     func testHexClamps() {
         XCTAssertEqual(GnotchiEvents.hex(RGBA(r: 2, g: -1, b: 0.2, a: 1)), "#FF0033")
     }

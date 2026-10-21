@@ -16,6 +16,8 @@ import Security
 enum GnotchiEvents {
 
     static let maxFrame = 4096
+    /// Höchstens so viele Zeichen Titel gehen raus (Datensparsamkeit; Gnotchi zeigt höchstens 120).
+    static let maxTitle = 200
     static let ackTimeout: TimeInterval = 0.5
     /// Nach Gnotchis Start kurz warten, bis der Socket steht.
     static let launchDelay: TimeInterval = 3
@@ -39,7 +41,9 @@ enum GnotchiEvents {
         guard let item, case .event = item.kind, !item.isAllDay, let start = item.start else {
             return ["v": 1, "event": NSNull()]
         }
-        return ["v": 1, "event": ["title": item.title, "start": start.timeIntervalSince1970.rounded(),
+        // Gekürzt (Review 21.10.): Ein Titel über 4 KB ließ die Nachricht ausfallen, Gnotchi zeigte dann womöglich
+        // den vorigen Termin. Gnotchi zeigt ohnehin höchstens 120 Zeichen.
+        return ["v": 1, "event": ["title": String(item.title.prefix(maxTitle)), "start": start.timeIntervalSince1970.rounded(),
                                   "color": hex(item.color)]]
     }
 
