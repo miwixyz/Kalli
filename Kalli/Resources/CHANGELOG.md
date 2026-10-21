@@ -2,6 +2,14 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.11.1] — noch nicht veröffentlicht
+
+### Behoben
+
+- **Updates in der Notch auch bei automatischer Installation:** Ist „Automatisch installieren“
+  an, lädt Kalli ein Update still und installiert es beim Beenden. Gnotchi erfuhr davon bisher
+  nichts. Jetzt steht auch dieses Update in der Notch, ein Klick zeigt „Installieren und neu starten“.
+
 ## [0.11.0] — 2026-10-21
 
 ### Neu

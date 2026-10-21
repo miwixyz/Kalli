@@ -12,6 +12,8 @@ struct KalliApp: App {
     @State private var oneThing: OneThing
     /// Hält den Dienste-Anbieter am Leben (NSApp.servicesProvider hält ihn nicht sicher fest).
     @State private var oneThingService: OneThingService
+    /// Nächster Termin in Gnotchis Notch (0.11.1, Gnotchi G26).
+    @State private var gnotchiEvents: GnotchiEventSender
 
     init() {
         // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
@@ -33,6 +35,12 @@ struct KalliApp: App {
         let service = OneThingService(oneThing: o)
         _oneThing = State(initialValue: o)
         _oneThingService = State(initialValue: service)
+        let events = GnotchiEventSender(current: { [s] in s.nextEvent })
+        _gnotchiEvents = State(initialValue: events)
+        // Nicht im Testlauf: Die Test-Kalli soll keine echten Termine an ein laufendes Gnotchi schicken.
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil {
+            Task { @MainActor in events.start() }
+        }
         // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
         Task { @MainActor in
             NSApp.servicesProvider = service
