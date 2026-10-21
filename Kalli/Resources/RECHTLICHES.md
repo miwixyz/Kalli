@@ -32,6 +32,7 @@ Was Kalli liest:
 | Erinnerungen (EventKit) | lesen, Erledigt-Kennzeichen setzen **und** neue Erinnerungen anlegen (ab 0.10.0) | Aufgaben anzeigen, abhaken und über das „+“ neu anlegen |
 | Mitteilungen (macOS) | **schreiben**, nur wenn du sie einschaltest | Hinweis vor einem Termin |
 | GitHub (Netz) | **abrufen**, nur für Updates | Nachsehen, ob eine neuere Fassung vorliegt |
+| Gnotchi, Termin (nur auf diesem Mac, ab 0.12.0) | **senden**, nur an ein echtes, signiertes Gnotchi, das Kalli vorher über eine geschützte lokale Verbindung geprüft hat | den nächsten Termin 15 Minuten vor Beginn in der Notch zeigen. Gesendet werden nur Titel (höchstens 200 Zeichen), Beginn und Kalenderfarbe des Termins, den die Menüleiste ohnehin zeigt. Gnotchi speichert ihn nicht. Andere Programme können die Verbindung nicht lesen |
 | Gnotchi (nur auf diesem Mac, ab 0.11.0) | **melden**, nur wenn ein echtes, signiertes Gnotchi ≥ 0.4.0 läuft und dort „Updates der App-Familie“ an ist | „Kalli 0.11.0 bereit“ in der Notch zeigen. Gemeldet werden nur App-Name und Versionsnummer, über eine Systemmeldung, die jedes Programm auf diesem Mac mitlesen kann. Nichts davon verlässt den Mac |
 
 **Was geschrieben wird — vollständig:** das Erledigt-Kennzeichen einer Erinnerung,

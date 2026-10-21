@@ -5,7 +5,7 @@ import XCTest
 
 // SYNTHETISCH – erfundene Termine, keine echten Kalenderdaten.
 
-/// 0.11.1 Nächster Termin an Gnotchi (Gnotchi SECURE-DESIGN G26): Nachricht, Rahmen, Prüfung der Gegenseite.
+/// 0.12.0 Nächster Termin an Gnotchi (Gnotchi SECURE-DESIGN G26): Nachricht, Rahmen, Prüfung der Gegenseite.
 @MainActor
 final class GnotchiEventsTests: XCTestCase {
 

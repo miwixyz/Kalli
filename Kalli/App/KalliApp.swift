@@ -12,7 +12,7 @@ struct KalliApp: App {
     @State private var oneThing: OneThing
     /// Hält den Dienste-Anbieter am Leben (NSApp.servicesProvider hält ihn nicht sicher fest).
     @State private var oneThingService: OneThingService
-    /// Nächster Termin in Gnotchis Notch (0.11.1, Gnotchi G26).
+    /// Nächster Termin in Gnotchis Notch (0.12.0, Gnotchi G26).
     @State private var gnotchiEvents: GnotchiEventSender
 
     init() {

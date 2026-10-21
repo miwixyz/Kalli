@@ -2,13 +2,31 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [0.11.1] — noch nicht veröffentlicht
+## [0.12.0] — 2026-10-21
+
+Dein nächster Termin in der Notch.
+
+### Neu
+
+- **Nächster Termin in Gnotchi:** Läuft [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.5.0,
+  erscheint dein nächster Termin 15 Minuten vor Beginn in der Notch, mit Uhrzeit und Restzeit.
+  Es ist derselbe Termin, den Kallis Menüleiste zeigt. Kalli schickt nur Titel, Beginn und
+  Kalenderfarbe, über eine lokale Verbindung, bei der beide Apps vorher die Signatur der anderen
+  prüfen. Abschalten in Gnotchi: „Termine aus Kalli anzeigen“.
 
 ### Behoben
 
 - **Updates in der Notch auch bei automatischer Installation:** Ist „Automatisch installieren“
   an, lädt Kalli ein Update still und installiert es beim Beenden. Gnotchi erfuhr davon bisher
   nichts. Jetzt steht auch dieses Update in der Notch, ein Klick zeigt „Installieren und neu starten“.
+- **Nach einem Neustart von Gnotchi** meldet Kalli ein bereites Update jetzt wieder. macOS meldet
+  den Start von Apps ohne Dock-Symbol nicht als App-Start; Kalli beobachtet jetzt die Liste der
+  laufenden Programme.
+
+### Intern
+
+- `GnotchiEventSender` (Socket `kalli.sock`, Gnotchi SECURE-DESIGN G26), `StilleInstallation`
+  (`SPUUpdaterDelegate`), `GnotchiLaunchWatcher`. 157 Tests. `rafter run` Scan `fee0de22` ohne Befund.
 
 ## [0.11.0] — 2026-10-21
 

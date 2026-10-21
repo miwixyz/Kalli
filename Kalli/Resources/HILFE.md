@@ -313,6 +313,13 @@ mit dem Update-Fenster. Kalli meldet Gnotchi dafür nur seinen Namen und die Ver
 In Gnotchi lässt sich das unter Einstellungen → Live-Aktivitäten → „Updates der App-Familie“
 abschalten, dann meldet Kalli nichts.
 
+**Nächster Termin in der Notch (ab 0.12.0, mit Gnotchi ab 0.5.0):** Der Termin, den Kallis
+Menüleiste als nächsten zeigt, erscheint 15 Minuten vor Beginn in der Notch, mit Uhrzeit und
+Restzeit. Ganztägige Termine und Erinnerungen nicht. Kalli schickt nur Titel, Beginn und
+Kalenderfarbe, über eine lokale Verbindung, bei der beide Apps vorher die Signatur der anderen
+prüfen; andere Programme bekommen nichts. Abschalten in Gnotchi: Einstellungen → „Termine aus
+Kalli anzeigen“.
+
 ## Berechtigungen
 
 Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und

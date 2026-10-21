@@ -4,7 +4,7 @@ import Foundation
 import OSLog
 import Security
 
-/// Nächster Termin in Gnotchis Notch (Kalli 0.11.1, Gnotchi 0.5.0, Gnotchi SECURE-DESIGN G26).
+/// Nächster Termin in Gnotchis Notch (Kalli 0.12.0, Gnotchi 0.5.0, Gnotchi SECURE-DESIGN G26).
 ///
 /// Termin-Titel sind privat. Deshalb **nicht** über `DistributedNotificationCenter` (jeder lokale Prozess liest
 /// mit), sondern über Gnotchis lokalen Socket `~/Library/Application Support/Gnotchi/kalli.sock`. Bevor ein Byte

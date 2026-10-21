@@ -24,6 +24,11 @@ ansteht, bezahlt das mit Oberfläche.
 
 ## Funktionen
 
+- **Nächster Termin in der Notch (ab 0.12.0):** Mit [Gnotchi](https://github.com/miwixyz/Gnotchi)
+  ab 0.5.0 erscheint der nächste Termin 15 Minuten vor Beginn in der Notch. Nur Titel, Beginn und
+  Farbe, über einen lokalen Socket, beide Apps prüfen vorher die Developer-ID-Signatur der anderen
+  (Gnotchi SECURE-DESIGN G26).
+
 - **Menüleiste:** Datum in frei wählbarem Format, optional ein Termin mit
   Countdown („10:00 P&O in 13 Min.", Titel auf feste Länge gekürzt, damit die
   Leistenbreite nicht springt). Ein Schalter, drei Zustände sind damit

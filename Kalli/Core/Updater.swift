@@ -209,7 +209,7 @@ private final class SanfteErinnerung: NSObject, @preconcurrency SPUStandardUserD
     }
 }
 
-/// Still geladenes Update (0.11.1): Bei „Automatisch installieren“ lädt Sparkle
+/// Still geladenes Update (0.12.0): Bei „Automatisch installieren“ lädt Sparkle
 /// das Update ohne jede Anzeige und installiert es beim Beenden. Die sanfte
 /// Erinnerung oben wird dann nie gerufen — gemessen 2026-10-21: Testkopie
 /// Build 6, Hintergrundprüfung, `Autoupdate` lief, an Gnotchi ging nichts.

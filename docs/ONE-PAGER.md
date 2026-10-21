@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.11: Updates auch in der Notch
+## Neu in 0.12: Dein nächster Termin in der Notch
+
+Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.5.0, steht dein nächster Termin 15 Minuten vorher in der Notch, mit Uhrzeit und wie lange es noch dauert. Es ist derselbe Termin, den Kalli in der Menüleiste zeigt. Ein Klick darauf öffnet den Apple Kalender.
+
+---
+
+## Seit 0.11: Updates auch in der Notch
 
 Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi), die Notch-App der Familie, ab Version 0.4.0, steht ein gefundenes Kalli-Update auch in der Notch. Dort bleibt es, bis es installiert ist. Ein Klick darauf öffnet Kalli gleich mit dem Update-Fenster. Kalli meldet dafür nur seinen Namen und die Versionsnummer, und das nur an ein echtes, signiertes Gnotchi.
 
@@ -74,6 +80,7 @@ Kalli legt keine Termine an und ändert keine. Es gibt keine Zeitzonen und keine
 - Es gibt keinen Server, keine Analyse und keine Kennungen.
 - Den einzigen Netzwerkzugriff, die Suche nach Updates bei GitHub, erlaubst du beim ersten Mal selbst. Sagst du nein, geht nichts ins Netz.
 - Läuft Gnotchi, erfährt es von Kalli nur, dass ein Update bereitliegt, mit Name und Versionsnummer. Das bleibt auf deinem Mac.
+- Für die Notch bekommt Gnotchi den nächsten Termin: Titel, Beginn und Farbe. Beide Apps prüfen vorher, ob die andere echt ist. Andere Programme lesen nicht mit, und Gnotchi speichert nichts.
 
 ---
 
