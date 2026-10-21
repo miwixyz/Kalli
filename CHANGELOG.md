@@ -2,7 +2,7 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [0.11.0] — noch nicht veröffentlicht
+## [0.11.0] — 2026-10-21
 
 ### Neu
 

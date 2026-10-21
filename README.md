@@ -307,6 +307,11 @@ Kalli aktualisiert sich über **Sparkle** — aber nur, wenn du es erlaubst.
   (das läge bei einer Menüleisten-App hinter anderen Apps), sondern meldet es
   sanft: eine Mitteilung und der Knopf zeigt **„Update X“**. Ein Klick auf
   eines von beiden öffnet das Update-Fenster vorn. Seit 0.4.9.
+- **In der Notch (ab 0.11.0):** Läuft [Gnotchi](https://github.com/miwixyz/Gnotchi)
+  ab 0.4.0, meldet Kalli ein bereites Update auch dorthin, bis es installiert ist.
+  Ein Klick in der Notch öffnet das Update-Fenster. Gemeldet werden nur App-Name
+  und Versionsnummer über eine lokale Systemmeldung, und nur an ein
+  Developer-ID-signiertes Gnotchi (Abschnitt 9a im Sicherheitsentwurf).
 - **Zwei Signaturen** werden geprüft, bevor etwas ersetzt wird: die
   EdDSA-Signatur des Archivs gegen den in der App eingebauten öffentlichen
   Schlüssel, und Apples Developer-ID-Signatur. **Nicht** „schlägt eine fehl,

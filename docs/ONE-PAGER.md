@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.10: Neue Aufgaben, ohne die Erinnerungen-App zu öffnen
+## Neu in 0.11: Updates auch in der Notch
+
+Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi), die Notch-App der Familie, ab Version 0.4.0, steht ein gefundenes Kalli-Update auch in der Notch. Dort bleibt es, bis es installiert ist. Ein Klick darauf öffnet Kalli gleich mit dem Update-Fenster. Kalli meldet dafür nur seinen Namen und die Versionsnummer, und das nur an ein echtes, signiertes Gnotchi.
+
+---
+
+## Seit 0.10: Neue Aufgaben, ohne die Erinnerungen-App zu öffnen
 
 Klick auf das Plus neben „Aufgaben“, tippe, was zu tun ist, und drück Return. Kalli legt die Erinnerung in deiner Erinnerungen-App an. Tag und Uhrzeit schreibst du einfach dazu.
 
@@ -67,6 +73,7 @@ Kalli legt keine Termine an und ändert keine. Es gibt keine Zeitzonen und keine
 - Kalender liest Kalli nur. Bei Erinnerungen setzt es das Häkchen und legt über das Plus neue an. Beides passiert nur, wenn du klickst.
 - Es gibt keinen Server, keine Analyse und keine Kennungen.
 - Den einzigen Netzwerkzugriff, die Suche nach Updates bei GitHub, erlaubst du beim ersten Mal selbst. Sagst du nein, geht nichts ins Netz.
+- Läuft Gnotchi, erfährt es von Kalli nur, dass ein Update bereitliegt, mit Name und Versionsnummer. Das bleibt auf deinem Mac.
 
 ---
 
