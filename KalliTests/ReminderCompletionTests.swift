@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt die Nachprüfung nach dem Abhaken ab — insbesondere wiederkehrende
 /// Erinnerungen (Audit-Fund K-C9, 2026-09-27).

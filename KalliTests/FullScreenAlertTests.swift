@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Vollbild-Hinweis: welche Termine, wann, und welcher Link geöffnet werden darf.
 ///

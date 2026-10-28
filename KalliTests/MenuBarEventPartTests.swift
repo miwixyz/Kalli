@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt die Regel ab, **welcher** Termintext in der Menüleiste steht — und
 /// wann **keiner**.

@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Wochentage hervorheben (Michael, 2026-10-12: „jeder Donnerstag soll die Farbe rot
 /// haben"): ab Werk keiner, Wahl bleibt gespeichert, gilt für jede Woche.

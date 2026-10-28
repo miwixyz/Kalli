@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Hell/Dunkel-Knopf (Michael, 2026-09-29): ab Werk System, Durchschalten
 /// System → Hell → Dunkel → System, Wahl bleibt gespeichert.

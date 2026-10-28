@@ -1,6 +1,5 @@
 import ServiceManagement
 import XCTest
-@testable import Kalli
 
 /// Gemessen 10.10.2026 (macOS 27, signierte App in /Applications): Vor der allerersten
 /// Registrierung meldet `SMAppService.mainApp.status` `.notFound`, `register()` gelingt

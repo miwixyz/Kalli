@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt die beiden Auswahlregeln der Menüleiste ab — **welcher** Termin dort
 /// steht, wenn mehrere in Frage kommen.
@@ -159,7 +158,7 @@ final class EventSelectionTests: XCTestCase {
         let suite = "KalliTests.bar.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
-        let store = CalendarStore(prefs: Preferences(defaults: defaults))
+        let store = CalendarStore(prefs: Preferences(defaults: defaults), alerts: nil)
         defer { store.stop() }
 
         let popoverMonth = Fixture.event(title: "aus dem Popover-Monat",

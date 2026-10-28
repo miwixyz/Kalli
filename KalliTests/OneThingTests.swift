@@ -1,6 +1,5 @@
 import AppKit
 import XCTest
-@testable import Kalli
 
 /// „Die eine Sache" (0.7.0): Bereinigung, Kürzung für die Leiste, Abgleich mit
 /// Erinnerungen und Speicherung.

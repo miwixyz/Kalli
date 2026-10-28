@@ -165,6 +165,12 @@ Berechtigungen, keine Systemuhr: Jede geprüfte Funktion bekommt `now`
 übergeben. Ein Test, der die Uhr befragt, schlägt irgendwann nachts fehl und
 wird dann ignoriert statt gelesen.
 
+Das Testziel hat **keine Host-App**: Die geprüften Dateien werden direkt ins
+Testbündel kompiliert (`project.yml`), die Tests laufen im `xctest`-Agenten.
+`make test` startet also keine zweite Kalli neben der installierten und braucht
+keine Signatur. `Kalli/Core` ist ganz enthalten (außer `Updater.swift`, Sparkle);
+braucht ein Test eine Datei von woanders, gehört sie in die `sources` von `KalliTests`.
+
 Die Tests sind rückwirkend zu echten Fehlern geschrieben, nicht zu Zeilen. Jeder
 prüft eine Regel, die einmal falsch war — mit dem Befund im Kommentar.
 

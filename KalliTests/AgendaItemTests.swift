@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt die Beschriftungen und Zustandsfragen eines Eintrags ab.
 ///

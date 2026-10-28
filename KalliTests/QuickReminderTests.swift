@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Neue Erinnerung (0.10.0): Texterkennung, Knöpfe, Felder für EventKit, Vollbild für „Dringend".
 /// `Fixture.now` = Dienstag, 22.09.2026, 12:00 (Berlin).

@@ -57,9 +57,6 @@ final class Updater {
     /// Meldet das bereite Update an Gnotchi (0.11.0, Gnotchi G23) und zeigt auf Gnotchis Bitte das Fenster.
     @ObservationIgnored private var gnotchi: GnotchiUpdateSender?
 
-    /// Kennung der Update-Mitteilung — `EventAlerts` erkennt daran den Klick.
-    nonisolated static let erinnerungsID = "kalli.update"
-
     /// `startingUpdater: true` startet die Hintergrundprüfung — die aber nur
     /// läuft, wenn der Nutzer sie erlaubt hat (siehe oben).
     private let controller: SPUStandardUpdaterController
@@ -133,10 +130,6 @@ final class Updater {
     }
 }
 
-extension Notification.Name {
-    static let kalliUpdateErinnerungGeklickt = Notification.Name("kalli.update.geklickt")
-}
-
 /// Sanfte Update-Erinnerung statt eines Fensters hinter anderen Apps.
 ///
 /// Sparkle sagt selbst, was bei Apps ohne Dock-Symbol passiert: Findet eine
@@ -185,7 +178,7 @@ private final class SanfteErinnerung: NSObject, @preconcurrency SPUStandardUserD
         // Nicht still: Ohne Mitteilungs-Erlaubnis bleibt nur der Hinweis am
         // Update-Knopf — das Protokoll muss es sagen.
         UNUserNotificationCenter.current().add(
-            UNNotificationRequest(identifier: Updater.erinnerungsID, content: inhalt, trigger: nil)
+            UNNotificationRequest(identifier: EventAlerts.updateErinnerungsID, content: inhalt, trigger: nil)
         ) { fehler in
             if let fehler {
                 Self.log.notice("Update-Mitteilung nicht zugestellt (\(fehler.localizedDescription, privacy: .public)) — nur Hinweis am Knopf")
@@ -204,8 +197,8 @@ private final class SanfteErinnerung: NSObject, @preconcurrency SPUStandardUserD
     private func aufraeumen() {
         onChange?(nil)
         let c = UNUserNotificationCenter.current()
-        c.removeDeliveredNotifications(withIdentifiers: [Updater.erinnerungsID])
-        c.removePendingNotificationRequests(withIdentifiers: [Updater.erinnerungsID])
+        c.removeDeliveredNotifications(withIdentifiers: [EventAlerts.updateErinnerungsID])
+        c.removePendingNotificationRequests(withIdentifiers: [EventAlerts.updateErinnerungsID])
     }
 }
 

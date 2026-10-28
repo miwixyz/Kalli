@@ -29,6 +29,11 @@ final class EventAlerts {
     /// Mitteilungen von fremden unterscheiden, ohne eine Liste zu fuehren.
     nonisolated static let prefix = "kalli.termin."
 
+    /// Kennung der Update-Mitteilung, gestellt vom `Updater`. Liegt hier, weil
+    /// der Klick darauf bei diesem Delegate landet — und damit die Tests diese
+    /// Datei ohne Sparkle kompilieren (Testziel ohne Host-App, 2026-10-28).
+    nonisolated static let updateErinnerungsID = "kalli.update"
+
     private let center = UNUserNotificationCenter.current()
     private let presenter = Presenter()
 
@@ -57,7 +62,7 @@ final class EventAlerts {
             _ center: UNUserNotificationCenter,
             didReceive response: UNNotificationResponse
         ) async {
-            guard response.notification.request.identifier == Updater.erinnerungsID else { return }
+            guard response.notification.request.identifier == EventAlerts.updateErinnerungsID else { return }
             await MainActor.run {
                 NotificationCenter.default.post(name: .kalliUpdateErinnerungGeklickt, object: nil)
             }
@@ -243,4 +248,9 @@ final class EventAlerts {
         f.dateFormat = "HH:mm"
         return f
     }()
+}
+
+/// Klick auf die Update-Erinnerung — gesendet hier, empfangen im `Updater`.
+extension Notification.Name {
+    static let kalliUpdateErinnerungGeklickt = Notification.Name("kalli.update.geklickt")
 }

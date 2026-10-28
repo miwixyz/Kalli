@@ -37,10 +37,7 @@ struct KalliApp: App {
         _oneThingService = State(initialValue: service)
         let events = GnotchiEventSender(current: { [s] in s.nextEvent })
         _gnotchiEvents = State(initialValue: events)
-        // Nicht im Testlauf: Die Test-Kalli soll keine echten Termine an ein laufendes Gnotchi schicken.
-        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil {
-            Task { @MainActor in events.start() }
-        }
+        Task { @MainActor in events.start() }
         // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
         Task { @MainActor in
             NSApp.servicesProvider = service

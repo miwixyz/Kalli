@@ -61,15 +61,29 @@ targets:
   # keine Berechtigungen, keine Uhr. Alle geprüften Funktionen bekommen `now`
   # übergeben; ein Test, der von der Systemuhr abhängt, schlägt irgendwann
   # nachts fehl und wird dann ignoriert statt gelesen.
+  #
+  # OHNE Host-App (2026-10-28): keine Abhängigkeit auf das Ziel Kalli, also kein
+  # TEST_HOST — ein Testlauf startet keine zweite Kalli neben der installierten.
+  # Die geprüften Dateien werden direkt mitkompiliert. Was hier fehlt, kennt der
+  # Compiler nicht: Updater.swift (Sparkle) und KalliApp.swift (@main) bleiben
+  # draußen; die UI-Dateien stehen nur wegen Logik darin (AppearanceMode,
+  # MonthRaster, FullScreenAlertView.status) bzw. deren Abhängigkeiten.
   KalliTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - path: KalliTests
-    dependencies:
-      - target: Kalli
+      - path: Kalli/Core
+        excludes:
+          - Updater.swift
+      - path: Kalli/App/MenuBarLabel.swift
+      - path: Kalli/App/MenuBarIcon.swift
+      - path: Kalli/UI/Theme.swift
+      - path: Kalli/UI/FamilyTheme.swift
+      - path: Kalli/UI/GlassBackground.swift
+      - path: Kalli/UI/MonthGrid.swift
+      - path: Kalli/UI/FullScreenAlertWindow.swift
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        ENABLE_TESTABILITY: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.kalli.app.tests

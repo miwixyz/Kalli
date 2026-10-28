@@ -46,15 +46,18 @@ final class CalendarStore {
     nonisolated private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
 
     private let store = EKEventStore()
-    private let alerts = EventAlerts()
+    /// `nil` nur in Tests: Das Testziel läuft ohne Host-App, und ohne App-Bündel
+    /// wirft `UNUserNotificationCenter.current()` (gemessen 2026-10-28).
+    private let alerts: EventAlerts?
     private let fullScreenAlerts = FullScreenAlerts()
     private var observer: NSObjectProtocol?
     private var loadedRange: DateInterval?
 
     private let prefs: Preferences
 
-    init(prefs: Preferences) {
+    init(prefs: Preferences, alerts: EventAlerts? = EventAlerts()) {
         self.prefs = prefs
+        self.alerts = alerts
         observer = NotificationCenter.default.addObserver(
             forName: .EKEventStoreChanged, object: store, queue: .main
         ) { [weak self] _ in
@@ -349,12 +352,13 @@ final class CalendarStore {
         // Arbeit für nichts. (Beim Re-Audit des eigenen Fixes gefunden,
         // 2026-09-22.)
         guard prefs.notifyBeforeNextEvent else {
-            await alerts.sync(horizon: [], enabled: false,
-                              leadMinutes: prefs.alertLeadMinutes)
+            await alerts?.sync(horizon: [], enabled: false,
+                               leadMinutes: prefs.alertLeadMinutes)
             notificationsBlocked = false
             return
         }
         // Bewusst NICHT `items`: siehe fetchAlertHorizon().
+        guard let alerts else { return }
         let planned = await alerts.sync(
             horizon: await fetchAlertHorizon(),
             enabled: true,
@@ -371,7 +375,7 @@ final class CalendarStore {
     /// Fragt die Mitteilungs-Berechtigung an. Gibt zurück, ob sie **danach
     /// tatsächlich vorliegt** — nicht, ob der Aufruf durchlief.
     func requestNotificationPermission() async -> Bool {
-        await alerts.requestPermission()
+        await alerts?.requestPermission() ?? false
     }
 
     private func fetchEvents(in range: DateInterval) async -> [AgendaItem] {

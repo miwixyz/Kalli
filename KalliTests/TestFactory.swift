@@ -1,5 +1,4 @@
 import Foundation
-@testable import Kalli
 
 /// Bausteine für die Tests.
 ///

@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt ab, **welche** Termine eine Systemmitteilung bekommen.
 ///
@@ -139,7 +138,7 @@ final class AlertCandidateTests: XCTestCase {
 
     /// Fremde Mitteilungen (z. B. die Update-Erinnerung) sind tabu.
     func testForeignIdentifiersAreNeverTouched() {
-        XCTAssertTrue(EventAlerts.staleIdentifiers(pending: [Updater.erinnerungsID, "fremd"],
+        XCTAssertTrue(EventAlerts.staleIdentifiers(pending: [EventAlerts.updateErinnerungsID, "fremd"],
                                                    horizon: []).isEmpty)
     }
 }

@@ -1,6 +1,5 @@
 import EventKit
 import XCTest
-@testable import Kalli
 
 /// Deckt die Abbildung von EventKits Berechtigungsstatus auf Kallis
 /// Anzeigezustand ab.

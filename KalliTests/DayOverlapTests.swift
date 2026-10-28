@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// Deckt ab, **an welchen Tagen** ein Eintrag steht und **welche Tage** geladen
 /// werden.

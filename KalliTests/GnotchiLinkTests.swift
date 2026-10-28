@@ -1,5 +1,4 @@
 import XCTest
-@testable import Kalli
 
 /// 0.11.0 Update-Meldung an Gnotchi (Gnotchi SECURE-DESIGN G23/G24): nur Kürzel und geprüfte Version raus,
 /// nur „zeig dein Update-Fenster“ für Kalli rein.

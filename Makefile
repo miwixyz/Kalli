@@ -83,17 +83,16 @@ install: install-guard check-docs build
 # veroeffentlicht aber nicht.
 # Nur reine Entscheidungslogik — laeuft ohne Berechtigungen und ohne Uhr.
 #
-# MIT Signatur, bewusst: `xcodebuild test` startet die App als Test-Host. Mit
-# CODE_SIGNING_ALLOWED=NO waere das ein ZWEITES com.kalli.app mit ad-hoc
-# Signatur, also eine zweite TCC-Identitaet neben der ausgelieferten. Genau das
-# hat am 2026-09-22 drei verwaiste Kalender-Eintraege und ein leeres App-Symbol
-# in den Systemeinstellungen hinterlassen. Mit Developer-ID-Signatur ist der
-# Test-Host identisch mit dem Release und hinterlaesst keinen zweiten Eintrag.
+# OHNE Host-App (ab 2026-10-28): Die gepruefte Logik wird direkt ins Testbuendel
+# kompiliert (project.yml), die Tests laufen im `xctest`-Agenten. Es startet
+# keine zweite Kalli, also gibt es keine zweite TCC-Identitaet und keinen
+# Grund mehr fuer die Developer-ID-Signatur, die bis 0.12.0 hier stand (Anlass:
+# 2026-09-22 drei verwaiste Kalender-Eintraege durch einen ad-hoc-Test-Host).
 test: gen
-	xcodebuild -project $(APP).xcodeproj -scheme $(APP) \
+	xcodebuild -project $(APP).xcodeproj -scheme $(APP)Tests \
 		-destination 'platform=macOS' \
 		-derivedDataPath $(DERIVED) \
-		-allowProvisioningUpdates test
+		CODE_SIGNING_ALLOWED=NO test
 
 # SwiftLint -- Regeln und Begruendungen in .swiftlint.yml. Exit != 0 bei Verstoss.
 lint:

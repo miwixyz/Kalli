@@ -1,7 +1,6 @@
 import Darwin
 import Security
 import XCTest
-@testable import Kalli
 
 // SYNTHETISCH – erfundene Termine, keine echten Kalenderdaten.
 
