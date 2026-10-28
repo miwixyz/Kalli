@@ -33,6 +33,7 @@ struct OneThingField: View {
                     }
                     .buttonStyle(.plain)
                     .help("Aus der Menüleiste entfernen")
+                    .accessibilityLabel(Text("Aus der Menüleiste entfernen"))
                 }
             }
             if oneThing.reminderID != nil {

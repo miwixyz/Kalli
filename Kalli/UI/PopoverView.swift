@@ -141,6 +141,7 @@ struct PopoverView: View {
                         }
                         .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
                         .help("Vorheriger Monat")
+                        .accessibilityLabel(Text("Vorheriger Monat"))
                         Button {
                             visibleMonth = Date()
                             selection = Date()
@@ -155,6 +156,7 @@ struct PopoverView: View {
                         }
                         .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
                         .help("Nächster Monat")
+                        .accessibilityLabel(Text("Nächster Monat"))
                     }
                 }
             }
@@ -327,11 +329,11 @@ struct PopoverView: View {
 
     private var footer: some View {
         HStack {
-            Button {
+            Button(showingSettings ? "Zurück zum Kalender" : "Einstellungen",
+                   systemImage: showingSettings ? "chevron.left" : "gearshape") {
                 withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
-            } label: {
-                Image(systemName: showingSettings ? "chevron.left" : "gearshape")
             }
+            .labelStyle(.iconOnly)
             .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
             .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
 
@@ -346,6 +348,7 @@ struct PopoverView: View {
             }
             .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
             .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
+            .accessibilityLabel(Text("Erscheinungsbild: \(prefs.appearanceMode.title)"))
 
             // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
             // auszulösen — die automatische Suche ist ab Werk aus, weil sie

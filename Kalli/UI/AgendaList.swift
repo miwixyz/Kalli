@@ -63,6 +63,7 @@ struct AgendaGroup: View {
                     .buttonStyle(.plain)
                     .foregroundStyle(Theme.accent)
                     .help(isAdding ? "Abbrechen" : "Neue Erinnerung in Apple Erinnerungen")
+                    .accessibilityLabel(Text(isAdding ? "Abbrechen" : "Neue Erinnerung"))
                 }
             }
             .padding(.bottom, 5)
@@ -137,6 +138,7 @@ struct AgendaRow: View {
                     }
                     .buttonStyle(.plain)
                     .help(item.isCompleted ? "Häkchen zurücknehmen" : "Als erledigt markieren")
+                    .accessibilityLabel(Text(item.isCompleted ? "Häkchen zurücknehmen" : "Als erledigt markieren"))
                 } else if item.isAllDay {
                     // Balken = gilt über die ganze Breite des Tages.
                     RoundedRectangle(cornerRadius: 1.5)

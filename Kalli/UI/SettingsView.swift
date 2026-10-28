@@ -581,5 +581,6 @@ private struct AgendaOrderEditor: View {
         .foregroundStyle(enabled ? Theme.accent : Color.secondary.opacity(0.35))
         .disabled(!enabled)
         .help(help)
+        .accessibilityLabel(Text(help))
     }
 }
