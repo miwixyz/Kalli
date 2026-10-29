@@ -30,21 +30,35 @@ struct KalliApp: App {
         let s = CalendarStore(prefs: p)
         _prefs = State(initialValue: p)
         _store = State(initialValue: s)
-        _label = State(initialValue: MenuBarLabel(prefs: p, store: s))
+        let l = MenuBarLabel(prefs: p, store: s)
+        _label = State(initialValue: l)
         let o = OneThing(lookup: { [s] id in s.reminderLookup(id: id) })
         let service = OneThingService(oneThing: o)
         _oneThing = State(initialValue: o)
         _oneThingService = State(initialValue: service)
         let events = GnotchiEventSender(current: { [s] in s.nextEvent })
         _gnotchiEvents = State(initialValue: events)
+        // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
+        Task { @MainActor in p.appearanceMode.apply() }
+        // Bild-Testkopie (docs/SECURE-DESIGN.md K1, nur Debug-Build): keine Termine an Gnotchi – ihr leerer
+        // „nächster Termin“ überschriebe die echte Anzeige –, kein Dienste-Menü, dafür der Befehlskanal.
+        guard !Self.startedAsBildKopie(prefs: p, store: s, label: l) else { return }
         Task { @MainActor in events.start() }
         // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
         Task { @MainActor in
             NSApp.servicesProvider = service
             NSUpdateDynamicServices()
         }
-        // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
-        Task { @MainActor in p.appearanceMode.apply() }
+    }
+
+    private static func startedAsBildKopie(prefs: Preferences, store: CalendarStore, label: MenuBarLabel) -> Bool {
+        #if DEBUG
+        if BildKopie.isActive {
+            Task { @MainActor in DebugBridge.start(prefs: prefs, store: store, label: label) }
+            return true
+        }
+        #endif
+        return false
     }
 
     var body: some Scene {

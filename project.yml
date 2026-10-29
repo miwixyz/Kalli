@@ -83,6 +83,8 @@ targets:
       - path: Kalli/UI/GlassBackground.swift
       - path: Kalli/UI/MonthGrid.swift
       - path: Kalli/UI/FullScreenAlertWindow.swift
+      # Befehlskanal der Bild-Testkopie (docs/SECURE-DESIGN.md K1): nur das reine Parsen, kein Socket.
+      - path: Kalli/Debug/DebugCommand.swift
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

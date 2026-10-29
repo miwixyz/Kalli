@@ -74,13 +74,16 @@ final class Updater {
         // Die Delegates prüfen nichts und lockern nichts — sie entscheiden nur,
         // WIE ein gefundenes Update gezeigt wird. Signaturprüfung, Appcast und
         // Installation bleiben Sparkles Standardweg.
+        // Bild-Testkopie (docs/SECURE-DESIGN.md K1): Sparkle nicht starten (kein Netz) und nichts an Gnotchi.
+        let bildKopie = BildKopie.isActive
         controller = SPUStandardUpdaterController(
-            startingUpdater: true,
+            startingUpdater: !bildKopie,
             updaterDelegate: s,
             userDriverDelegate: e
         )
         e.onChange = { [weak self] version in self?.bereitesUpdate = version }
         s.onChange = { [weak self] version in self?.bereitesUpdate = version }
+        guard !bildKopie else { return }
         // Klick in Gnotchi öffnet Kalli und bittet um das Update-Fenster – nur mit eigenem bereitem Update.
         gnotchi = GnotchiUpdateSender(
             hasUpdate: { [weak self] in self?.bereitesUpdate != nil },
