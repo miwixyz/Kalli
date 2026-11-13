@@ -40,6 +40,12 @@ ansteht, bezahlt das mit Oberfläche.
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
 - **Hell/Dunkel** folgt dem System, oder fest per Knopf unten im Popover (System → Hell → Dunkel)
 - **Liquid Glass** auf dem Popover (macOS 26+), Glas-Knöpfe, Einstellungen als Karten im Stil der Systemeinstellungen
+- **Glasgruppen** (ab 0.13.0): Zurück/Heute/Weiter und Zahnrad/Hell-Dunkel in je einer Glaskapsel mit
+  Lichtkante, die dem Mauszeiger folgt; die Reiter der Einstellungen sind eine gleitende Pille.
+  Gleiche Optik wie Porter, Tippi, TippAI, Gnotchi (`Kalli/UI/GlassEffects.swift`)
+- **Bedienungshilfen:** kräftigere Farben bei „Kontrast erhöhen“ (ab 0.13.0), jeder Symbol-Knopf
+  hat einen Namen für VoiceOver
+- **Neuerungen im Update-Fenster** (ab 0.13.0): Sparkle zeigt, was in der neuen Version steckt
 - **Design der App-Familie** (ab 0.6.0): Farbwelt „Schiefer“, Akzent Schieferindigo, Schrift
   **Plus Jakarta Sans** (SIL OFL, mitgeliefert, Lizenz in `THIRD-PARTY-LICENSES.md`). Farben und
   Schrift kommen aus `Kalli/UI/FamilyTheme.swift`, einer Kopie der Vault-Vorlage
@@ -143,7 +149,7 @@ Kalli/
   App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
   Core/    CalendarStore (EventKit; schreibend: Erledigt-Kennzeichen, neue Erinnerung), QuickReminder, Preferences, Models,
            EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm)
-  UI/      PopoverView, MonthGrid, SettingsView, GlassBackground
+  UI/      PopoverView, MonthGrid, SettingsView, GlassBackground, GlassEffects (Glasgruppen, gleitende Pille)
 KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
 ```
 
