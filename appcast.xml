@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.13.0</title>
+            <pubDate>Fri, 13 Nov 2026 14:17:43 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>92</sparkle:version>
+            <sparkle:shortVersionString>0.13.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Ruhigere, lebendigere Knöpfe und kräftigere Farben, wenn du sie brauchst.</p><h3>Neu</h3><ul><li><b>Knöpfe in Glasgruppen:</b> Zurück, Heute und Weiter oben im Kalender sitzen jetzt in einer gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel unten. Ein Lichtpunkt auf dem Rand folgt dem Mauszeiger, ein weicher Schatten gleitet von Knopf zu Knopf, und ein gedrückter Knopf federt kurz nach. Die Reiter der Einstellungen sind eine Pille, die zum gewählten Reiter gleitet. Dieselbe Optik haben Porter, Tippi, TippAI und Gnotchi.</li><li><b>Farben für „Kontrast erhöhen“:</b> Ist in den Systemeinstellungen unter Bedienungshilfen → Anzeige „Kontrast erhöhen“ an, nutzt Kalli kräftigere Farben für Akzent, Nebentexte und Rahmen. Ohne die Einstellung bleibt alles wie gewohnt.</li><li><b>Neuerungen im Update-Fenster:</b> Findet Kalli ein Update, zeigt das Fenster jetzt, was in der neuen Version steckt.</li></ul><h3>Behoben</h3><ul><li><b>Knöpfe mit Namen für VoiceOver:</b> Acht Knöpfe, die nur ein Symbol zeigen, hatten für VoiceOver und andere Bedienungshilfen keinen Namen. Jetzt sagt jeder, was er tut.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.13.0/Kalli-0.13.0.zip" length="3358468" type="application/octet-stream" sparkle:edSignature="QWPmXL75MVPrLajEVp++iqNI1q2+IfvMSz/xjbCYCjfQjOcCE+0hZ726KGSvhgRvQLvmL9A7PBYMeHfjcYX0Cg=="/>
+        </item>
+        <item>
             <title>0.12.0</title>
             <pubDate>Wed, 21 Oct 2026 20:36:34 +0200</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -21,16 +32,6 @@
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.11.0/Kalli-0.11.0.zip" length="3295334" type="application/octet-stream" sparkle:edSignature="3e5qRTVdgjIqBhPQzlCBKRHLLbUpz8S3k4T1yuW0kXryJWdYEh7dcDSRcTEflDc3+/Fbc9b+39WB6XrPXWJ3Cg=="/>
-        </item>
-        <item>
-            <title>0.10.0</title>
-            <pubDate>Wed, 21 Oct 2026 10:56:58 +0200</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>74</sparkle:version>
-            <sparkle:shortVersionString>0.10.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.10.0/Kalli-0.10.0.zip" length="3284249" type="application/octet-stream" sparkle:edSignature="DbWderLjW7Yi7EDOex20pb/ZDSb8GpE3D7MHsHPg75uunBa28yt/XYfE38Hshkb4vbOIg0jIIAd6RUcc18H6Dw=="/>
         </item>
     </channel>
 </rss>
