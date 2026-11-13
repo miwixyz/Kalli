@@ -247,7 +247,13 @@ Kalli trägt das Design der App-Familie, das künftig auch Tippi, TippAI und Qot
 bekommen: die Farbwelt **„Schiefer“**, ein ruhiges Blaugrau, und die Schrift
 **Plus Jakarta Sans**. Kallis eigener Akzent ist Schieferindigo. Auf dem Akzent
 steht im Hellen weiße, im Dunklen dunkle Schrift, damit beides gut lesbar
-bleibt. Die Schrift ist frei lizenziert (SIL Open Font License), der Lizenztext
+bleibt.
+
+Ab 0.13.0 sitzen Zurück, Heute und Weiter sowie Zahnrad und Hell/Dunkel in je
+einer Glaskapsel. Ein Lichtpunkt auf dem Rand folgt dem Mauszeiger, ein weicher
+Schatten gleitet von Knopf zu Knopf. Ist in den Systemeinstellungen
+„Kontrast erhöhen“ an, nutzt Kalli kräftigere Farben für Akzent, Nebentexte und
+Rahmen. Die Schrift ist frei lizenziert (SIL Open Font License), der Lizenztext
 steht unter **Drittanbieter-Lizenzen**.
 
 ## Einstellungen
@@ -284,6 +290,8 @@ beim ersten Mal fragt es dich, ob es selbständig nachsehen darf.
   kaputter Knopf aus.
 - **Automatisch:** nur wenn du es erlaubt hast. Die Entscheidung lässt sich
   jederzeit ändern.
+- **Was ist neu:** Das Update-Fenster zeigt ab 0.13.0, was in der neuen Version
+  steckt.
 
 Sagst du nein, gibt es **keinen** Netzwerkzugriff, außer du drückst den Knopf.
 

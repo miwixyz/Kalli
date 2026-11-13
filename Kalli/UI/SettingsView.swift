@@ -24,12 +24,12 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Picker("", selection: $tab) {
-                ForEach(Tab.allCases) { Text($0.rawValue).tag($0) }
+            // Gleitende Pille statt Segment-Umschalter (Porter-Optik, 13.11.2026).
+            SlidingPicker(Tab.allCases, selection: $tab, height: 26,
+                          accessibilityTitle: Text("Einstellungsbereich")) { tab, selected in
+                Text(tab.rawValue).font(FamilyTheme.font(13, weight: selected ? .semibold : .medium))
+                    .lineLimit(1)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .controlSize(.large)
 
             // Die Hilfe bringt ihren eigenen Scrollbereich mit (sie rendert
             // lange Dokumente). Zwei ineinander verschachtelte ScrollViews

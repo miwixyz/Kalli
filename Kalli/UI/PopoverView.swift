@@ -132,33 +132,39 @@ struct PopoverView: View {
                 .contentTransition(.numericText())
             Spacer()
             if !showingSettings {
-                // Neutrale Glas-Knöpfe (Design-System): `.buttonStyle(.glass)` füllte
-                // sie in der Akzentfarbe — drei blaue Knöpfe waren zu laut (0.6.0-Test).
-                GlassEffectContainer(spacing: 6) {
-                    HStack(spacing: 6) {
-                        Button { step(-1) } label: {
-                            Image(systemName: "chevron.left").font(.system(size: 11, weight: .semibold))
-                        }
-                        .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
-                        .help("Vorheriger Monat")
-                        .accessibilityLabel(Text("Vorheriger Monat"))
-                        Button {
-                            visibleMonth = Date()
-                            selection = Date()
-                        } label: {
-                            Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale,
-                                                          weight: .medium))
-                        }
-                        .buttonStyle(.familyGlass(.capsule, size: 26 * prefs.layoutScale))
-                        .help("Zurück zum heutigen Tag")
-                        Button { step(1) } label: {
-                            Image(systemName: "chevron.right").font(.system(size: 11, weight: .semibold))
-                        }
-                        .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
-                        .help("Nächster Monat")
-                        .accessibilityLabel(Text("Nächster Monat"))
+                // Eine Glasgruppe statt drei Einzelknöpfe (Porter-Optik, 13.11.2026): Lichtkante
+                // folgt dem Zeiger, Hover-Schatten gleitet, Drücken staucht. Neutral, nicht in der
+                // Akzentfarbe — drei blaue Knöpfe waren zu laut (0.6.0-Test).
+                let size = 26 * prefs.layoutScale
+                GlassGroup(height: size + 4) {
+                    Button { step(-1) } label: {
+                        Image(systemName: "chevron.left").font(.system(size: 11, weight: .semibold))
+                            .frame(width: size, height: size).contentShape(Capsule())
                     }
+                    .buttonStyle(.glassPress)
+                    .glassGhostItem()
+                    .help("Vorheriger Monat")
+                    .accessibilityLabel(Text("Vorheriger Monat"))
+                    Button {
+                        visibleMonth = Date()
+                        selection = Date()
+                    } label: {
+                        Text("Heute").font(Theme.font(Theme.Size.itemTime, prefs.layoutScale, weight: .medium))
+                            .padding(.horizontal, size * 0.35).frame(height: size).contentShape(Capsule())
+                    }
+                    .buttonStyle(.glassPress)
+                    .glassGhostItem()
+                    .help("Zurück zum heutigen Tag")
+                    Button { step(1) } label: {
+                        Image(systemName: "chevron.right").font(.system(size: 11, weight: .semibold))
+                            .frame(width: size, height: size).contentShape(Capsule())
+                    }
+                    .buttonStyle(.glassPress)
+                    .glassGhostItem()
+                    .help("Nächster Monat")
+                    .accessibilityLabel(Text("Nächster Monat"))
                 }
+                .foregroundStyle(FamilyTheme.textPrimary)
             }
         }
     }
@@ -329,26 +335,36 @@ struct PopoverView: View {
 
     private var footer: some View {
         HStack {
-            Button(showingSettings ? "Zurück zum Kalender" : "Einstellungen",
-                   systemImage: showingSettings ? "chevron.left" : "gearshape") {
-                withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
-            .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
+            // Zahnrad und Hell/Dunkel als eine Glasgruppe (Porter-Optik, 13.11.2026).
+            let size = 26 * prefs.layoutScale
+            GlassGroup(height: size + 4) {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
+                } label: {
+                    Image(systemName: showingSettings ? "chevron.left" : "gearshape")
+                        .frame(width: size, height: size).contentShape(Capsule())
+                }
+                .buttonStyle(.glassPress)
+                .glassGhostItem()
+                .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
+                .accessibilityLabel(Text(showingSettings ? "Zurück zum Kalender" : "Einstellungen"))
 
-            // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
-            // den aktuellen Stand (Michael, 2026-09-29).
-            Button {
-                prefs.appearanceMode = prefs.appearanceMode.next
-                prefs.appearanceMode.apply()
-            } label: {
-                Image(systemName: prefs.appearanceMode.symbol)
-                    .contentTransition(.symbolEffect(.replace))
+                // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
+                // den aktuellen Stand (Michael, 2026-09-29).
+                Button {
+                    prefs.appearanceMode = prefs.appearanceMode.next
+                    prefs.appearanceMode.apply()
+                } label: {
+                    Image(systemName: prefs.appearanceMode.symbol)
+                        .contentTransition(.symbolEffect(.replace))
+                        .frame(width: size, height: size).contentShape(Capsule())
+                }
+                .buttonStyle(.glassPress)
+                .glassGhostItem()
+                .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
+                .accessibilityLabel(Text("Erscheinungsbild: \(prefs.appearanceMode.title)"))
             }
-            .buttonStyle(.familyGlass(.circle, size: 26 * prefs.layoutScale))
-            .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
-            .accessibilityLabel(Text("Erscheinungsbild: \(prefs.appearanceMode.title)"))
+            .foregroundStyle(FamilyTheme.textPrimary)
 
             // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
             // auszulösen — die automatische Suche ist ab Werk aus, weil sie

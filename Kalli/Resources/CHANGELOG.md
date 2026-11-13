@@ -2,6 +2,36 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.13.0] — 2026-11-13
+
+Ruhigere, lebendigere Knöpfe und kräftigere Farben, wenn du sie brauchst.
+
+### Neu
+
+- **Knöpfe in Glasgruppen:** Zurück, Heute und Weiter oben im Kalender sitzen jetzt in einer
+  gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel unten. Ein Lichtpunkt auf dem Rand
+  folgt dem Mauszeiger, ein weicher Schatten gleitet von Knopf zu Knopf, und ein gedrückter
+  Knopf federt kurz nach. Die Reiter der Einstellungen sind eine Pille, die zum gewählten
+  Reiter gleitet. Dieselbe Optik haben Porter, Tippi, TippAI und Gnotchi.
+- **Farben für „Kontrast erhöhen“:** Ist in den Systemeinstellungen unter Bedienungshilfen →
+  Anzeige „Kontrast erhöhen“ an, nutzt Kalli kräftigere Farben für Akzent, Nebentexte und
+  Rahmen. Ohne die Einstellung bleibt alles wie gewohnt.
+- **Neuerungen im Update-Fenster:** Findet Kalli ein Update, zeigt das Fenster jetzt, was
+  in der neuen Version steckt.
+
+### Behoben
+
+- **Knöpfe mit Namen für VoiceOver:** Acht Knöpfe, die nur ein Symbol zeigen, hatten für
+  VoiceOver und andere Bedienungshilfen keinen Namen. Jetzt sagt jeder, was er tut.
+
+### Intern
+
+- `Kalli/UI/GlassEffects.swift` (Familien-Datei wie Tippi/TippAI/Gnotchi, dazu `GlassGroup`
+  mit Lichtkante und `GlassMotion.rimPoint`), Tests im Testziel ohne Host-App.
+- `scripts/release-notes.py` + `--embed-release-notes`. Bild-Testkopie mit Befehlskanal
+  (`scripts/bild-test.sh`, nur Debug). `make test` startet keine zweite Kalli mehr.
+- Impressum und Datenschutz: neue Anschrift.
+
 ## [0.12.0] — 2026-10-21
 
 Dein nächster Termin in der Notch.

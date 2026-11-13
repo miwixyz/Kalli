@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.12: Dein nächster Termin in der Notch
+## Neu in 0.13: Knöpfe aus einem Stück Glas
+
+Zurück, Heute und Weiter sitzen jetzt in einer gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel. Ein Lichtpunkt auf dem Rand folgt deiner Maus, ein weicher Schatten gleitet von Knopf zu Knopf. Ist auf deinem Mac „Kontrast erhöhen“ eingeschaltet, nutzt Kalli kräftigere Farben. Und findet Kalli ein Update, steht im Fenster, was neu ist.
+
+---
+
+## Seit 0.12: Dein nächster Termin in der Notch
 
 Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.5.0, steht dein nächster Termin 15 Minuten vorher in der Notch, mit Uhrzeit und wie lange es noch dauert. Es ist derselbe Termin, den Kalli in der Menüleiste zeigt. Ein Klick darauf öffnet den Apple Kalender.
 

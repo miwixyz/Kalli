@@ -13,7 +13,7 @@ settings:
     ARCHS: arm64
     ONLY_ACTIVE_ARCH: YES
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "0.12.0"
+    MARKETING_VERSION: "0.13.0"
     CURRENT_PROJECT_VERSION: "6"
 
 # Genau EINE direkte Abhaengigkeit, null transitive.
@@ -81,6 +81,7 @@ targets:
       - path: Kalli/UI/Theme.swift
       - path: Kalli/UI/FamilyTheme.swift
       - path: Kalli/UI/GlassBackground.swift
+      - path: Kalli/UI/GlassEffects.swift
       - path: Kalli/UI/MonthGrid.swift
       - path: Kalli/UI/FullScreenAlertWindow.swift
       # Befehlskanal der Bild-Testkopie (docs/SECURE-DESIGN.md K1): nur das reine Parsen, kein Socket.
