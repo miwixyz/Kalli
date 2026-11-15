@@ -6,7 +6,7 @@
 
 Kostenlos · Open Source (MIT) · für macOS 26 · kein Server, keine Analyse
 
-**Website:** [miwixyz.github.io/Kalli](https://miwixyz.github.io/Kalli/)
+**Website:** [kalli.mwlr.dev](https://kalli.mwlr.dev/)
 
 ---
 

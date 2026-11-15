@@ -6,7 +6,7 @@ Menüleisten-Kalender für macOS. Bewusst klein.
 
 Zeigt Datum, Monatsraster, Termine und Erinnerungen — und sonst nichts.
 
-**Website:** [miwixyz.github.io/Kalli](https://miwixyz.github.io/Kalli/) ·
+**Website:** [kalli.mwlr.dev](https://kalli.mwlr.dev/) ·
 **Kurzvorstellung zum Weitergeben:** [docs/ONE-PAGER.md](docs/ONE-PAGER.md) ·
 **Herunterladen:** [neuestes Release](https://github.com/miwixyz/Kalli/releases/latest)
 
