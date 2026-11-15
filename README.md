@@ -101,7 +101,7 @@ freie Natural-Language-Eingabe (über Tag/Uhrzeit beim Anlegen hinaus), Zeitzone
 
 ```bash
 make build     # xcodegen + xcodebuild
-make test      # alle Tests, unter einer Sekunde
+make test      # alle Tests, ohne Host-App, wenige Sekunden
 make run       # bauen und aus dem build-Ordner starten
 make install   # nach /Applications legen und starten (nicht über eine Release-Kalli)
 ```
@@ -152,8 +152,10 @@ Server. Vollständige Offenlegung inklusive Sperrbildschirm:
 Kalli/
   App/     KalliApp (MenuBarExtra + Settings), MenuBarLabel (Leistentext + Timer)
   Core/    CalendarStore (EventKit; schreibend: Erledigt-Kennzeichen, neue Erinnerung), QuickReminder, Preferences, Models,
-           EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm)
-  UI/      PopoverView, MonthGrid, SettingsView, GlassBackground, GlassEffects (Glasgruppen, gleitende Pille)
+           EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm),
+           DeskPad (reine Logik des Tagesblatts: Gruppen, Blättern, Abreißen, Monatsraster)
+  UI/      PopoverView, AgendaList, MonthGrid, SettingsView, GlassBackground, GlassEffects (Glasgruppen, gleitende Pille),
+           PaperPadView + DeskPadView + DeskPadWindow (Tagesblatt: Papierblatt, Glas-Blatt, Fenster), WindowDragArea
 KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
 ```
 
