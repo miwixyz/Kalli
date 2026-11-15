@@ -57,15 +57,17 @@ final class DeskPadController {
         Self.log.notice("Schreibtischblatt: an, sichtbar \(panel.isVisible, privacy: .public), Rahmen \(NSStringFromRect(panel.frame), privacy: .public), Ebene \(panel.level.rawValue, privacy: .public)")
     }
 
-    /// Setzt die Ansicht für das gewählte Aussehen ein. **Schatten immer vom Fenster, nie aus
-    /// SwiftUI:** Ein `.shadow` am Rand der Ansicht wird an der Fenstergrenze rechteckig
-    /// abgeschnitten und zeichnet einen grauen Kasten um das Blatt (Michael 2026-11-15). Der
-    /// Fensterschatten folgt der sichtbaren Form.
+    /// Setzt die Ansicht für das gewählte Aussehen ein. **Schatten:** Bei undurchsichtigem Inhalt
+    /// (Glas-Blatt) kommt er vom Fenster, nie aus SwiftUI: Ein `.shadow` am Rand der Ansicht wird an der
+    /// Fenstergrenze rechteckig abgeschnitten und zeichnet einen grauen Kasten (Michael 2026-11-15).
+    /// Bei halbtransparentem Glas (Papierblatt) wird der Fensterschatten dagegen gepunktet; dort
+    /// zeichnet die Ansicht ihn selbst, kleiner als der transparente Fensterrand.
     private func install(_ style: DeskPadStyle, in panel: NSPanel) {
         shownStyle = style
         switch style {
         case .paper:
-            panel.hasShadow = true
+            // Halbtransparentes Glas: Der Fensterschatten wird gepunktet, die Ansicht zeichnet ihn selbst.
+            panel.hasShadow = false
             panel.contentView = NSHostingView(rootView: PaperPadView()
                 .environment(prefs).environment(store).tint(Theme.accent))
         case .glass:

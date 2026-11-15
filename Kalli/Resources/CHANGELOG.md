@@ -2,6 +2,21 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unveröffentlicht]
+
+### Geändert
+
+- **Papierblatt neu gezeichnet:** Das Brett ist jetzt eine Glasplatte in kräftigem Indigo mit
+  heller Randkante und einem Glanz, der deinem Mauszeiger folgt. Das Blatt ist eine einzige
+  Karte mit abgerundeten Ecken und einem Kopfband mit Monat und Jahr, darunter die
+  Perforationslinie. Die Zahl ist größer. Der Schatten liegt innerhalb des Fensters, damit
+  kein gepunkteter Rand mehr entsteht.
+
+### Behoben
+
+- **Doppelklick auf die Zahl:** Von einem fernen Tag aus sprang das Blatt einmal zu weit
+  zurück (etwa von Dienstag auf Samstag statt auf Sonntag). Jetzt landet es auf heute.
+
 ## [0.14.0] — 2026-11-15
 
 Ein Tagesblatt für den Schreibtisch.

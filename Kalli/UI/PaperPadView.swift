@@ -24,14 +24,16 @@ struct PaperPadView: View {
     @State private var fall: CGFloat = 0
     @State private var axis: DeskPad.DragAxis?
     @State private var busy = false
+    /// Zeiger über dem Brett, für den mitwandernden Glanz.
+    @State private var pointer: CGPoint?
 
     private let calendar = Calendar.current
     private var scale: Double { prefs.layoutScale }
 
     private enum Metrics {
         static let board = CGSize(width: 340, height: 580)
-        static let pageInsetTop: CGFloat = 32
-        static let pageInset: CGFloat = 16
+        static let pageInsetTop: CGFloat = 14
+        static let pageInset: CGFloat = 14
         static var page: CGSize {
             CGSize(width: board.width - 2 * pageInset, height: board.height - pageInsetTop - pageInset)
         }
@@ -43,9 +45,14 @@ struct PaperPadView: View {
             pages
                 .frame(width: Metrics.page.width * scale, height: Metrics.page.height * scale)
                 .padding(.top, Metrics.pageInsetTop * scale)
-            strip
         }
         .frame(width: Metrics.board.width * scale, height: Metrics.board.height * scale)
+        .onContinuousHover(coordinateSpace: .local) { phase in
+            switch phase {
+            case .active(let point): pointer = point
+            case .ended: pointer = nil
+            }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .accessibilityElement(children: .contain)
         .accessibilityAction(named: "Nächster Tag") { turn(.next) }
@@ -66,27 +73,40 @@ struct PaperPadView: View {
 
     // MARK: - Brett und Ringe
 
+    /// Glasplatte statt Pappbrett: Liquid Glass mit Indigo-Tönung, heller Randkante und einem
+    /// Glanz, der dem Zeiger folgt (Familien-Glas, wie die Kapseln in Popover und Einstellungen).
     private var board: some View {
-        let shape = RoundedRectangle(cornerRadius: 26 * scale, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: 30 * scale, style: .continuous)
         return shape
-            .fill(LinearGradient(colors: [Color(light: 0x4A5BA8, dark: 0x2B3563),
-                                          Color(light: 0x34428A, dark: 0x1C2349)],
-                                 startPoint: .top, endPoint: .bottom))
-            .overlay(shape.strokeBorder(.white.opacity(0.18), lineWidth: 1))
-            .overlay(shape.inset(by: 5 * scale)
-                .strokeBorder(.white.opacity(0.10), style: StrokeStyle(lineWidth: 1, dash: [3, 4])))
+            .fill(Color(light: 0x2A3566, dark: 0x232C62).opacity(0.90))
+            .familyGlass(in: shape)
+            .overlay(shape.fill(LinearGradient(stops: [
+                .init(color: .white.opacity(0.20), location: 0),
+                .init(color: .white.opacity(0), location: 0.30),
+            ], startPoint: .top, endPoint: .bottom)))
+            .overlay {
+                if let pointer {
+                    Circle()
+                        .fill(RadialGradient(colors: [.white.opacity(0.30), .white.opacity(0)],
+                                             center: .center, startRadius: 0, endRadius: 120 * scale))
+                        .frame(width: 240 * scale, height: 240 * scale)
+                        .position(pointer)
+                        .blendMode(.plusLighter)
+                        .clipShape(shape)
+                        .allowsHitTesting(false)
+                        .transition(.opacity)
+                }
+            }
+            .overlay(shape.strokeBorder(LinearGradient(stops: [
+                .init(color: .white.opacity(0.75), location: 0),
+                .init(color: .white.opacity(0.10), location: 0.5),
+                .init(color: .white.opacity(0.30), location: 1),
+            ], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+            .animation(.easeOut(duration: 0.2), value: pointer == nil)
             .movesWindow()
-    }
-
-    /// Dünner Klebestreifen in Kalli-Indigo über dem Blattkopf (Michael 2026-11-15: keine Ringe,
-    /// stattdessen Perforation). Er bleibt im Brett; das Blatt darunter hat die Abrisskante.
-    private var strip: some View {
-        Rectangle()
-            .fill(Theme.accent)
-            .overlay(alignment: .bottom) { Rectangle().fill(.black.opacity(0.18)).frame(height: 1) }
-            .frame(width: Metrics.page.width * scale, height: 6 * scale)
-            .padding(.top, (Metrics.pageInsetTop - 7) * scale)
-            .allowsHitTesting(false)
+            // Schatten selbst zeichnen, Radius + Versatz kleiner als der transparente Fensterrand (24 pt):
+            // Der Fensterschatten wird bei halbtransparentem Glas gepunktet.
+            .shadow(color: .black.opacity(0.30), radius: 10 * scale, y: 5 * scale)
     }
 
     // MARK: - Blätter
@@ -95,9 +115,9 @@ struct PaperPadView: View {
         ZStack {
             // Ein paar Blätter darunter geben dem Block Dicke.
             ForEach([2, 1], id: \.self) { depth in
-                RoundedRectangle(cornerRadius: 8 * scale, style: .continuous)
-                    .fill(PaperPage.paper.opacity(0.9))
-                    .overlay(RoundedRectangle(cornerRadius: 8 * scale, style: .continuous)
+                RoundedRectangle(cornerRadius: 16 * scale, style: .continuous)
+                    .fill(PaperPage.paper.opacity(0.85))
+                    .overlay(RoundedRectangle(cornerRadius: 16 * scale, style: .continuous)
                         .strokeBorder(.black.opacity(0.08), lineWidth: 0.5))
                     .padding(.horizontal, CGFloat(depth) * 2 * scale)
                     .offset(y: CGFloat(depth) * 3 * scale)
@@ -111,6 +131,7 @@ struct PaperPadView: View {
                 page(for: DeskPad.shifted(day, by: -1, calendar: calendar)).flipped(progress: 1 - flip, scale: scale)
             }
         }
+        .shadow(color: .black.opacity(0.28), radius: 9 * scale, y: 4 * scale)
         .gesture(dragGesture)
     }
 
@@ -223,7 +244,11 @@ struct PaperPadView: View {
         // Sprung: erst auf den Tag davor/danach, dann ein Blatt umschlagen — sieht aus wie ein Blättern,
         // ohne dass ein Monat voller Blätter vorbeifliegt.
         day = DeskPad.shifted(today, by: direction == .next ? -1 : 1, calendar: calendar)
-        pinned = false
+        // Angeheftet bis zum Ende des Blätterns: Sonst rechnet die Lade-Aufgabe den Zwischentag
+        // mitten in der Animation auf heute zurück, und es wird einmal zu oft geblättert
+        // (gemessen 2026-11-15: von Dienstag auf Samstag statt auf Sonntag).
+        // `turn` setzt `pinned` am Ende richtig.
+        pinned = true
         turn(direction)
     }
 
@@ -259,7 +284,7 @@ private extension View {
         return self
             .overlay(LinearGradient(colors: [.black.opacity(0.0), .black.opacity(0.35 * p)],
                                     startPoint: .top, endPoint: .bottom)
-                .clipShape(RoundedRectangle(cornerRadius: 8 * scale, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 16 * scale, style: .continuous))
                 .allowsHitTesting(false))
             .rotation3DEffect(.degrees(-90 * p), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.45)
             .shadow(color: .black.opacity(0.30 * p), radius: 10 * scale, y: 8 * scale)
@@ -299,7 +324,7 @@ struct PaperPage: View {
     var onToggle: (AgendaItem) -> Void = { _ in }
     var onToday: () -> Void = {}
 
-    static let paper = Color(light: 0xFAF7F0, dark: 0x252833)
+    static let paper = Color(light: 0xFCFBF7, dark: 0x252936)
     static let ink = Color(light: 0x1E2433, dark: 0xECEFF6)
     private let calendar = Calendar.current
 
@@ -324,65 +349,69 @@ struct PaperPage: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            header
-            Text(verbatim: "\(calendar.component(.day, from: day))")
-                .font(Theme.font(72, scale, weight: .bold))
-                .foregroundStyle(isToday ? Theme.accent : Self.ink)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 2 * scale)
-                .onTapGesture(count: 2) { onToday() }
-                .help("Doppelklick: zurück zu heute")
-            Text(weekdayFormatter.string(from: day).uppercased())
-                .font(Theme.font(12, scale, weight: .semibold))
-                .tracking(7)
-                .foregroundStyle(Self.ink.opacity(0.75))
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 8 * scale)
-            Rectangle().fill(Self.ink.opacity(0.12)).frame(height: 0.75)
-            list
-            Spacer(minLength: 0)
-            MiniMonth(day: day, scale: scale, calendar: calendar)
+            band
+            perforation
+            VStack(alignment: .leading, spacing: 0) {
+                Text(verbatim: "\(calendar.component(.day, from: day))")
+                    .font(Theme.font(96, scale, weight: .bold))
+                    .foregroundStyle(Self.ink)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 2 * scale)
+                    .onTapGesture(count: 2) { onToday() }
+                    .help("Doppelklick: zurück zu heute")
+                Text(weekdayFormatter.string(from: day).uppercased())
+                    .font(Theme.font(12, scale, weight: .semibold))
+                    .tracking(7)
+                    .foregroundStyle(Self.ink.opacity(0.75))
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 8 * scale)
+                Rectangle().fill(Self.ink.opacity(0.12)).frame(height: 0.75)
+                list
+                Spacer(minLength: 0)
+                MiniMonth(day: day, scale: scale, calendar: calendar)
+            }
+            .padding(.horizontal, 18 * scale)
+            .padding(.bottom, 12 * scale)
         }
-        .padding(.horizontal, 18 * scale)
-        .padding(.top, 22 * scale)
-        .padding(.bottom, 12 * scale)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(PerforatedPage(radius: 8 * scale, notch: 2.6 * scale).fill(Self.paper))
-        .overlay(alignment: .top) { perforation }
-        .clipShape(PerforatedPage(radius: 8 * scale, notch: 2.6 * scale))
-        .overlay(PerforatedPage(radius: 8 * scale, notch: 2.6 * scale)
-            .stroke(.black.opacity(0.10), lineWidth: 0.5))
+        .background(RoundedRectangle(cornerRadius: 16 * scale, style: .continuous).fill(Self.paper))
+        .clipShape(RoundedRectangle(cornerRadius: 16 * scale, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 16 * scale, style: .continuous)
+            .strokeBorder(.black.opacity(0.10), lineWidth: 0.5))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(Text(verbatim: "\(weekdayFormatter.string(from: day)), \(calendar.component(.day, from: day)). \(monthFormatter.string(from: day))"))
     }
 
-    private var header: some View {
-        VStack(spacing: 5 * scale) {
-            HStack {
-                Text(monthFormatter.string(from: day).uppercased())
-                    .font(Theme.font(11, scale, weight: .bold))
-                    .tracking(3.2)
-                    .foregroundStyle(Theme.accent)
-                Spacer()
-                Text(verbatim: "\(calendar.component(.year, from: day))")
-                    .font(Theme.font(11, scale, weight: .semibold))
-                    .tracking(2)
-                    .foregroundStyle(Self.ink.opacity(0.75))
-            }
-            VStack(spacing: 2) {
-                Rectangle().fill(Theme.accent).frame(height: 1.2)
-                Rectangle().fill(Theme.accent.opacity(0.55)).frame(height: 0.6)
-            }
+    /// Kopfband des Blatts in Indigo: Monat links, Jahr rechts. Gehört zur Karte (keine schwebende
+    /// Leiste): Das Blatt hängt am Band, darunter reißt es an der Perforation ab.
+    private var band: some View {
+        HStack {
+            Text(monthFormatter.string(from: day).uppercased())
+                .font(Theme.font(12, scale, weight: .bold))
+                .tracking(3.4)
+            Spacer()
+            Text(verbatim: "\(calendar.component(.year, from: day))")
+                .font(Theme.font(12, scale, weight: .semibold))
+                .tracking(2)
+                .opacity(0.9)
         }
+        .foregroundStyle(Theme.onAccent)
+        .padding(.horizontal, 18 * scale)
+        .frame(height: 38 * scale)
+        .frame(maxWidth: .infinity)
+        .background(LinearGradient(colors: [Color(light: 0x4B5BAA, dark: 0xA9B4EA),
+                                            Color(light: 0x3A4891, dark: 0x8F9BDD)],
+                                   startPoint: .top, endPoint: .bottom))
+        .overlay(alignment: .top) { Rectangle().fill(.white.opacity(0.28)).frame(height: 1) }
     }
 
-    /// Gepunktete Linie unter den Aussparungen: hier reißt das Blatt ab.
+    /// Gepunktete Linie unter dem Band: hier reißt das Blatt ab.
     private var perforation: some View {
         Rectangle()
-            .stroke(Self.ink.opacity(0.28), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [0.1, 4 * scale]))
+            .stroke(Self.ink.opacity(0.32), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [0.1, 4 * scale]))
             .frame(height: 1)
-            .padding(.horizontal, 6 * scale)
-            .padding(.top, 8 * scale)
+            .padding(.horizontal, 8 * scale)
+            .padding(.vertical, 5 * scale)
     }
 
     @ViewBuilder
@@ -463,36 +492,5 @@ private struct MiniMonth: View {
                     }
             }
         }
-    }
-}
-
-/// Blattform mit Abrisskante: oben eine Reihe halbrunder Aussparungen wie bei einem Abreißblock,
-/// unten abgerundete Ecken.
-private struct PerforatedPage: Shape {
-    var radius: CGFloat
-    var notch: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let pitch = notch * 3.4
-        let count = max(1, Int((rect.width - 2 * radius) / pitch))
-        let first = rect.minX + (rect.width - CGFloat(count - 1) * pitch) / 2
-        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-        for index in 0..<count {
-            let centerX = first + CGFloat(index) * pitch
-            path.addLine(to: CGPoint(x: centerX - notch, y: rect.minY))
-            // Halbkreis nach unten ins Blatt.
-            path.addArc(center: CGPoint(x: centerX, y: rect.minY), radius: notch,
-                        startAngle: .degrees(180), endAngle: .degrees(0), clockwise: true)
-        }
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - radius))
-        path.addQuadCurve(to: CGPoint(x: rect.maxX - radius, y: rect.maxY),
-                          control: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX + radius, y: rect.maxY))
-        path.addQuadCurve(to: CGPoint(x: rect.minX, y: rect.maxY - radius),
-                          control: CGPoint(x: rect.minX, y: rect.maxY))
-        path.closeSubpath()
-        return path
     }
 }

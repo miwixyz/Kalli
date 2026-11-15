@@ -368,11 +368,11 @@ enum DeskPadStyle: Int, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Fenstergröße vor der Skalierung mit der Textgröße. Das Papierblatt trägt 16 pt Rand
+    /// Fenstergröße vor der Skalierung mit der Textgröße. Das Papierblatt trägt 24 pt Rand
     /// für den Schatten, den SwiftUI selbst zeichnet (das Fenster hat keinen).
     var windowSize: CGSize {
         switch self {
-        case .paper: CGSize(width: 372, height: 612)
+        case .paper: CGSize(width: 388, height: 628)
         case .glass: CGSize(width: 320, height: 460)
         }
     }
