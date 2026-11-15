@@ -437,6 +437,14 @@ private struct PopoverSection: View {
             AgendaOrderEditor()
         }
 
+        SettingsGroup(title: "Tagesblatt", symbol: "rectangle.portrait.fill", tint: Theme.accent) {
+            Toggle("Tagesblatt auf dem Schreibtisch", isOn: $prefs.deskPadEnabled)
+            SettingsHint("Ein Glas-Blatt mit Terminen und Aufgaben des Tages, hinter allen Fenstern "
+                 + "auf dem Schreibtisch. Mit der Maus verschiebbar, mit \u{2039} \u{203A} blätterst du "
+                 + "durch die Tage, Aufgaben lassen sich dort abhaken. Es liest dieselben Kalender "
+                 + "und Listen wie das Popover.")
+        }
+
         SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: Theme.accent) {
             Toggle("Fortschritt laufender Termine", isOn: $prefs.showRunningProgress)
                 .onChange(of: prefs.showRunningProgress) { label.update() }

@@ -26,6 +26,9 @@ final class CalendarStore {
     private(set) var access: Access = .unknown
     private(set) var sources: [SourceInfo] = []
     private(set) var items: [AgendaItem] = []
+    /// Zählt jeden abgeschlossenen Neulauf (`refreshBar`). Das Schreibtisch-Blatt lädt
+    /// seinen Tag neu, sobald sich der Wert ändert (EventKit-Änderung, Aufwachen, Tageswechsel).
+    private(set) var revision = 0
     /// Der nächste noch nicht begonnene Termin (keine Erinnerung, nicht ganztägig).
     private(set) var nextEvent: AgendaItem?
     /// Der Termin, der gerade läuft. Für die Fortschrittsanzeige.
@@ -316,6 +319,7 @@ final class CalendarStore {
         urgentReminders = await fetchReminders(in: window).filter(FullScreenAlerts.isEligible)
         recomputeNextEvent()
         syncFullScreenAlerts()
+        revision &+= 1
         await syncAlerts()
     }
 
@@ -413,6 +417,23 @@ final class CalendarStore {
 
     /// Wie weit voraus Mitteilungen geplant werden.
     nonisolated static let alertHorizon: TimeInterval = 24 * 3600
+
+    /// Einträge **eines** Tages, unabhängig vom Popover-Monat (`items`/`loadedRange` bleiben
+    /// unberührt). Für das Schreibtisch-Blatt: Es blättert durch beliebige Tage, während das
+    /// Popover einen anderen Monat zeigen darf — ein gemeinsamer Ladebereich hätte beide gestört.
+    /// Abgefragt wird ±1 Tag und danach mit `occurs` gefiltert, wie bei Raster und Leiste:
+    /// ganztägige Termine liegen in GMT, Nachtdienste ragen über Mitternacht.
+    func dayItems(_ day: Date, calendar: Calendar) async -> [AgendaItem] {
+        let start = calendar.startOfDay(for: day)
+        guard let from = calendar.date(byAdding: .day, value: -1, to: start),
+              let to = calendar.date(byAdding: .day, value: 2, to: start) else { return [] }
+        let range = DateInterval(start: from, end: to)
+        var found = await fetchEvents(in: range)
+        found += await fetchReminders(in: range)
+        return found
+            .filter { Self.occurs($0, on: day, calendar: calendar) }
+            .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
+    }
 
     private func fetchReminders(in range: DateInterval) async -> [AgendaItem] {
         let cals = store.calendars(for: .reminder).filter { !prefs.isHidden($0.calendarIdentifier) }

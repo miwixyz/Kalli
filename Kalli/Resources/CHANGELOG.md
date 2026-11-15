@@ -2,6 +2,19 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.14.0] — noch nicht veröffentlicht
+
+Ein Tagesblatt für den Schreibtisch.
+
+### Neu
+
+- **Tagesblatt auf dem Schreibtisch:** Ein Glas-Blatt zeigt den Tag mit Datum, Terminen und
+  Aufgaben, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter
+  allen Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus
+  verschieben. Mit ‹ Heute › blätterst du durch die Tage, ohne dass sich der Monat im Popover
+  mitbewegt. Aufgaben lassen sich dort abhaken. Ab Werk aus; einschalten unter Einstellungen →
+  Ansicht → Tagesblatt.
+
 ## [0.13.0] — 2026-11-13
 
 Ruhigere, lebendigere Knöpfe und kräftigere Farben, wenn du sie brauchst.

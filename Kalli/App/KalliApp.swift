@@ -14,6 +14,8 @@ struct KalliApp: App {
     @State private var oneThingService: OneThingService
     /// Nächster Termin in Gnotchis Notch (0.12.0, Gnotchi G26).
     @State private var gnotchiEvents: GnotchiEventSender
+    /// Tagesblatt auf dem Schreibtisch (0.14.0), ab Werk aus.
+    @State private var deskPad: DeskPadController
 
     init() {
         // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
@@ -38,12 +40,15 @@ struct KalliApp: App {
         _oneThingService = State(initialValue: service)
         let events = GnotchiEventSender(current: { [s] in s.nextEvent })
         _gnotchiEvents = State(initialValue: events)
+        let pad = DeskPadController(prefs: p, store: s)
+        _deskPad = State(initialValue: pad)
         // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
         Task { @MainActor in p.appearanceMode.apply() }
         // Bild-Testkopie (docs/SECURE-DESIGN.md K1, nur Debug-Build): keine Termine an Gnotchi – ihr leerer
         // „nächster Termin“ überschriebe die echte Anzeige –, kein Dienste-Menü, dafür der Befehlskanal.
         guard !Self.startedAsBildKopie(prefs: p, store: s, label: l) else { return }
         Task { @MainActor in events.start() }
+        Task { @MainActor in pad.start() }
         // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
         Task { @MainActor in
             NSApp.servicesProvider = service

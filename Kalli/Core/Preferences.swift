@@ -31,6 +31,7 @@ final class Preferences {
         static let weekdayHighlights = "weekdayHighlights"
         static let collapsedGroups = "collapsedAgendaGroups"
         static let groupOrder = "agendaGroupOrder"
+        static let deskPad = "deskPadEnabled"
     }
 
     private let defaults: UserDefaults
@@ -202,6 +203,12 @@ final class Preferences {
         didSet { defaults.set(fullScreenBeforeEvent, forKey: Key.fullScreen) }
     }
 
+    /// Tagesblatt auf dem Schreibtisch (0.14.0, Michael 2026-11-15). Ab Werk aus: Ein zweites
+    /// Fenster wird eingeschaltet, nicht vorausgesetzt — Kalli bleibt sonst, was es war.
+    var deskPadEnabled: Bool {
+        didSet { defaults.set(deskPadEnabled, forKey: Key.deskPad) }
+    }
+
     /// Eigener Vorlauf für den Vollbild-Hinweis (0 = zum Beginn). Bewusst getrennt von
     /// `alertLeadMinutes`: Die Mitteilung warnt vor, der Vollbild-Hinweis holt einen
     /// kurz vor Beginn aus der Arbeit (entschieden mit Michael, 2026-09-29).
@@ -260,6 +267,7 @@ final class Preferences {
         flashNextEventInMenuBar = defaults.object(forKey: Key.flashNext) as? Bool ?? false
         alertLeadMinutes = defaults.object(forKey: Key.alertLead) as? Int ?? 10
         fullScreenBeforeEvent = defaults.object(forKey: Key.fullScreen) as? Bool ?? false
+        deskPadEnabled = defaults.object(forKey: Key.deskPad) as? Bool ?? false
         fullScreenLeadMinutes = defaults.object(forKey: Key.fullScreenLead) as? Int ?? 1
         fullScreenScreens = FullScreenScreens(
             rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0

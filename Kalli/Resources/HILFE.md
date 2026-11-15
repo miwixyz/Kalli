@@ -233,6 +233,25 @@ Termin.
 Die Farbe kommt jeweils vom Kalender, die **Form** von der Art. So bleibt die
 Bedeutung erkennbar, auch wenn zwei Kalender ähnlich eingefärbt sind.
 
+## Tagesblatt auf dem Schreibtisch (ab 0.14.0)
+
+Einstellungen → Ansicht → **Tagesblatt auf dem Schreibtisch**, ab Werk aus. Dann liegt
+ein Glas-Blatt auf dem Schreibtisch: oben Wochentag, Tag und Monat, darunter die Termine
+und Aufgaben des Tages, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste
+im Popover.
+
+- **Blättern:** **‹ Heute ›** oben rechts geht einen Tag zurück, zum heutigen Tag oder einen
+  Tag vor. Das Blatt lädt den Tag selbst; der Monat im Popover bleibt, wo er ist. Solange
+  du nicht weitergeblättert hast, springt das Blatt um Mitternacht auf den neuen Tag.
+- **Aufgaben abhaken:** Ein Klick auf den Kreis, wie im Popover.
+- **Verschieben:** an einer freien Stelle des Blatts ziehen. Kalli merkt sich den Platz.
+- **Ebene:** über den Symbolen des Schreibtischs, hinter jedem App-Fenster. Zum Ansehen den
+  Schreibtisch freilegen (Klick aufs Hintergrundbild, wenn macOS das erlaubt).
+- **Größe:** folgt der Textgröße unter Einstellungen → Darstellung.
+
+Das Blatt liest dieselben Kalender und Erinnerungslisten wie das Popover; ausgeblendete
+bleiben ausgeblendet. Es zeigt immer den ganzen Tag, auch vergangene Termine.
+
 ## Hell und Dunkel
 
 Unten links neben dem Zahnrad sitzt ein runder Knopf. Jeder Klick schaltet
