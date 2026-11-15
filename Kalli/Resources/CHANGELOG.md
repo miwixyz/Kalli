@@ -2,7 +2,9 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unveröffentlicht]
+## [0.14.1] — 2026-11-15
+
+Das Papierblatt sieht zusammenhängender aus, und der Doppelklick springt richtig.
 
 ### Geändert
 
