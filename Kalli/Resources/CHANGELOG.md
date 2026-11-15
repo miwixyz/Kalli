@@ -8,12 +8,17 @@ Ein Tagesblatt für den Schreibtisch.
 
 ### Neu
 
-- **Tagesblatt auf dem Schreibtisch:** Ein Glas-Blatt zeigt den Tag mit Datum, Terminen und
-  Aufgaben, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter
-  allen Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus
-  verschieben. Mit ‹ Heute › blätterst du durch die Tage, ohne dass sich der Monat im Popover
-  mitbewegt. Aufgaben lassen sich dort abhaken. Ab Werk aus; einschalten unter Einstellungen →
-  Ansicht → Tagesblatt.
+- **Tagesblatt auf dem Schreibtisch:** Ein Blatt zeigt den Tag mit Datum, Terminen und Aufgaben,
+  in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter allen
+  Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus verschieben.
+  Zwei Aussehen: das **Papierblatt** (Abreißblock auf einem Brett in Kalli-Farben, großes
+  Datum, Monatsraster am Fuß) und ein **Glas-Blatt**. Beim Papierblatt blätterst du durch
+  Ziehen: nach oben schlägt das Blatt nach hinten weg, nach unten kommt das vorige zurück,
+  seitlich ziehen reißt das Blatt an der Perforation ab (es schwingt aus, fällt weg und der
+  nächste Tag liegt da), ein Doppelklick auf die Zahl springt auf heute. Beim Glas-Blatt
+  blättert ‹ Heute ›.
+  Aufgaben lassen sich abhaken. Ab Werk aus; einschalten unter Einstellungen → Ansicht →
+  Tagesblatt.
 
 ## [0.13.0] — 2026-11-13
 

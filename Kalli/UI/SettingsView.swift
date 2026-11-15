@@ -439,10 +439,15 @@ private struct PopoverSection: View {
 
         SettingsGroup(title: "Tagesblatt", symbol: "rectangle.portrait.fill", tint: Theme.accent) {
             Toggle("Tagesblatt auf dem Schreibtisch", isOn: $prefs.deskPadEnabled)
-            SettingsHint("Ein Glas-Blatt mit Terminen und Aufgaben des Tages, hinter allen Fenstern "
-                 + "auf dem Schreibtisch. Mit der Maus verschiebbar, mit \u{2039} \u{203A} blätterst du "
-                 + "durch die Tage, Aufgaben lassen sich dort abhaken. Es liest dieselben Kalender "
-                 + "und Listen wie das Popover.")
+            if prefs.deskPadEnabled {
+                Picker("Aussehen", selection: $prefs.deskPadStyle) {
+                    ForEach(DeskPadStyle.allCases) { Text($0.title).tag($0) }
+                }
+            }
+            SettingsHint("Ein Blatt mit Terminen und Aufgaben des Tages, hinter allen Fenstern auf dem "
+                 + "Schreibtisch. Das Papierblatt blätterst du durch Ziehen nach oben oder unten, "
+                 + "Doppelklick auf die Zahl springt auf heute; das Glas-Blatt hat \u{2039} \u{203A}. "
+                 + "Aufgaben lassen sich dort abhaken. Es liest dieselben Kalender und Listen wie das Popover.")
         }
 
         SettingsGroup(title: "Laufend und kommend", symbol: "timer", tint: Theme.accent) {

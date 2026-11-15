@@ -39,4 +39,74 @@ enum DeskPad {
         let start = calendar.startOfDay(for: day)
         return calendar.date(byAdding: .day, value: days, to: start) ?? start
     }
+
+    // MARK: - Papierblatt: Blättern
+
+    /// Richtung eines Blattwechsels: nach oben ziehen schlägt das Blatt weg (nächster Tag),
+    /// nach unten ziehen holt das vorige zurück.
+    enum Flip: Equatable { case next, previous }
+
+    /// Fortschritt des Ziehens, −1…1. Negativ = nach oben (nächster Tag). Ein ganzes Blatt
+    /// braucht 80 % der Blatthöhe, damit der Daumen nicht über den Rand muss.
+    static func flipProgress(translation: CGFloat, height: CGFloat) -> CGFloat {
+        guard height > 0 else { return 0 }
+        return max(-1, min(1, translation / (height * 0.8)))
+    }
+
+    /// Wird beim Loslassen weitergeblättert? Ja, wenn weit genug gezogen wurde (30 % der Höhe)
+    /// oder der Schwung dorthin reicht (60 %). Sonst fällt das Blatt zurück.
+    static func flipDecision(translation: CGFloat, predicted: CGFloat, height: CGFloat) -> Flip? {
+        guard height > 0 else { return nil }
+        let far = abs(translation) > height * 0.3
+        let fast = abs(predicted) > height * 0.6 && abs(translation) > 8
+        guard far || fast else { return nil }
+        let direction = abs(predicted) > abs(translation) ? predicted : translation
+        return direction < 0 ? .next : .previous
+    }
+
+    // MARK: - Papierblatt: Monatsraster
+
+    /// Wochen des Monats von `day` als Zeilen zu 7 Tagen, Wochenbeginn nach `calendar.firstWeekday`.
+    /// Leere Felder vor dem 1. und nach dem letzten Tag sind `nil`.
+    static func monthWeeks(for day: Date, calendar: Calendar) -> [[Int?]] {
+        guard let interval = calendar.dateInterval(of: .month, for: day),
+              let count = calendar.range(of: .day, in: .month, for: day)?.count else { return [] }
+        let firstWeekday = calendar.component(.weekday, from: interval.start)
+        let lead = (firstWeekday - calendar.firstWeekday + 7) % 7
+        var cells: [Int?] = Array(repeating: nil, count: lead) + (1...count).map { Optional($0) }
+        while cells.count % 7 != 0 { cells.append(nil) }
+        return stride(from: 0, to: cells.count, by: 7).map { Array(cells[$0..<$0 + 7]) }
+    }
+
+    /// Kürzel der Wochentage ab Wochenbeginn („M D M D F S S“), dazu die Position des Sonntags.
+    static func weekdayInitials(calendar: Calendar) -> (symbols: [String], sundayIndex: Int) {
+        let all = calendar.veryShortStandaloneWeekdaySymbols
+        let shift = calendar.firstWeekday - 1
+        let symbols = Array(all[shift...] + all[..<shift])
+        return (symbols, (7 - shift) % 7)
+    }
+
+    // MARK: - Papierblatt: Abreißen
+
+    /// Achse einer Ziehbewegung. Erst ab 10 pt Weg entschieden, danach bleibt sie bis zum
+    /// Loslassen gleich: Wer nach oben blättert, reißt nicht versehentlich ab.
+    enum DragAxis: Equatable { case vertical, horizontal }
+
+    static func dragAxis(_ translation: CGSize) -> DragAxis? {
+        guard max(abs(translation.width), abs(translation.height)) >= 10 else { return nil }
+        return abs(translation.width) > abs(translation.height) * 1.3 ? .horizontal : .vertical
+    }
+
+    /// Fortschritt des seitlichen Ziehens, −1…1 (negativ = nach links). Fast die halbe Blattbreite
+    /// ist ein ganzer Ausschlag.
+    static func tearProgress(translation: CGFloat, width: CGFloat) -> CGFloat {
+        guard width > 0 else { return 0 }
+        return max(-1, min(1, translation / (width * 0.45)))
+    }
+
+    /// Reißt das Blatt beim Loslassen ab? Ab 30 % der Breite oder mit kräftigem Schwung.
+    static func tearDecision(translation: CGFloat, predicted: CGFloat, width: CGFloat) -> Bool {
+        guard width > 0 else { return false }
+        return abs(translation) > width * 0.3 || (abs(predicted) > width * 0.7 && abs(translation) > 20)
+    }
 }

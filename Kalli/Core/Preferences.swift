@@ -32,6 +32,7 @@ final class Preferences {
         static let collapsedGroups = "collapsedAgendaGroups"
         static let groupOrder = "agendaGroupOrder"
         static let deskPad = "deskPadEnabled"
+        static let deskPadStyle = "deskPadStyle"
     }
 
     private let defaults: UserDefaults
@@ -209,6 +210,11 @@ final class Preferences {
         didSet { defaults.set(deskPadEnabled, forKey: Key.deskPad) }
     }
 
+    /// Aussehen des Tagesblatts (Michael 2026-11-15: das Papierblatt gefällt ihm besser).
+    var deskPadStyle: DeskPadStyle {
+        didSet { defaults.set(deskPadStyle.rawValue, forKey: Key.deskPadStyle) }
+    }
+
     /// Eigener Vorlauf für den Vollbild-Hinweis (0 = zum Beginn). Bewusst getrennt von
     /// `alertLeadMinutes`: Die Mitteilung warnt vor, der Vollbild-Hinweis holt einen
     /// kurz vor Beginn aus der Arbeit (entschieden mit Michael, 2026-09-29).
@@ -268,6 +274,7 @@ final class Preferences {
         alertLeadMinutes = defaults.object(forKey: Key.alertLead) as? Int ?? 10
         fullScreenBeforeEvent = defaults.object(forKey: Key.fullScreen) as? Bool ?? false
         deskPadEnabled = defaults.object(forKey: Key.deskPad) as? Bool ?? false
+        deskPadStyle = DeskPadStyle(rawValue: defaults.object(forKey: Key.deskPadStyle) as? Int ?? 0) ?? .paper
         fullScreenLeadMinutes = defaults.object(forKey: Key.fullScreenLead) as? Int ?? 1
         fullScreenScreens = FullScreenScreens(
             rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0
@@ -344,5 +351,29 @@ enum AgendaGroupKind: String, CaseIterable, Sendable {
         guard list.indices.contains(to) else { return list }
         list.swapAt(from, to)
         return list
+    }
+}
+
+/// Aussehen des Tagesblatts auf dem Schreibtisch.
+enum DeskPadStyle: Int, CaseIterable, Identifiable, Sendable {
+    case paper = 0
+    case glass = 1
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .paper: "Papierblatt"
+        case .glass: "Glas"
+        }
+    }
+
+    /// Fenstergröße vor der Skalierung mit der Textgröße. Das Papierblatt trägt 16 pt Rand
+    /// für den Schatten, den SwiftUI selbst zeichnet (das Fenster hat keinen).
+    var windowSize: CGSize {
+        switch self {
+        case .paper: CGSize(width: 372, height: 612)
+        case .glass: CGSize(width: 320, height: 460)
+        }
     }
 }

@@ -435,6 +435,19 @@ final class CalendarStore {
             .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
     }
 
+    /// Einträge für `day` und `span` Tage davor und danach in einem Zug (das Papierblatt zeigt
+    /// beim Blättern die Nachbarblätter). Eine Abfrage statt drei: Erinnerungen werden jedes
+    /// Mal komplett gelesen. Die Ansicht sortiert selbst mit `occurs` auf die Tage.
+    func itemsAround(_ day: Date, span: Int, calendar: Calendar) async -> [AgendaItem] {
+        let start = calendar.startOfDay(for: day)
+        guard let from = calendar.date(byAdding: .day, value: -(span + 1), to: start),
+              let to = calendar.date(byAdding: .day, value: span + 2, to: start) else { return [] }
+        let range = DateInterval(start: from, end: to)
+        var found = await fetchEvents(in: range)
+        found += await fetchReminders(in: range)
+        return found.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
+    }
+
     private func fetchReminders(in range: DateInterval) async -> [AgendaItem] {
         let cals = store.calendars(for: .reminder).filter { !prefs.isHidden($0.calendarIdentifier) }
         guard !cals.isEmpty else { return [] }

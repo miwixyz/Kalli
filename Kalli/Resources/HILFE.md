@@ -236,15 +236,23 @@ Bedeutung erkennbar, auch wenn zwei Kalender ähnlich eingefärbt sind.
 ## Tagesblatt auf dem Schreibtisch (ab 0.14.0)
 
 Einstellungen → Ansicht → **Tagesblatt auf dem Schreibtisch**, ab Werk aus. Dann liegt
-ein Glas-Blatt auf dem Schreibtisch: oben Wochentag, Tag und Monat, darunter die Termine
-und Aufgaben des Tages, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste
-im Popover.
+ein Blatt auf dem Schreibtisch: Datum, darunter die Termine und Aufgaben des Tages in
+denselben Gruppen und derselben Reihenfolge wie die Tagesliste im Popover. Unter
+**Aussehen** wählst du zwischen Papierblatt und Glas.
 
-- **Blättern:** **‹ Heute ›** oben rechts geht einen Tag zurück, zum heutigen Tag oder einen
-  Tag vor. Das Blatt lädt den Tag selbst; der Monat im Popover bleibt, wo er ist. Solange
-  du nicht weitergeblättert hast, springt das Blatt um Mitternacht auf den neuen Tag.
+- **Papierblatt blättern:** Das Blatt nach oben ziehen, es klappt nach hinten weg und der
+  nächste Tag liegt da. Nach unten ziehen holt das vorige zurück. Ein kurzer Schwung reicht.
+  **Seitlich ziehen** reißt das Blatt an der Perforation ab: Es schwingt aus, fällt weg und
+  der nächste Tag liegt da. Ein kurzes Zupfen lässt es zurückfedern. **Doppelklick auf die
+  große Zahl** springt auf heute. Mit VoiceOver gibt es die Aktionen
+  „Nächster Tag“, „Vorheriger Tag“ und „Blatt abreißen“.
+- **Glas-Blatt blättern:** **‹ Heute ›** oben rechts geht einen Tag zurück, zu heute oder
+  einen Tag vor.
+- Solange du nicht weitergeblättert hast, springt das Blatt um Mitternacht auf den neuen Tag.
+  Das Blatt lädt seinen Tag selbst, der Monat im Popover bleibt, wo er ist.
 - **Aufgaben abhaken:** Ein Klick auf den Kreis, wie im Popover.
-- **Verschieben:** an einer freien Stelle des Blatts ziehen. Kalli merkt sich den Platz.
+- **Verschieben:** am Rand des Bretts bzw. an einer freien Stelle des Glas-Blatts ziehen.
+  Kalli merkt sich den Platz.
 - **Ebene:** über den Symbolen des Schreibtischs, hinter jedem App-Fenster. Zum Ansehen den
   Schreibtisch freilegen (Klick aufs Hintergrundbild, wenn macOS das erlaubt).
 - **Größe:** folgt der Textgröße unter Einstellungen → Darstellung.

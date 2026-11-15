@@ -15,6 +15,7 @@ final class DeskPadController {
     private let prefs: Preferences
     private let store: CalendarStore
     private var panel: NSPanel?
+    private var shownStyle: DeskPadStyle?
 
     init(prefs: Preferences, store: CalendarStore) {
         self.prefs = prefs
@@ -30,6 +31,7 @@ final class DeskPadController {
     private func observe() {
         withObservationTracking {
             _ = prefs.deskPadEnabled
+            _ = prefs.deskPadStyle
             _ = prefs.layoutScale
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in
@@ -47,15 +49,33 @@ final class DeskPadController {
         }
         let panel = self.panel ?? makePanel()
         self.panel = panel
+        if shownStyle != prefs.deskPadStyle { install(prefs.deskPadStyle, in: panel) }
         resize(panel)
         panel.orderFront(nil)
         // Messpunkt: „eingeschaltet“ und „sichtbar“ sind zwei Aussagen.
         Self.log.notice("Schreibtischblatt: an, sichtbar \(panel.isVisible, privacy: .public), Rahmen \(NSStringFromRect(panel.frame), privacy: .public), Ebene \(panel.level.rawValue, privacy: .public)")
     }
 
-    /// Feste Größe, mit der Textgröße skaliert; die obere linke Ecke bleibt stehen.
+    /// Setzt die Ansicht für das gewählte Aussehen ein. Das Papierblatt zeichnet seinen Schatten
+    /// selbst (Fenster ohne Schatten, transparenter Rand), das Glas-Blatt nutzt den des Fensters.
+    private func install(_ style: DeskPadStyle, in panel: NSPanel) {
+        shownStyle = style
+        switch style {
+        case .paper:
+            panel.hasShadow = false
+            panel.contentView = NSHostingView(rootView: PaperPadView()
+                .environment(prefs).environment(store).tint(Theme.accent))
+        case .glass:
+            panel.hasShadow = true
+            panel.contentView = NSHostingView(rootView: DeskPadView()
+                .environment(prefs).environment(store).tint(Theme.accent))
+        }
+    }
+
+    /// Feste Größe je Aussehen, mit der Textgröße skaliert; die obere linke Ecke bleibt stehen.
     private func resize(_ panel: NSPanel) {
-        let size = NSSize(width: 320 * prefs.layoutScale, height: 460 * prefs.layoutScale)
+        let base = prefs.deskPadStyle.windowSize
+        let size = NSSize(width: base.width * prefs.layoutScale, height: base.height * prefs.layoutScale)
         guard panel.frame.size != size else { return }
         var frame = panel.frame
         frame.origin.y += frame.height - size.height
@@ -72,15 +92,14 @@ final class DeskPadController {
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = true
         panel.isMovableByWindowBackground = true
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
         panel.title = "Kalli Tagesblatt"
-        panel.contentView = NSHostingView(rootView: DeskPadView()
-            .environment(prefs)
-            .environment(store)
-            .tint(Theme.accent))
+        #if DEBUG
+        // Zum Ansehen und für Messungen mit Mausereignissen: vor allen Fenstern statt dahinter.
+        if ProcessInfo.processInfo.arguments.contains("-tagesblattVorne") { panel.level = .floating }
+        #endif
         if !panel.setFrameUsingName(Self.frameName) {
             let area = (NSScreen.screens.first ?? NSScreen.main)?.visibleFrame ?? .zero
             panel.setFrameTopLeftPoint(NSPoint(x: area.maxX - 320 - 24, y: area.maxY - 24))

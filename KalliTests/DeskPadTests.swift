@@ -70,4 +70,102 @@ final class DeskPadTests: XCTestCase {
         let start = cal.startOfDay(for: Fixture.now)
         XCTAssertEqual(DeskPad.shifted(DeskPad.shifted(start, by: 5, calendar: cal), by: -5, calendar: cal), start)
     }
+
+    // MARK: - Papierblatt: Blättern
+
+    func testFlipProgressIsSignedAndClamped() {
+        XCTAssertEqual(DeskPad.flipProgress(translation: 0, height: 500), 0)
+        XCTAssertEqual(DeskPad.flipProgress(translation: -200, height: 500), -0.5, accuracy: 0.0001)
+        XCTAssertEqual(DeskPad.flipProgress(translation: -900, height: 500), -1)
+        XCTAssertEqual(DeskPad.flipProgress(translation: 900, height: 500), 1)
+        XCTAssertEqual(DeskPad.flipProgress(translation: 50, height: 0), 0)
+    }
+
+    func testDraggingUpFlipsToNextDayAndDownToPreviousDay() {
+        XCTAssertEqual(DeskPad.flipDecision(translation: -200, predicted: -210, height: 500), .next)
+        XCTAssertEqual(DeskPad.flipDecision(translation: 200, predicted: 210, height: 500), .previous)
+    }
+
+    func testShortSlowDragFallsBack() {
+        XCTAssertNil(DeskPad.flipDecision(translation: -60, predicted: -80, height: 500))
+        XCTAssertNil(DeskPad.flipDecision(translation: 0, predicted: 0, height: 500))
+    }
+
+    func testFastFlickFlipsEvenWhenShort() {
+        XCTAssertEqual(DeskPad.flipDecision(translation: -70, predicted: -400, height: 500), .next)
+    }
+
+    func testLongDragBeatsOppositeMomentum() {
+        // Weit nach unten gezogen, mit schwachem Schwung nach oben losgelassen: Der Schwung gilt nur,
+        // wenn er größer ist als der Weg — hier zieht der lange Weg nach unten.
+        XCTAssertEqual(DeskPad.flipDecision(translation: 300, predicted: -50, height: 500), .previous)
+    }
+
+    // MARK: - Papierblatt: Monatsraster
+
+    private var mondayCalendar: Calendar {
+        var cal = Fixture.calendar
+        cal.firstWeekday = 2
+        return cal
+    }
+
+    func testMonthWeeksNovember2026StartingMonday() {
+        // 1. November 2026 ist ein Sonntag: sechs leere Felder davor, dann sechs Zeilen.
+        let weeks = DeskPad.monthWeeks(for: Fixture.now.addingTimeInterval(54 * 86_400), calendar: mondayCalendar)
+        XCTAssertEqual(weeks.count, 6)
+        XCTAssertEqual(weeks[0], [nil, nil, nil, nil, nil, nil, 1])
+        XCTAssertEqual(weeks[5], [30, nil, nil, nil, nil, nil, nil])
+        XCTAssertEqual(weeks.flatMap { $0 }.compactMap { $0 }, Array(1...30))
+    }
+
+    func testMonthWeeksStartingSundayShiftsTheFirst() {
+        var cal = Fixture.calendar
+        cal.firstWeekday = 1
+        let weeks = DeskPad.monthWeeks(for: Fixture.now.addingTimeInterval(54 * 86_400), calendar: cal)
+        XCTAssertEqual(weeks[0].first, 1)
+        XCTAssertEqual(weeks.count, 5)
+    }
+
+    func testMonthWeeksSeptember2026HasThirtyDays() {
+        let weeks = DeskPad.monthWeeks(for: Fixture.now, calendar: mondayCalendar)
+        XCTAssertEqual(weeks.flatMap { $0 }.compactMap { $0 }.count, 30)
+        XCTAssertTrue(weeks.allSatisfy { $0.count == 7 })
+    }
+
+    func testWeekdayInitialsStartAtFirstWeekdayAndFindSunday() {
+        let monday = DeskPad.weekdayInitials(calendar: mondayCalendar)
+        XCTAssertEqual(monday.symbols.count, 7)
+        XCTAssertEqual(monday.sundayIndex, 6)
+        var sunday = Fixture.calendar
+        sunday.firstWeekday = 1
+        XCTAssertEqual(DeskPad.weekdayInitials(calendar: sunday).sundayIndex, 0)
+    }
+
+    // MARK: - Papierblatt: Abreißen
+
+    func testAxisStaysUndecidedUnderTenPoints() {
+        XCTAssertNil(DeskPad.dragAxis(CGSize(width: 6, height: 7)))
+    }
+
+    func testAxisHorizontalOnlyWhenClearlySideways() {
+        XCTAssertEqual(DeskPad.dragAxis(CGSize(width: 30, height: 5)), .horizontal)
+        XCTAssertEqual(DeskPad.dragAxis(CGSize(width: -30, height: 5)), .horizontal)
+        XCTAssertEqual(DeskPad.dragAxis(CGSize(width: 20, height: 18)), .vertical)  // schräg = blättern
+        XCTAssertEqual(DeskPad.dragAxis(CGSize(width: 3, height: -40)), .vertical)
+    }
+
+    func testTearProgressIsSignedAndClamped() {
+        XCTAssertEqual(DeskPad.tearProgress(translation: 0, width: 300), 0)
+        XCTAssertEqual(DeskPad.tearProgress(translation: 67.5, width: 300), 0.5, accuracy: 0.0001)
+        XCTAssertEqual(DeskPad.tearProgress(translation: -500, width: 300), -1)
+        XCTAssertEqual(DeskPad.tearProgress(translation: 20, width: 0), 0)
+    }
+
+    func testTearNeedsDistanceOrMomentum() {
+        XCTAssertTrue(DeskPad.tearDecision(translation: 120, predicted: 130, width: 300))
+        XCTAssertTrue(DeskPad.tearDecision(translation: -120, predicted: -130, width: 300))
+        XCTAssertFalse(DeskPad.tearDecision(translation: 40, predicted: 60, width: 300))
+        XCTAssertTrue(DeskPad.tearDecision(translation: 40, predicted: 260, width: 300))
+        XCTAssertFalse(DeskPad.tearDecision(translation: 5, predicted: 400, width: 300))  // Zucken
+    }
 }

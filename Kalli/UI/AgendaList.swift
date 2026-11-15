@@ -20,6 +20,8 @@ struct AgendaGroup: View {
     var scale: Double = 1.0
     var justCompleted: Set<String> = []
     var oneThingID: String? = nil
+    /// Das Tagesblatt lässt „ganztägig“ unter den Einträgen weg: Die Überschrift sagt es schon.
+    var hideAllDayLabel = false
     var onToggle: ((AgendaItem) -> Void)? = nil
     var onMakeOneThing: ((AgendaItem) -> Void)? = nil
 
@@ -90,6 +92,7 @@ struct AgendaGroup: View {
             AgendaRow(item: item, showProgress: showProgress, scale: scale,
                       isFading: justCompleted.contains(item.id),
                       isOneThing: item.isReminder && item.id == oneThingID,
+                      hideAllDayLabel: hideAllDayLabel,
                       onToggle: { onToggle?(item) })
                 .padding(.vertical, 5)
                 .contentShape(Rectangle())
@@ -109,6 +112,7 @@ struct AgendaRow: View {
     var isFading: Bool = false
     /// Diese Erinnerung steht als „die eine Sache" in der Leiste.
     var isOneThing: Bool = false
+    var hideAllDayLabel = false
     var onToggle: (() -> Void)? = nil
 
     private let timeFormatter: DateFormatter = {
@@ -173,7 +177,7 @@ struct AgendaRow: View {
                     }
                 }
                 let time = item.timeLabel(using: timeFormatter)
-                if !time.isEmpty {
+                if !time.isEmpty && !(hideAllDayLabel && item.isAllDay) {
                     HStack(spacing: 6) {
                         Text(time)
                             .font(Theme.font(Theme.Size.itemTime, scale))

@@ -64,9 +64,10 @@ ansteht, bezahlt das mit Oberfläche.
   Kalli meldet nur Termine **ohne eigenen Kalender-Alarm** — sonst klingelte es zweimal.
   Die Mitteilung enthält Titel und Uhrzeit; was das für Mitteilungszentrale und
   Sperrbildschirm bedeutet, steht in `Kalli/Resources/RECHTLICHES.md`
-- **Tagesblatt auf dem Schreibtisch** (ab 0.14.0) — Glas-Blatt hinter allen Fenstern mit
-  Datum, Terminen und Aufgaben des Tages, verschiebbar, mit ‹ Heute › durch die Tage
-  blätterbar, Aufgaben abhakbar. **Ab Werk aus**, liest dieselben Quellen wie das Popover
+- **Tagesblatt auf dem Schreibtisch** (ab 0.14.0) — Papierblatt (Abreißblock mit Perforation, durch
+  Ziehen blätterbar, seitlich abreißbar, Doppelklick = heute) oder Glas-Blatt hinter allen Fenstern, mit Datum,
+  Terminen und Aufgaben des Tages, verschiebbar, Aufgaben abhakbar. **Ab Werk aus**, liest
+  dieselben Quellen wie das Popover
 - **Vollbild-Hinweis vor dem Termin** (ab 0.5.0, nach dem Vorbild von „In Your Face“) —
   Glasfläche über der unteren Bildschirmhälfte, bis Esc/Return. Bildschirme wählbar:
   alle, Hauptbildschirm oder andere. **„Zum Beginn nochmal“** holt den Hinweis
