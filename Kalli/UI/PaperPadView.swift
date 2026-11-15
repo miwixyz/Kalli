@@ -51,6 +51,10 @@ struct PaperPadView: View {
         .accessibilityAction(named: "Nächster Tag") { turn(.next) }
         .accessibilityAction(named: "Vorheriger Tag") { turn(.previous) }
         .accessibilityAction(named: "Blatt abreißen") { tearOff() }
+        .contextMenu {
+            // Das Blatt liegt hinter den Fenstern; der Weg über Popover und Einstellungen ist weit.
+            Button("Tagesblatt ausblenden", systemImage: "eye.slash") { prefs.deskPadEnabled = false }
+        }
         .task(id: "\(day.timeIntervalSince1970)-\(store.revision)") {
             if !pinned {
                 let today = calendar.startOfDay(for: Date())
@@ -71,8 +75,7 @@ struct PaperPadView: View {
             .overlay(shape.strokeBorder(.white.opacity(0.18), lineWidth: 1))
             .overlay(shape.inset(by: 5 * scale)
                 .strokeBorder(.white.opacity(0.10), style: StrokeStyle(lineWidth: 1, dash: [3, 4])))
-            .background(WindowDragArea())
-            .shadow(color: .black.opacity(0.28), radius: 14 * scale, y: 8 * scale)
+            .movesWindow()
     }
 
     /// Dünner Klebestreifen in Kalli-Indigo über dem Blattkopf (Michael 2026-11-15: keine Ringe,
@@ -276,16 +279,6 @@ private extension View {
             .offset(x: sign * 70 * f * scale, y: 760 * f * f * scale)
             .shadow(color: .black.opacity(0.30 * p), radius: 8 * scale, x: sign * 3, y: 6 * scale)
             .opacity(1 - max(0, (f - 0.65) / 0.35))
-    }
-}
-
-/// Fläche, an der man das Fenster verschieben kann. Ohne sie fängt SwiftUI jeden Klick ab und
-/// `isMovableByWindowBackground` greift nicht.
-private struct WindowDragArea: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView { DragView() }
-    func updateNSView(_ nsView: NSView, context: Context) {}
-    private final class DragView: NSView {
-        override var mouseDownCanMoveWindow: Bool { true }
     }
 }
 

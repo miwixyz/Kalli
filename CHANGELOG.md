@@ -17,7 +17,7 @@ Ein Tagesblatt für den Schreibtisch.
   seitlich ziehen reißt das Blatt an der Perforation ab (es schwingt aus, fällt weg und der
   nächste Tag liegt da), ein Doppelklick auf die Zahl springt auf heute. Beim Glas-Blatt
   blättert ‹ Heute ›.
-  Aufgaben lassen sich abhaken. Ab Werk aus; einschalten unter Einstellungen → Ansicht →
+  Aufgaben lassen sich abhaken, Rechtsklick auf das Blatt blendet es aus. Ab Werk aus; einschalten unter Einstellungen → Ansicht →
   Tagesblatt.
 
 ## [0.13.0] — 2026-11-13

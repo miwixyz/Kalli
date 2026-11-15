@@ -250,6 +250,8 @@ denselben Gruppen und derselben Reihenfolge wie die Tagesliste im Popover. Unter
   einen Tag vor.
 - Solange du nicht weitergeblättert hast, springt das Blatt um Mitternacht auf den neuen Tag.
   Das Blatt lädt seinen Tag selbst, der Monat im Popover bleibt, wo er ist.
+- **Ausblenden:** Rechtsklick auf das Blatt → **Tagesblatt ausblenden**. Wieder einschalten
+  unter Einstellungen → Ansicht → Tagesblatt.
 - **Aufgaben abhaken:** Ein Klick auf den Kreis, wie im Popover.
 - **Verschieben:** am Rand des Bretts bzw. an einer freien Stelle des Glas-Blatts ziehen.
   Kalli merkt sich den Platz.

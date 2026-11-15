@@ -48,6 +48,10 @@ struct DeskPadView: View {
         }
         .padding(18 * scale)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .movesWindow()
+        .contextMenu {
+            Button("Tagesblatt ausblenden", systemImage: "eye.slash") { prefs.deskPadEnabled = false }
+        }
         .glassSurface(in: RoundedRectangle(cornerRadius: 24 * scale))
         .task(id: "\(day.timeIntervalSince1970)-\(store.revision)") {
             if !pinned {
