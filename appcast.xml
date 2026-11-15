@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.14.1</title>
+            <pubDate>Sun, 15 Nov 2026 12:04:40 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>101</sparkle:version>
+            <sparkle:shortVersionString>0.14.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Das Papierblatt sieht zusammenhängender aus, und der Doppelklick springt richtig.</p><h3>Geändert</h3><ul><li><b>Papierblatt neu gezeichnet:</b> Das Brett ist jetzt eine Glasplatte in kräftigem Indigo mit heller Randkante und einem Glanz, der deinem Mauszeiger folgt. Das Blatt ist eine einzige Karte mit abgerundeten Ecken und einem Kopfband mit Monat und Jahr, darunter die Perforationslinie. Die Zahl ist größer. Der Schatten liegt innerhalb des Fensters, damit kein gepunkteter Rand mehr entsteht.</li></ul><h3>Behoben</h3><ul><li><b>Doppelklick auf die Zahl:</b> Von einem fernen Tag aus sprang das Blatt einmal zu weit zurück (etwa von Dienstag auf Samstag statt auf Sonntag). Jetzt landet es auf heute.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.1/Kalli-0.14.1.zip" length="3443229" type="application/octet-stream" sparkle:edSignature="Sn00+NEQ1pcbU+iAJKN1xYZWg12Lf3Z6TVB84+jQoqA1gcKLPnEXiOlmTTgrtyAgHhXqvCRgnA9ISVauw4j0Dw=="/>
+        </item>
+        <item>
             <title>0.14.0</title>
             <pubDate>Sun, 15 Nov 2026 11:43:13 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,16 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Ruhigere, lebendigere Knöpfe und kräftigere Farben, wenn du sie brauchst.</p><h3>Neu</h3><ul><li><b>Knöpfe in Glasgruppen:</b> Zurück, Heute und Weiter oben im Kalender sitzen jetzt in einer gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel unten. Ein Lichtpunkt auf dem Rand folgt dem Mauszeiger, ein weicher Schatten gleitet von Knopf zu Knopf, und ein gedrückter Knopf federt kurz nach. Die Reiter der Einstellungen sind eine Pille, die zum gewählten Reiter gleitet. Dieselbe Optik haben Porter, Tippi, TippAI und Gnotchi.</li><li><b>Farben für „Kontrast erhöhen“:</b> Ist in den Systemeinstellungen unter Bedienungshilfen → Anzeige „Kontrast erhöhen“ an, nutzt Kalli kräftigere Farben für Akzent, Nebentexte und Rahmen. Ohne die Einstellung bleibt alles wie gewohnt.</li><li><b>Neuerungen im Update-Fenster:</b> Findet Kalli ein Update, zeigt das Fenster jetzt, was in der neuen Version steckt.</li></ul><h3>Behoben</h3><ul><li><b>Knöpfe mit Namen für VoiceOver:</b> Acht Knöpfe, die nur ein Symbol zeigen, hatten für VoiceOver und andere Bedienungshilfen keinen Namen. Jetzt sagt jeder, was er tut.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.13.0/Kalli-0.13.0.zip" length="3358468" type="application/octet-stream" sparkle:edSignature="QWPmXL75MVPrLajEVp++iqNI1q2+IfvMSz/xjbCYCjfQjOcCE+0hZ726KGSvhgRvQLvmL9A7PBYMeHfjcYX0Cg=="/>
-        </item>
-        <item>
-            <title>0.12.0</title>
-            <pubDate>Wed, 21 Oct 2026 20:36:34 +0200</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>83</sparkle:version>
-            <sparkle:shortVersionString>0.12.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.12.0/Kalli-0.12.0.zip" length="3310091" type="application/octet-stream" sparkle:edSignature="yJdiMN2dIBBIyAKjtaWU1Wr4Y78dQoZ2HpGfrv6Bolvc05DCspLC3Du+YuCoFvrMw8EolQTSxmeR+cvwFgcpBA=="/>
         </item>
     </channel>
 </rss>
