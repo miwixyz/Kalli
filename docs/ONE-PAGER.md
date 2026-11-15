@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.13: Knöpfe aus einem Stück Glas
+## Neu in 0.14: Ein Tagesblatt auf dem Schreibtisch
+
+Auf Wunsch liegt hinter deinen Fenstern ein Abreißblock mit dem heutigen Tag, mit Terminen und Aufgaben darauf. Du blätterst durch Ziehen nach oben oder unten, reißt ein Blatt seitlich ab und springst mit einem Doppelklick auf die Zahl zurück auf heute. Wer es ruhiger mag, nimmt das Glas-Blatt mit Pfeilen. Das Tagesblatt ist ab Werk aus, liest dieselben Kalender und Listen wie Kalli und lässt sich mit einem Rechtsklick wieder ausblenden.
+
+---
+
+## Seit 0.13: Knöpfe aus einem Stück Glas
 
 Zurück, Heute und Weiter sitzen jetzt in einer gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel. Ein Lichtpunkt auf dem Rand folgt deiner Maus, ein weicher Schatten gleitet von Knopf zu Knopf. Ist auf deinem Mac „Kontrast erhöhen“ eingeschaltet, nutzt Kalli kräftigere Farben. Und findet Kalli ein Update, steht im Fenster, was neu ist.
 
@@ -66,6 +72,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Bestimmte Wochentage sofort finden | Jeder Wochentag bekommt auf Wunsch eine eigene Farbe, zum Beispiel jeder Donnerstag Rot |
 | Den Tag sortiert vor dir haben | Tagesliste getrennt nach Aufgaben, ganztägig und Terminen. Die Reihenfolge stellst du selbst ein, Ganztägiges und Aufgaben lassen sich zuklappen |
 | Aufgaben erledigen und anlegen | Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an, Tag und Uhrzeit auch mitgetippt. Kalli liest danach nach, ob alles angekommen ist |
+| Den Tag auf dem Schreibtisch vor Augen haben | Auf Wunsch ein Tagesblatt hinter den Fenstern, mit Terminen und Aufgaben, als Papierblatt zum Blättern und Abreißen oder als Glas-Blatt |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
 | Rechtzeitig erinnert werden | Drei Wege nach Wahl: Mitteilung, pulsierender Punkt in der Leiste, Vollbild-Hinweis. Alle sind ab Werk aus |
 | Die eine wichtige Aufgabe des Tages im Blick behalten | „Die eine Sache“ steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst |

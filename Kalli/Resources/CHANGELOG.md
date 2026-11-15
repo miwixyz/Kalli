@@ -2,7 +2,7 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [0.14.0] — noch nicht veröffentlicht
+## [0.14.0] — 2026-11-15
 
 Ein Tagesblatt für den Schreibtisch.
 
