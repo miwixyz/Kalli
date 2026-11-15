@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.14.0</title>
+            <pubDate>Sun, 15 Nov 2026 11:43:13 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>98</sparkle:version>
+            <sparkle:shortVersionString>0.14.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Ein Tagesblatt für den Schreibtisch.</p><h3>Neu</h3><ul><li><b>Tagesblatt auf dem Schreibtisch:</b> Ein Blatt zeigt den Tag mit Datum, Terminen und Aufgaben, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter allen Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus verschieben. Zwei Aussehen: das <b>Papierblatt</b> (Abreißblock auf einem Brett in Kalli-Farben, großes Datum, Monatsraster am Fuß) und ein <b>Glas-Blatt</b>. Beim Papierblatt blätterst du durch Ziehen: nach oben schlägt das Blatt nach hinten weg, nach unten kommt das vorige zurück, seitlich ziehen reißt das Blatt an der Perforation ab (es schwingt aus, fällt weg und der nächste Tag liegt da), ein Doppelklick auf die Zahl springt auf heute. Beim Glas-Blatt blättert ‹ Heute ›. Aufgaben lassen sich abhaken, Rechtsklick auf das Blatt blendet es aus. Ab Werk aus; einschalten unter Einstellungen → Ansicht → Tagesblatt.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.0/Kalli-0.14.0.zip" length="3442101" type="application/octet-stream" sparkle:edSignature="y4tK7d8RKJ14LeQrufMC9YDkfk0y7JtI+b2aYqI8hWSY1XtS4fTyXuZYTrfxt4gKU0wWqEXi2rbfpBbsAGEVDQ=="/>
+        </item>
+        <item>
             <title>0.13.0</title>
             <pubDate>Fri, 13 Nov 2026 14:17:43 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -22,16 +33,6 @@
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.12.0/Kalli-0.12.0.zip" length="3310091" type="application/octet-stream" sparkle:edSignature="yJdiMN2dIBBIyAKjtaWU1Wr4Y78dQoZ2HpGfrv6Bolvc05DCspLC3Du+YuCoFvrMw8EolQTSxmeR+cvwFgcpBA=="/>
-        </item>
-        <item>
-            <title>0.11.0</title>
-            <pubDate>Wed, 21 Oct 2026 16:15:44 +0200</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>77</sparkle:version>
-            <sparkle:shortVersionString>0.11.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.11.0/Kalli-0.11.0.zip" length="3295334" type="application/octet-stream" sparkle:edSignature="3e5qRTVdgjIqBhPQzlCBKRHLLbUpz8S3k4T1yuW0kXryJWdYEh7dcDSRcTEflDc3+/Fbc9b+39WB6XrPXWJ3Cg=="/>
         </item>
     </channel>
 </rss>
