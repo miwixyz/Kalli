@@ -10,6 +10,8 @@ struct DebugCommand: Equatable, Sendable {
         case snapshot(window: String)
         /// Hell, dunkel oder wie das System.
         case appearance(String)
+        /// Selbsttest (`SelfTest`): PASS/FAIL je Schritt, ohne Parameter, nur gegen die abgeschottete Kopie.
+        case selftest
     }
 
     let id: String
@@ -32,7 +34,7 @@ struct DebugCommand: Equatable, Sendable {
         + #"certificate leaf[field.1.2.840.113635.100.6.1.13] and identifier "dev.mwlr.kalli.ctl" and "#
         + #"certificate leaf[subject.OU] = "LTKJ6Z2VYB""#
 
-    /// `{"v":1,"id":"…","cmd":"status"|"snapshot"|"appearance", …}`; `id` 1–32 Zeichen a–z, A–Z, 0–9 (wird Dateiname).
+    /// `{"v":1,"id":"…","cmd":"status"|"snapshot"|"appearance"|"selftest", …}`; `id` 1–32 Zeichen a–z, A–Z, 0–9 (wird Dateiname).
     static func parse(_ payload: Data) -> DebugCommand? {
         guard let obj = try? JSONSerialization.jsonObject(with: payload) as? [String: Any],
               let v = obj["v"] as? NSNumber, CFGetTypeID(v) != CFBooleanGetTypeID(), v.doubleValue == 1,
@@ -48,6 +50,8 @@ struct DebugCommand: Equatable, Sendable {
         case "appearance":
             guard let m = obj["mode"] as? String, appearances.contains(m) else { return nil }
             return DebugCommand(id: id, kind: .appearance(m))
+        case "selftest":
+            return DebugCommand(id: id, kind: .selftest)
         default:
             return nil
         }
