@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.15.0</title>
+            <pubDate>Tue, 17 Nov 2026 23:23:31 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>108</sparkle:version>
+            <sparkle:shortVersionString>0.15.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Einmal am Tag zeigt dir Kalli, was heute fällig ist.</p><h3>Neu</h3><ul><li><b>Aufgaben des Tages:</b> Zur eingestellten Stunde (ab Werk 9 Uhr) erscheint oben rechts ein kleines Glasfenster mit den offenen Erinnerungen, die heute fällig sind. Du hakst sie direkt dort ab. <b>„In 1 Std. wieder“</b> schließt das Fenster und holt es eine Stunde später zurück, so oft du willst, <b>„Schließen“</b> beendet es für heute. Das Fenster liegt über deinen Fenstern, nimmt dir aber weder Maus noch Tastatur weg, und lässt sich verschieben. Sind keine offenen Aufgaben für heute da, erscheint nichts. War der Mac zur Uhrzeit aus, kommt es beim nächsten Aufwachen am selben Tag. Ab Werk aus; einschalten unter Einstellungen → Menüleiste → Aufgaben des Tages.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.0/Kalli-0.15.0.zip" length="3428833" type="application/octet-stream" sparkle:edSignature="wxWD7pQY5Y+8xQf0G4vOqH2rj2aNXONOAhLSslK+gJNVR/CtoSHp9lQoeUVogFEcdN/9zKI4x1m94pGqbUu5Aw=="/>
+        </item>
+        <item>
             <title>0.14.1</title>
             <pubDate>Sun, 15 Nov 2026 12:04:40 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Ein Tagesblatt für den Schreibtisch.</p><h3>Neu</h3><ul><li><b>Tagesblatt auf dem Schreibtisch:</b> Ein Blatt zeigt den Tag mit Datum, Terminen und Aufgaben, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter allen Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus verschieben. Zwei Aussehen: das <b>Papierblatt</b> (Abreißblock auf einem Brett in Kalli-Farben, großes Datum, Monatsraster am Fuß) und ein <b>Glas-Blatt</b>. Beim Papierblatt blätterst du durch Ziehen: nach oben schlägt das Blatt nach hinten weg, nach unten kommt das vorige zurück, seitlich ziehen reißt das Blatt an der Perforation ab (es schwingt aus, fällt weg und der nächste Tag liegt da), ein Doppelklick auf die Zahl springt auf heute. Beim Glas-Blatt blättert ‹ Heute ›. Aufgaben lassen sich abhaken, Rechtsklick auf das Blatt blendet es aus. Ab Werk aus; einschalten unter Einstellungen → Ansicht → Tagesblatt.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.0/Kalli-0.14.0.zip" length="3442101" type="application/octet-stream" sparkle:edSignature="y4tK7d8RKJ14LeQrufMC9YDkfk0y7JtI+b2aYqI8hWSY1XtS4fTyXuZYTrfxt4gKU0wWqEXi2rbfpBbsAGEVDQ=="/>
-        </item>
-        <item>
-            <title>0.13.0</title>
-            <pubDate>Fri, 13 Nov 2026 14:17:43 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>92</sparkle:version>
-            <sparkle:shortVersionString>0.13.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Ruhigere, lebendigere Knöpfe und kräftigere Farben, wenn du sie brauchst.</p><h3>Neu</h3><ul><li><b>Knöpfe in Glasgruppen:</b> Zurück, Heute und Weiter oben im Kalender sitzen jetzt in einer gemeinsamen Glaskapsel, ebenso Zahnrad und Hell/Dunkel unten. Ein Lichtpunkt auf dem Rand folgt dem Mauszeiger, ein weicher Schatten gleitet von Knopf zu Knopf, und ein gedrückter Knopf federt kurz nach. Die Reiter der Einstellungen sind eine Pille, die zum gewählten Reiter gleitet. Dieselbe Optik haben Porter, Tippi, TippAI und Gnotchi.</li><li><b>Farben für „Kontrast erhöhen“:</b> Ist in den Systemeinstellungen unter Bedienungshilfen → Anzeige „Kontrast erhöhen“ an, nutzt Kalli kräftigere Farben für Akzent, Nebentexte und Rahmen. Ohne die Einstellung bleibt alles wie gewohnt.</li><li><b>Neuerungen im Update-Fenster:</b> Findet Kalli ein Update, zeigt das Fenster jetzt, was in der neuen Version steckt.</li></ul><h3>Behoben</h3><ul><li><b>Knöpfe mit Namen für VoiceOver:</b> Acht Knöpfe, die nur ein Symbol zeigen, hatten für VoiceOver und andere Bedienungshilfen keinen Namen. Jetzt sagt jeder, was er tut.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.13.0/Kalli-0.13.0.zip" length="3358468" type="application/octet-stream" sparkle:edSignature="QWPmXL75MVPrLajEVp++iqNI1q2+IfvMSz/xjbCYCjfQjOcCE+0hZ726KGSvhgRvQLvmL9A7PBYMeHfjcYX0Cg=="/>
         </item>
     </channel>
 </rss>
