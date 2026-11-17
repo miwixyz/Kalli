@@ -2,6 +2,26 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.15.0] — 2026-11-17
+
+Einmal am Tag zeigt dir Kalli, was heute fällig ist.
+
+### Neu
+
+- **Aufgaben des Tages:** Zur eingestellten Stunde (ab Werk 9 Uhr) erscheint oben rechts ein
+  kleines Glasfenster mit den offenen Erinnerungen, die heute fällig sind. Du hakst sie direkt
+  dort ab. **„In 1 Std. wieder“** schließt das Fenster und holt es eine Stunde später zurück,
+  so oft du willst, **„Schließen“** beendet es für heute. Das Fenster liegt über deinen
+  Fenstern, nimmt dir aber weder Maus noch Tastatur weg, und lässt sich verschieben. Sind
+  keine offenen Aufgaben für heute da, erscheint nichts. War der Mac zur Uhrzeit aus, kommt
+  es beim nächsten Aufwachen am selben Tag. Ab Werk aus; einschalten unter Einstellungen →
+  Menüleiste → Aufgaben des Tages.
+
+### Intern
+
+- Das Download-ZIP wird ohne `._`-Einträge gebaut und wie ein Browser-Download geprüft.
+- Bild-Testkopie: Selbsttest (`kallictl selftest`) und Bild des Aufgaben-Fensters mit Beispieldaten.
+
 ## [0.14.1] — 2026-11-15
 
 Das Papierblatt sieht zusammenhängender aus, und der Doppelklick springt richtig.

@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.14: Ein Tagesblatt auf dem Schreibtisch
+## Neu in 0.15: Was heute fällig ist, einmal am Tag vor Augen
+
+Auf Wunsch zeigt dir Kalli einmal am Tag zur Stunde deiner Wahl ein kleines Fenster mit den Aufgaben, die heute fällig sind. Du hakst sie direkt dort ab. Passt es gerade nicht, schickt „In 1 Std. wieder“ das Fenster weg, und eine Stunde später ist es wieder da. „Schließen“ beendet es für heute. Das Fenster nimmt dir weder Maus noch Tastatur weg, und wenn nichts fällig ist, erscheint es gar nicht. Ab Werk ist es aus.
+
+---
+
+## Seit 0.14: Ein Tagesblatt auf dem Schreibtisch
 
 Auf Wunsch liegt hinter deinen Fenstern ein Abreißblock mit dem heutigen Tag, mit Terminen und Aufgaben darauf. Du blätterst durch Ziehen nach oben oder unten, reißt ein Blatt seitlich ab und springst mit einem Doppelklick auf die Zahl zurück auf heute. Wer es ruhiger mag, nimmt das Glas-Blatt mit Pfeilen. Das Tagesblatt ist ab Werk aus, liest dieselben Kalender und Listen wie Kalli und lässt sich mit einem Rechtsklick wieder ausblenden.
 
@@ -73,6 +79,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Den Tag sortiert vor dir haben | Tagesliste getrennt nach Aufgaben, ganztägig und Terminen. Die Reihenfolge stellst du selbst ein, Ganztägiges und Aufgaben lassen sich zuklappen |
 | Aufgaben erledigen und anlegen | Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an, Tag und Uhrzeit auch mitgetippt. Kalli liest danach nach, ob alles angekommen ist |
 | Den Tag auf dem Schreibtisch vor Augen haben | Auf Wunsch ein Tagesblatt hinter den Fenstern, mit Terminen und Aufgaben, als Papierblatt zum Blättern und Abreißen oder als Glas-Blatt |
+| Jeden Tag an die fälligen Aufgaben denken | Auf Wunsch einmal täglich ein kleines Fenster mit den heute fälligen Erinnerungen, abhakbar und um eine Stunde verschiebbar |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
 | Rechtzeitig erinnert werden | Drei Wege nach Wahl: Mitteilung, pulsierender Punkt in der Leiste, Vollbild-Hinweis. Alle sind ab Werk aus |
 | Die eine wichtige Aufgabe des Tages im Blick behalten | „Die eine Sache“ steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst |
