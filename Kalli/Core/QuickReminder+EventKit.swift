@@ -17,7 +17,7 @@ extension QuickReminder {
     /// „Dringend" = Priorität 1. Liefert die Kennung der neuen Erinnerung.
     @MainActor
     static func save(_ draft: Draft, in store: EKEventStore, calendar: Calendar) -> Result<String, Failure> {
-        guard EKEventStore.authorizationStatus(for: .reminder) == .fullAccess else {
+        guard CalendarStore.authorization(for: .reminder) == .fullAccess else {
             return .failure(.init(message: "Kein Zugriff auf Erinnerungen."))
         }
         guard let list = store.defaultCalendarForNewReminders() else {

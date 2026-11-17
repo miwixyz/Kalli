@@ -110,12 +110,20 @@ final class CalendarStore {
 
     // MARK: - Berechtigung
 
+    /// Die **eine** Stelle, die macOS nach dem Berechtigungsstand fragt. In der Bild-Testkopie
+    /// (docs/SECURE-DESIGN.md K1) immer `.denied`, egal was macOS erteilt hat: Leere Entitlements sperren unter
+    /// Hardened Runtime nur den Kalender, **nicht** die Erinnerungen (gemessen 2026-11-17: Kopie mit leeren
+    /// Entitlements hatte Vollzugriff und zeigte echte Listennamen). Die Abschottung liegt deshalb hier im Code.
+    nonisolated static func authorization(for type: EKEntityType) -> EKAuthorizationStatus {
+        BildKopie.isActive ? .denied : EKEventStore.authorizationStatus(for: type)
+    }
+
     nonisolated var eventPermission: Permission {
-        Self.permission(EKEventStore.authorizationStatus(for: .event))
+        Self.permission(CalendarStore.authorization(for: .event))
     }
 
     nonisolated var reminderPermission: Permission {
-        Self.permission(EKEventStore.authorizationStatus(for: .reminder))
+        Self.permission(CalendarStore.authorization(for: .reminder))
     }
 
     /// Kann ein Anfragen überhaupt etwas bewirken?
@@ -207,8 +215,8 @@ final class CalendarStore {
     /// einer Anfrage gesetzt. Wer den Zugriff danach in den Systemeinstellungen
     /// erteilte, sah bis zum Neustart weiter „Kein Zugriff auf Kalender".
     func refreshAccess() async {
-        let e = EKEventStore.authorizationStatus(for: .event) == .fullAccess
-        let r = EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
+        let e = CalendarStore.authorization(for: .event) == .fullAccess
+        let r = CalendarStore.authorization(for: .reminder) == .fullAccess
         let fresh = Self.access(events: e, reminders: r)
         guard fresh != access else { return }
         Self.log.notice("Berechtigung hat sich geaendert — Kalender \(e, privacy: .public), Erinnerungen \(r, privacy: .public)")
@@ -239,17 +247,21 @@ final class CalendarStore {
         await reload()
     }
 
+    // Beide fragen in der Bild-Testkopie nie (K1) – auch nicht über den Knopf in den Einstellungen.
     private func requestEvents() async -> Bool {
+        guard !BildKopie.isActive else { return false }
         do { return try await store.requestFullAccessToEvents() } catch { return false }
     }
 
     private func requestReminders() async -> Bool {
+        guard !BildKopie.isActive else { return false }
         do { return try await store.requestFullAccessToReminders() } catch { return false }
     }
 
     // MARK: - Quellen (Kalender + Erinnerungslisten)
 
     private func loadSources() {
+        guard !BildKopie.isActive else { return sources = [] }   // K1: keine echten Listennamen
         var found: [SourceInfo] = []
 
         for cal in store.calendars(for: .event) {
@@ -276,8 +288,8 @@ final class CalendarStore {
         }
         prefs.pruneHidden(to: Self.hiddenAfterPrune(
             prefs.hiddenSourceIDs, found: Set(found.map(\.id)),
-            eventsReadable: EKEventStore.authorizationStatus(for: .event) == .fullAccess,
-            remindersReadable: EKEventStore.authorizationStatus(for: .reminder) == .fullAccess))
+            eventsReadable: CalendarStore.authorization(for: .event) == .fullAccess,
+            remindersReadable: CalendarStore.authorization(for: .reminder) == .fullAccess))
     }
 
     // MARK: - Laden
@@ -389,6 +401,7 @@ final class CalendarStore {
     /// Holt Termine in einem Zeitfenster. Eine Stelle für beide Aufrufer —
     /// Monatsansicht und Mitteilungs-Horizont.
     private func fetchEvents(from: Date, to: Date) async -> [AgendaItem] {
+        guard Self.authorization(for: .event) == .fullAccess else { return [] }
         let cals = store.calendars(for: .event).filter { !prefs.isHidden($0.calendarIdentifier) }
         guard !cals.isEmpty else { return [] }
 
@@ -449,6 +462,7 @@ final class CalendarStore {
     }
 
     private func fetchReminders(in range: DateInterval) async -> [AgendaItem] {
+        guard Self.authorization(for: .reminder) == .fullAccess else { return [] }
         let cals = store.calendars(for: .reminder).filter { !prefs.isHidden($0.calendarIdentifier) }
         guard !cals.isEmpty else { return [] }
 
@@ -481,6 +495,7 @@ final class CalendarStore {
     @discardableResult
     func setCompleted(_ completed: Bool, for item: AgendaItem) async -> String? {
         guard item.isReminder else { return nil }
+        guard !BildKopie.isActive else { return "Die Bild-Testkopie ändert keine Erinnerungen." }
 
         // Frisch aus EventKit holen. Das AgendaItem ist eine Momentaufnahme;
         // dazwischen kann die Erinnerung anderswo geändert worden sein.
@@ -560,7 +575,7 @@ final class CalendarStore {
     /// weil sie außerhalb des geladenen Zeitraums liegen kann. Ohne Berechtigung
     /// `unknown`, nicht `gone`: dann darf nichts gelöscht werden.
     func reminderLookup(id: String) -> OneThing.ReminderLookup {
-        guard EKEventStore.authorizationStatus(for: .reminder) == .fullAccess else { return .unknown }
+        guard CalendarStore.authorization(for: .reminder) == .fullAccess else { return .unknown }
         guard let reminder = store.calendarItem(withIdentifier: id) as? EKReminder else { return .gone }
         return .found(.init(title: reminder.title ?? "", isCompleted: reminder.isCompleted))
     }
@@ -600,10 +615,10 @@ final class CalendarStore {
         // Die Rohwerte stehen mit dabei, weil die uebersetzten Bezeichnungen
         // eine Interpretation sind. 0 = notDetermined, 1 = restricted,
         // 2 = denied, 3 = fullAccess, 4 = writeOnly.
-        Self.log.notice("START — Kalender \(self.eventPermission.label, privacy: .public), Erinnerungen \(self.reminderPermission.label, privacy: .public), canPrompt \(self.canPrompt, privacy: .public), Rohwerte event=\(EKEventStore.authorizationStatus(for: .event).rawValue, privacy: .public) reminder=\(EKEventStore.authorizationStatus(for: .reminder).rawValue, privacy: .public)")
+        Self.log.notice("START — Kalender \(self.eventPermission.label, privacy: .public), Erinnerungen \(self.reminderPermission.label, privacy: .public), canPrompt \(self.canPrompt, privacy: .public), Rohwerte event=\(CalendarStore.authorization(for: .event).rawValue, privacy: .public) reminder=\(CalendarStore.authorization(for: .reminder).rawValue, privacy: .public)")
 
-        let e = EKEventStore.authorizationStatus(for: .event) == .fullAccess
-        let r = EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
+        let e = CalendarStore.authorization(for: .event) == .fullAccess
+        let r = CalendarStore.authorization(for: .reminder) == .fullAccess
         guard e || r else { return }
 
         access = switch (e, r) {

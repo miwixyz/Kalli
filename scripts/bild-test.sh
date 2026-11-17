@@ -35,6 +35,12 @@ PLIST="$APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(git rev-list --count HEAD)" "$PLIST"
 # Kein Dienste-Menü: Sonst stünde „Als eine Sache in Kalli“ doppelt im System und könnte in der Kopie landen.
 /usr/libexec/PlistBuddy -c "Delete :NSServices" "$PLIST"
+# Keine Begründungstexte für Kalender und Erinnerungen (K1): Ohne sie kann macOS der Kopie gar keinen
+# Zugriffsdialog zeigen. Die Kopie fragt ohnehin nie an (CalendarStore, BildKopie.isActive) – das ist die zweite Sperre.
+for key in NSCalendarsUsageDescription NSCalendarsFullAccessUsageDescription \
+    NSRemindersUsageDescription NSRemindersFullAccessUsageDescription; do
+    /usr/libexec/PlistBuddy -c "Delete :$key" "$PLIST"
+done
 
 IDENTITY=$(security find-identity -v -p codesigning \
     | sed -n 's/.*"\(Developer ID Application: [^"]*\)".*/\1/p' | head -1)
@@ -50,8 +56,9 @@ for part in "$APP"/Contents/MacOS/*.dylib; do
     codesign --force --options runtime --sign "$IDENTITY" "$part"
 done
 
-# App: KEINE Berechtigungen (K1). Ohne Kalender-/Erinnerungs-Entitlement lehnt macOS unter Hardened Runtime jede
-# Anfrage sofort ab – die Kopie sieht nie einen Termin. Keine Apple Events.
+# App: KEINE Berechtigungen (K1). Ohne Kalender-Entitlement lehnt macOS unter Hardened Runtime jede Kalender-Anfrage
+# sofort ab. Für ERINNERUNGEN gilt das NICHT (gemessen 2026-11-17: Vollzugriff trotz leerer Entitlements) – die
+# sperrt die Kopie im Code (CalendarStore.authorization) und über die entfernten Begründungstexte oben. Keine Apple Events.
 ENT="$DEST_DIR/KalliBild.entitlements"
 cat > "$ENT" <<'PLISTEND'
 <?xml version="1.0" encoding="UTF-8"?>

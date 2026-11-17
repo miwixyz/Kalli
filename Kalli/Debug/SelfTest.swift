@@ -1,5 +1,6 @@
 #if DEBUG
 import AppKit
+import EventKit
 import Foundation
 
 /// Selbsttest der Bild-Testkopie (Muster aus Gnotchi und Tippi, BAMA `test-mac-app`; Kalli 2026-11-16): ruft im
@@ -17,6 +18,7 @@ extension SelfTest {
     static func run(windowFor: (String) -> NSWindow?) async -> [Step] {
         var steps: [Step] = []
         steps.append(isolation())
+        steps.append(noPersonalData())
         steps.append(resources())
         steps.append(bundleSeal())
         steps.append(preferencesRoundTrip())
@@ -34,6 +36,24 @@ extension SelfTest {
         let folder = DebugBridge.directory?.lastPathComponent ?? "?"
         let ok = id == "dev.mwlr.kalli.bild" && BildKopie.isActive && folder == "Kalli Bild"
         return Step(name: "Abschottung", ok: ok, detail: "Kennung \(id), Datenordner \(folder)")
+    }
+
+    /// Kein Kalender- und kein Erinnerungszugriff (K1) – drei unabhängige Messungen, jede allein reicht für FAIL:
+    /// die Freigabe bei macOS (Rohwert; 3 = Vollzugriff, 4 = nur schreiben), die Sperre im Code
+    /// (`CalendarStore.authorization`) und eine Probe mit frischem `EKEventStore`, die nur **zählt**, wie viele
+    /// Kalender und Listen lesbar wären. Die Probe fragt nicht an (`calendars(for:)` löst keinen Dialog aus).
+    private static func noPersonalData() -> Step {
+        let raw = [EKEntityType.event, .reminder].map { EKEventStore.authorizationStatus(for: $0) }
+        let granted = raw.contains { $0 == .fullAccess || $0 == .writeOnly }
+        let gate = CalendarStore.authorization(for: .event) == .denied
+            && CalendarStore.authorization(for: .reminder) == .denied
+        let probe = EKEventStore()
+        let visible = probe.calendars(for: .event).count + probe.calendars(for: .reminder).count
+        let hint = granted ? " → Freigabe entziehen: tccutil reset Calendar|Reminders dev.mwlr.kalli.bild" : ""
+        return Step(name: "Kein Datenzugriff", ok: !granted && gate && visible == 0,
+                    detail: "macOS Kalender \(raw[0].rawValue), Erinnerungen \(raw[1].rawValue) (0 nie gefragt, "
+                        + "2 abgelehnt, 3 Vollzugriff), Sperre im Code " + (gate ? "an" : "AUS")
+                        + ", lesbare Kalender/Listen \(visible)" + hint)
     }
 
     /// Schrift und Texte im Bündel – fehlt eine, fällt die Oberfläche still auf die Systemschrift zurück.

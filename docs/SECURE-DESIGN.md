@@ -24,9 +24,29 @@ Fensterbilder für eigene Mac-Apps“, 28.10.).
     also keinen fest „Kalli“ heißenden Pfad, den die Kopie mitbenutzen würde. Einstellungen, „die eine Sache“ und
     Gruppenzustand liegen in `UserDefaults.standard` → mit eigener Kennung automatisch eigene Domäne. Der
     Kanal bekommt einen eigenen Ordner `~/Library/Application Support/Kalli Bild` (0700).
-  - **Keine Berechtigungen:** leere Entitlements. Unter Hardened Runtime lehnt macOS Kalender- und
-    Erinnerungs-Anfragen ohne Entitlement sofort ab (gemessen 2026-09-22, siehe `Kalli.entitlements`) – die Kopie
-    sieht nie einen Termin. Keine Apple Events.
+  - **Keine Berechtigungen, kein Kalender- und Erinnerungszugriff** (berichtigt 2026-11-17): leere Entitlements.
+    Unter Hardened Runtime lehnt macOS damit **nur Kalender**-Anfragen sofort ab (gemessen 2026-09-22, siehe
+    `Kalli.entitlements`). Für **Erinnerungen gilt das nicht** – bis 17.11. stand hier fälschlich „Kalender- und
+    Erinnerungs-Anfragen“. Gemessen am 17.11. auf dem Mac mini: Kopie mit leeren Entitlements (`codesign -d
+    --entitlements -` → `[Dict]` leer, `flags=0x10000(runtime)`), `kallictl status` → `erinnerungszugriff: 3`,
+    `kalenderzugriff: 0`; `snapshot einstellungen` zeigte echte Listennamen, ein frischer `EKEventStore` in der Kopie
+    sah 27 Listen. Weg dorthin: Das Popover fragte beim Öffnen (`canPrompt`, weil Kalender auf „nie gefragt“ stand)
+    beide Berechtigungen an; der Erinnerungs-Dialog erschien und wurde bestätigt. Wann, ist nicht mehr messbar (das
+    Protokoll reicht nicht so weit zurück, die TCC-Datenbank ist ohne Festplattenvollzugriff nicht lesbar).
+    Die Abschottung liegt deshalb in drei Schichten, keine davon ist das Entitlement:
+    1. **Code:** `CalendarStore.authorization(for:)` ist die einzige Stelle, die den Berechtigungsstand liest, und
+       liefert in der Kopie immer `.denied`. Daran hängen `canPrompt` (Popover fragt nicht), `loadIfAlreadyAuthorized`,
+       `refreshAccess`, `reminderLookup` und `QuickReminder.save`. Zusätzlich direkt gesperrt: `requestEvents`/
+       `requestReminders` (auch der Knopf in den Einstellungen fragt nicht), `loadSources` (keine Listennamen),
+       `fetchEvents`/`fetchReminders` (keine Einträge), `setCompleted` (kein Schreiben).
+    2. **Info.plist der Kopie:** `bild-test.sh` entfernt die vier `NS…UsageDescription`-Texte für Kalender und
+       Erinnerungen – ohne sie kann macOS der Kopie keinen Zugriffsdialog zeigen.
+    3. **Prüfung:** `kallictl selftest`, Schritt „Kein Datenzugriff“, meldet FAIL bei erteilter Freigabe (Rohwert 3
+       oder 4), bei ausgeschalteter Sperre oder wenn ein frischer `EKEventStore` mehr als 0 Kalender/Listen zählt.
+       Die Probe zählt nur, liest keine Titel und fragt nicht an.
+    Eine früher erteilte Freigabe bleibt bei macOS stehen, bis sie entzogen wird: `tccutil reset Reminders
+    dev.mwlr.kalli.bild` (einmalig je Mac, auf dem die Kopie je bestätigt wurde). `kallictl status` meldet bewusst
+    weiter den Rohwert von macOS, nicht den gesperrten Wert. Keine Apple Events.
   - **Kein Updater:** Sparkle wird in der Kopie nicht gestartet (`startingUpdater: false`, keine Prüfung, kein Netz).
   - **Keine Verbindung zu Gnotchi:** weder `GnotchiEventSender` (Termine an `kalli.sock`) noch `GnotchiUpdateSender`
     (Update-Meldung über distnoted) laufen in der Kopie. Ihr leeres „nächster Termin“ hätte sonst Gnotchis echte
