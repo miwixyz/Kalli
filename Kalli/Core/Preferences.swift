@@ -33,6 +33,8 @@ final class Preferences {
         static let groupOrder = "agendaGroupOrder"
         static let deskPad = "deskPadEnabled"
         static let deskPadStyle = "deskPadStyle"
+        static let taskDigest = "taskDigestEnabled"
+        static let taskDigestHour = "taskDigestHour"
     }
 
     private let defaults: UserDefaults
@@ -215,6 +217,17 @@ final class Preferences {
         didSet { defaults.set(deskPadStyle.rawValue, forKey: Key.deskPadStyle) }
     }
 
+    /// Tägliches Pop-up mit den heute fälligen Aufgaben (0.15.0, Michael 2026-11-17), siehe
+    /// `TaskDigest`. Ab Werk aus: Eine Unterbrechung wird eingeschaltet, nicht vorausgesetzt.
+    var taskDigestEnabled: Bool {
+        didSet { defaults.set(taskDigestEnabled, forKey: Key.taskDigest) }
+    }
+
+    /// Volle Stunde (0–23), zu der das Aufgaben-Pop-up erscheint. Ab Werk 9 Uhr.
+    var taskDigestHour: Int {
+        didSet { defaults.set(taskDigestHour, forKey: Key.taskDigestHour) }
+    }
+
     /// Eigener Vorlauf für den Vollbild-Hinweis (0 = zum Beginn). Bewusst getrennt von
     /// `alertLeadMinutes`: Die Mitteilung warnt vor, der Vollbild-Hinweis holt einen
     /// kurz vor Beginn aus der Arbeit (entschieden mit Michael, 2026-09-29).
@@ -276,6 +289,8 @@ final class Preferences {
         deskPadEnabled = defaults.object(forKey: Key.deskPad) as? Bool ?? false
         deskPadStyle = DeskPadStyle(rawValue: defaults.object(forKey: Key.deskPadStyle) as? Int ?? 0) ?? .paper
         fullScreenLeadMinutes = defaults.object(forKey: Key.fullScreenLead) as? Int ?? 1
+        taskDigestEnabled = defaults.object(forKey: Key.taskDigest) as? Bool ?? false
+        taskDigestHour = defaults.object(forKey: Key.taskDigestHour) as? Int ?? 9
         fullScreenScreens = FullScreenScreens(
             rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0
         ) ?? .all

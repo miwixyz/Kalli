@@ -6,7 +6,7 @@ struct DebugCommand: Equatable, Sendable {
     enum Kind: Equatable, Sendable {
         /// Version, Kennung, Freigaben, offene eigene Fenster – nur Zahlen und Kennungen.
         case status
-        /// Bild eines eigenen Fensters (nur Einstellungen und Hilfe – nie Kalender, Agenda, „die eine Sache“).
+        /// Bild eines eigenen Fensters (nur Einstellungen, Hilfe und das Aufgaben-Pop-up mit Beispieldaten – nie Kalender, Agenda, „die eine Sache“).
         case snapshot(window: String)
         /// Hell, dunkel oder wie das System.
         case appearance(String)
@@ -19,9 +19,11 @@ struct DebugCommand: Equatable, Sendable {
 
     static let settingsWindow = "einstellungen"
     static let helpWindow = "hilfe"
+    /// Aufgaben-Pop-up mit festen Beispielaufgaben (`TaskDigest.demoView`) – nie mit echten Erinnerungen.
+    static let tasksWindow = "aufgaben"
     /// Fenster, von denen ein Bild erlaubt ist. Kalender, Agenda und „die eine Sache“ zeigen im echten Kalli echte
     /// Inhalte und fehlen bewusst.
-    static let snapshotWindows: Set<String> = [settingsWindow, helpWindow]
+    static let snapshotWindows: Set<String> = [settingsWindow, helpWindow, tasksWindow]
     static let appearances: Set<String> = ["light", "dark", "system"]
 
     /// Größte Nachricht (4 Byte Länge + JSON). Größer → Verbindung zu.

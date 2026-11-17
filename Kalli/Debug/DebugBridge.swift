@@ -107,11 +107,12 @@ final class DebugBridge {
     private func window(_ id: String) -> NSWindow {
         if let w = windows[id] { return w }
         let isHelp = id == DebugCommand.helpWindow
+        let isTasks = id == DebugCommand.tasksWindow
         let content = VStack(spacing: 12) {
-            if isHelp { HelpView() } else { SettingsView() }
+            if isTasks { TaskDigest.demoView() } else if isHelp { HelpView() } else { SettingsView() }
         }
         .padding(12)
-        .frame(width: (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
+        .frame(width: isTasks ? nil : (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
         .environment(prefs)
         .environment(store)
         .environment(label)
@@ -119,7 +120,7 @@ final class DebugBridge {
         let controller = NSHostingController(rootView: content)
         let w = NSWindow(contentViewController: controller)
         w.styleMask = [.titled, .closable]
-        w.title = isHelp ? "Hilfe" : "Einstellungen"
+        w.title = isTasks ? "Aufgaben heute" : (isHelp ? "Hilfe" : "Einstellungen")
         w.identifier = NSUserInterfaceItemIdentifier(id)
         w.isReleasedWhenClosed = false
         w.setContentSize(controller.view.fittingSize)

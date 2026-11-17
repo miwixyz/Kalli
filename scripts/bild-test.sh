@@ -9,7 +9,7 @@
 #
 #   sh scripts/bild-test.sh                → bauen, signieren, nach ~/Applications installieren, starten
 #   build-dev/kallictl status              → Zustand (nur Zahlen/Kennungen)
-#   build-dev/kallictl snapshot einstellungen|hilfe
+#   build-dev/kallictl snapshot einstellungen|hilfe|aufgaben
 #   build-dev/kallictl appearance light|dark|system
 set -eu
 project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
@@ -90,4 +90,4 @@ open "$INSTALLED"
 echo "✓ Bild-Testkopie gestartet: $INSTALLED"
 echo "  Erster Lauf auf einem Mac: Systemeinstellungen → Datenschutz & Sicherheit → Bildschirm- & Systemaudioaufnahme"
 echo "  → „Kalli Bild“ einschalten (nicht „Kalli“), dann dieses Skript erneut starten."
-echo "  Steuern: build-dev/kallictl status | snapshot einstellungen|hilfe | appearance light|dark|system | selftest"
+echo "  Steuern: build-dev/kallictl status | snapshot einstellungen|hilfe|aufgaben | appearance light|dark|system | selftest"

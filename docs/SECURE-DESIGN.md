@@ -42,7 +42,7 @@ Fensterbilder für eigene Mac-Apps“, 28.10.).
   Apple-Development-Builds tragen `get-task-allow`. `kallictl` prüft umgekehrt die Kopie, bevor es sendet.
 - **Feste Befehle (Ingestion):** `DebugCommand.parse` (Tests `KalliTests/DebugCommandTests.swift`), JSON aus
   `JSONSerialization` (kein Code-Pfad im Parser), Rahmen = 4 Byte Länge + JSON, höchstens 4 KB, Länge 0 oder zu groß
-  → Verbindung zu. `v` Zahl 1 (kein Wahrheitswert). `status`; `snapshot` nur für `einstellungen`/`hilfe`;
+  → Verbindung zu. `v` Zahl 1 (kein Wahrheitswert). `status`; `snapshot` nur für `einstellungen`/`hilfe`/`aufgaben` (Aufgaben-Pop-up, seit 17.11.2026, ausschließlich mit festen Beispielaufgaben aus `TaskDigest.demoView`, nie mit Erinnerungen);
   `appearance` light/dark/system, `selftest` (seit 16.11.2026, ohne Parameter: Abschottung, Ressourcen, Siegel, Einstellungen in Wegwerf-Suite, Erinnerungs-Erkennung, beide Fenster, Beobachter-Rauchtest mit Wegwerf-Speicher ohne Berechtigung und ohne Mitteilungen). `id` 1–32 Zeichen A–Z/a–z/0–9, sie wird Dateiname (kein Pfad-Ausbruch).
   Alles andere: verworfen, keine Antwort, Verbindung zu. Höchstens 10 Befehle/s, der Rest fällt weg (DoS).
 - **Welche Fenster (Information disclosure):** Kalli hat keine eigenen Fenster – Einstellungen und Hilfe stehen im

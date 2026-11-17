@@ -131,6 +131,29 @@ Vollbild-Hinweis.
 - Schläft der Mac zum Zeitpunkt, holt Kalli den Hinweis nach dem Aufwachen nach,
   aber nur bis 5 Minuten nach Beginn.
 
+### Aufgaben des Tages (ab 0.15.0)
+
+Einmal am Tag zeigt Kalli dir die Aufgaben, die heute fällig sind. **Ab Werk aus**,
+einzuschalten unter Einstellungen → Menüleiste → **Aufgaben des Tages**.
+
+- Zur eingestellten **Uhrzeit** (volle Stunde, ab Werk 9 Uhr) erscheint oben rechts ein
+  kleines Glasfenster mit den **offenen Erinnerungen, die heute fällig sind**. Es liegt
+  über deinen Fenstern, nimmt dir aber weder Maus noch Tastatur weg. Du kannst es am
+  Hintergrund verschieben.
+- **Abhaken** direkt im Fenster: Klick auf den Kreis. Ist die letzte Aufgabe erledigt,
+  schließt sich das Fenster von selbst.
+- **„In 1 Std. wieder“** schließt das Fenster und holt es eine Stunde später zurück, so oft
+  du willst. Das Schlummern übersteht einen Neustart von Kalli. Kurz vor Mitternacht
+  wirkt der Knopf wie „Schließen“, denn in einer Stunde wären es nicht mehr die Aufgaben
+  von heute.
+- **„Schließen“** beendet es für heute. Morgen kommt es wieder.
+- Sind zur Uhrzeit **keine offenen Aufgaben** für heute da, erscheint nichts.
+- War der Mac zur Uhrzeit aus oder im Ruhezustand, kommt das Fenster beim nächsten
+  Aufwachen am selben Tag.
+- Gezeigt werden nur Erinnerungen mit Fälligkeit **heute** aus eingeblendeten Listen.
+  Überfällige von gestern und Erinnerungen ohne Datum gehören nicht dazu. Dringende
+  stehen oben, dann die mit Uhrzeit, dann die ohne. Mehr als acht werden gezählt.
+
 **„Link öffnen“:** Steht im Termin ein Web-Link (URL-Feld, Ort oder Notizen),
 zeigt der Hinweis einen Knopf mit der Zieladresse, z. B. „Link öffnen · zoom.us“.
 Geöffnet wird nur auf Klick und nur `http`/`https`. Einladungen können von
@@ -293,7 +316,7 @@ Symbol im Kalli-Akzent, im Stil der Systemeinstellungen:
 | Reiter | Inhalt |
 |---|---|
 | **Kalender** | Berechtigungen · jeder Kalender und jede Erinnerungsliste einzeln ein- und ausblendbar, nach Account gruppiert |
-| **Menüleiste** | Anzeige in der Leiste (Symbol, Datum, Format) · Termin in der Leiste · Hinweis vor dem Termin (Mitteilung, Puls) · Vollbild-Hinweis |
+| **Menüleiste** | Anzeige in der Leiste (Symbol, Datum, Format) · Termin in der Leiste · Hinweis vor dem Termin (Mitteilung, Puls) · Vollbild-Hinweis · Aufgaben des Tages |
 | **Ansicht** | Darstellung (Hell/Dunkel, Schriftgröße, Kalenderwochen) · Wochentage hervorheben · Tagesliste · Laufend und kommend · System (Start bei der Anmeldung) |
 
 ## Start bei der Anmeldung

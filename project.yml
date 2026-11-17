@@ -84,6 +84,9 @@ targets:
       - path: Kalli/UI/GlassEffects.swift
       - path: Kalli/UI/MonthGrid.swift
       - path: Kalli/UI/FullScreenAlertWindow.swift
+      # TaskDigest (Core) hält sein Fenster; die Ansicht braucht `movesWindow`.
+      - path: Kalli/UI/TaskDigestWindow.swift
+      - path: Kalli/UI/WindowDragArea.swift
       # Befehlskanal der Bild-Testkopie (docs/SECURE-DESIGN.md K1): nur das reine Parsen, kein Socket.
       - path: Kalli/Debug/DebugCommand.swift
       - path: Kalli/Debug/SelfTestResult.swift

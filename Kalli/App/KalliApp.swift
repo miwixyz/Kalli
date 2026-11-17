@@ -16,6 +16,8 @@ struct KalliApp: App {
     @State private var gnotchiEvents: GnotchiEventSender
     /// Tagesblatt auf dem Schreibtisch (0.14.0), ab Werk aus.
     @State private var deskPad: DeskPadController
+    /// Tägliches Pop-up mit den heute fälligen Aufgaben (0.15.0), ab Werk aus.
+    @State private var taskDigest: TaskDigest
 
     init() {
         // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
@@ -42,6 +44,8 @@ struct KalliApp: App {
         _gnotchiEvents = State(initialValue: events)
         let pad = DeskPadController(prefs: p, store: s)
         _deskPad = State(initialValue: pad)
+        let digest = TaskDigest(prefs: p, store: s)
+        _taskDigest = State(initialValue: digest)
         // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
         Task { @MainActor in p.appearanceMode.apply() }
         // Bild-Testkopie (docs/SECURE-DESIGN.md K1, nur Debug-Build): keine Termine an Gnotchi – ihr leerer
@@ -49,6 +53,12 @@ struct KalliApp: App {
         guard !Self.startedAsBildKopie(prefs: p, store: s, label: l) else { return }
         Task { @MainActor in events.start() }
         Task { @MainActor in pad.start() }
+        Task { @MainActor in
+            digest.start()
+            #if DEBUG
+            digest.showDemoIfRequested()
+            #endif
+        }
         // „Als eine Sache in Kalli" im Dienste-Menü (Info.plist NSServices).
         Task { @MainActor in
             NSApp.servicesProvider = service

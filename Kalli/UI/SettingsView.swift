@@ -245,6 +245,10 @@ private struct MenuBarSection: View {
         SettingsGroup(title: "Vollbild-Hinweis", symbol: "rectangle.bottomhalf.inset.filled", tint: Theme.accent) {
             fullScreen
         }
+
+        SettingsGroup(title: "Aufgaben des Tages", symbol: "checklist", tint: Theme.accent) {
+            taskDigest
+        }
     }
 
     @ViewBuilder
@@ -359,6 +363,24 @@ private struct MenuBarSection: View {
             SettingsHint("Gilt für beide Kanäle. Kalli meldet nur Termine, die im "
                  + "Kalender keinen eigenen Alarm tragen — sonst klingelte es "
                  + "zweimal für denselben Termin.")
+        }
+    }
+
+    @ViewBuilder
+    private var taskDigest: some View {
+        @Bindable var prefs = prefs
+
+        Toggle("Tägliches Pop-up mit fälligen Aufgaben", isOn: $prefs.taskDigestEnabled)
+
+        if prefs.taskDigestEnabled {
+            Picker("Uhrzeit", selection: $prefs.taskDigestHour) {
+                ForEach(5...21, id: \.self) { Text(verbatim: "\($0):00 Uhr").tag($0) }
+            }
+
+            SettingsHint("Zeigt einmal am Tag die offenen Erinnerungen, die heute fällig sind, zum Abhaken. "
+                 + "\u{201E}In 1 Std. wieder\u{201C} holt das Fenster eine Stunde später zurück, "
+                 + "\u{201E}Schließen\u{201C} beendet es für heute. Ohne offene Aufgaben erscheint nichts. "
+                 + "War der Mac zur Uhrzeit aus, kommt es beim nächsten Aufwachen am selben Tag.")
         }
     }
 

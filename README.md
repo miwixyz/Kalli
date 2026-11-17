@@ -68,6 +68,9 @@ ansteht, bezahlt das mit Oberfläche.
   Ziehen blätterbar, seitlich abreißbar, Doppelklick = heute) oder Glas-Blatt hinter allen Fenstern, mit Datum,
   Terminen und Aufgaben des Tages, verschiebbar, Aufgaben abhakbar. **Ab Werk aus**, liest
   dieselben Quellen wie das Popover
+- **Aufgaben des Tages** (ab 0.15.0) — einmal täglich zur eingestellten Stunde ein kleines
+  Glasfenster oben rechts mit den heute fälligen, offenen Erinnerungen, abhakbar. **„In 1 Std.
+  wieder“** schlummert, „Schließen“ gilt für den Tag. Nimmt keinen Fokus, **ab Werk aus**
 - **Vollbild-Hinweis vor dem Termin** (ab 0.5.0, nach dem Vorbild von „In Your Face“) —
   Glasfläche über der unteren Bildschirmhälfte, bis Esc/Return. Bildschirme wählbar:
   alle, Hauptbildschirm oder andere. **„Zum Beginn nochmal“** holt den Hinweis
@@ -154,8 +157,10 @@ Kalli/
   Core/    CalendarStore (EventKit; schreibend: Erledigt-Kennzeichen, neue Erinnerung), QuickReminder, Preferences, Models,
            EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm),
            DeskPad (reine Logik des Tagesblatts: Gruppen, Blättern, Abreißen, Monatsraster)
+           TaskDigest (tägliches Aufgaben-Pop-up: Zeitpunkt, Schlummern, Auswahl)
   UI/      PopoverView, AgendaList, MonthGrid, SettingsView, GlassBackground, GlassEffects (Glasgruppen, gleitende Pille),
-           PaperPadView + DeskPadView + DeskPadWindow (Tagesblatt: Papierblatt, Glas-Blatt, Fenster), WindowDragArea
+           PaperPadView + DeskPadView + DeskPadWindow (Tagesblatt: Papierblatt, Glas-Blatt, Fenster), WindowDragArea,
+           TaskDigestWindow (Fenster und Ansicht des Aufgaben-Pop-ups)
 KalliTests/ Reine Entscheidungslogik — ohne EventKit, ohne Uhr
 ```
 
@@ -218,7 +223,7 @@ weiß es nicht.
    Paket schützt macOS danach vor Änderungen, und weitere Builds scheitern dann
    still mit „Operation not permitted“. `scripts/dev-signed.sh` baut nach
    `build-dev/` und signiert eine frische Kopie unter `/tmp`
-   (`./scripts/dev-signed.sh -vollbildDemo` zeigt den Vollbild-Hinweis sofort,
+   (`./scripts/dev-signed.sh -vollbildDemo` zeigt den Vollbild-Hinweis sofort, `-aufgabenDemo` das Aufgaben-Pop-up,
    nur in Debug-Builds). Das App-Symbol entsteht mit `scripts/make-icon.py` aus
    `assets/Kalli-App_Icon.png`.
 
