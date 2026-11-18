@@ -41,10 +41,27 @@ final class TaskDigestTests: XCTestCase {
                        NSPoint(x: 16, y: 1038))
     }
 
-    func testSavedPositionThatNoLongerFitsFallsBackToTopLeft() {
-        let saved = NSPoint(x: 1700, y: 700)   // ragt rechts über den Rand
-        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: saved, size: size, areas: [main]),
-                       NSPoint(x: 16, y: 1038))
+    /// Audit 2026-11-18: Ragt das Fenster an der gemerkten Stelle über den Rand, wird es dort
+    /// hineingeschoben statt nach oben links zu springen.
+    func testSavedPositionThatNoLongerFitsIsPushedBackOnScreen() {
+        let rightEdge = NSPoint(x: 1700, y: 700)   // ragt rechts über den Rand
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: rightEdge, size: size, areas: [main]),
+                       NSPoint(x: 1580, y: 700))
+        // Unten abgelegt bei wenigen Aufgaben, heute ist das Fenster höher.
+        let bottom = NSPoint(x: 100, y: 150)
+        let tall = NSSize(width: 340, height: 330)
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: bottom, size: tall, areas: [main]),
+                       NSPoint(x: 100, y: 330))
+        // Auf dem zweiten Bildschirm bleibt es dort.
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: NSPoint(x: 3700, y: 700), size: size,
+                                                   areas: [main, second]),
+                       NSPoint(x: 3500, y: 700))
+    }
+
+    func testWindowTallerThanTheScreenSitsFlushAtTheTop() {
+        let huge = NSSize(width: 340, height: 1200)
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: NSPoint(x: 100, y: 500), size: huge, areas: [main]),
+                       NSPoint(x: 100, y: 1050))
     }
 
     // MARK: Auswahl

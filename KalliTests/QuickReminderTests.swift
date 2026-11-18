@@ -59,6 +59,18 @@ final class QuickReminderTests: XCTestCase {
         XCTAssertNil(parse("Termin 31.2.").day)
     }
 
+    /// Audit 2026-11-18: Was kein gültiges, künftiges Datum ist, bleibt im Titel stehen.
+    func testInvalidOrPastDateStaysInTitle() {
+        for text in ["Termin 31.2. absagen", "Version 0.15. freigeben", "Treffen 9.30. vorbereiten",
+                     "Protokoll 1.1.202 ablegen", "Rechnung vom 12.03.2024 prüfen"] {
+            let p = parse(text)
+            XCTAssertNil(p.day, text)
+            XCTAssertEqual(p.title, text, text)
+        }
+        XCTAssertEqual(parse("Abgabe 5.1.2027").day, day(5, 1, 2027))
+        XCTAssertEqual(parse("Abgabe 5.1.2027").title, "Abgabe")
+    }
+
     func testDateIsNotReadAsTime() {
         let p = parse("Abgabe 24.10. 15 Uhr")
         XCTAssertEqual(p.day, day(24, 10))
@@ -138,6 +150,22 @@ final class QuickReminderTests: XCTestCase {
         XCTAssertFalse(FullScreenAlerts.isEligible(urgent(due: now, hasTime: false)))
         XCTAssertFalse(FullScreenAlerts.isEligible(urgent(due: now, completed: true)))
         XCTAssertFalse(FullScreenAlerts.isEligible(Fixture.reminder(due: now)))
+    }
+
+    /// Audit 2026-11-18: Verschiebt man eine schon gezeigte dringende Erinnerung, bleibt die
+    /// Kennung gleich – zur neuen Zeit muss der Hinweis trotzdem kommen.
+    func testMovedUrgentReminderAlertsAgain() {
+        func urgentRem(due: Date) -> AgendaItem {
+            var r = Fixture.reminder(id: "rem-1", due: due)
+            r.isUrgent = true
+            return r
+        }
+        let original = urgentRem(due: Fixture.at(0))
+        let shown: Set<String> = [FullScreenAlerts.alertKey(original)]
+        XCTAssertTrue(FullScreenAlerts.due(in: [original], now: Fixture.at(0), lead: 60, shown: shown).isEmpty)
+
+        let moved = urgentRem(due: Fixture.at(60))
+        XCTAssertEqual(FullScreenAlerts.due(in: [moved], now: Fixture.at(60), lead: 60, shown: shown).count, 1)
     }
 
     func testUrgentReminderIsNotSnoozable() {

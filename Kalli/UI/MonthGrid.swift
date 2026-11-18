@@ -64,6 +64,23 @@ struct MonthGrid: View {
         return Array(symbols[first...] + symbols[..<first])
     }
 
+    /// Pfeiltasten verschieben die Auswahl um einen Tag bzw. eine Woche, innerhalb der
+    /// 42 sichtbaren Tage (Audit 2026-11-18: Raster war per Tastatur nicht bedienbar).
+    private func move(_ direction: MoveCommandDirection) {
+        let step: Int
+        switch direction {
+        case .left: step = -1
+        case .right: step = 1
+        case .up: step = -7
+        case .down: step = 7
+        @unknown default: return
+        }
+        let days = MonthRaster.days(for: month, calendar: calendar)
+        guard let target = calendar.date(byAdding: .day, value: step, to: selection),
+              days.contains(where: { calendar.isDate($0, inSameDayAs: target) }) else { return }
+        selection = target
+    }
+
     var body: some View {
         Grid(horizontalSpacing: 2, verticalSpacing: 2) {
             GridRow {
@@ -102,10 +119,36 @@ struct MonthGrid: View {
                             width: cellW, height: cellH, scale: scale
                         )
                         .onTapGesture { selection = day }
+                        // VoiceOver: ein Tag ist eine auslösbare Schaltfläche mit Datum und Zustand.
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(Self.spoken(day, calendar: calendar,
+                                                        isToday: calendar.isDateInToday(day)))
+                        .accessibilityValue(hasItems(day) ? "Einträge vorhanden" : "")
+                        .accessibilityAddTraits(calendar.isDate(day, inSameDayAs: selection)
+                                                ? [.isButton, .isSelected] : .isButton)
+                        .accessibilityAction { selection = day }
                     }
                 }
             }
         }
+        .focusable()
+        .focusEffectDisabled()
+        .onMoveCommand(perform: move)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Monat")
+    }
+
+    private static let spokenFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "de_DE")
+        f.dateFormat = "EEEE, d. MMMM"
+        return f
+    }()
+
+    static func spoken(_ day: Date, calendar: Calendar, isToday: Bool) -> String {
+        spokenFormatter.calendar = calendar
+        let text = spokenFormatter.string(from: day)
+        return isToday ? "Heute, \(text)" : text
     }
 }
 

@@ -386,8 +386,9 @@ Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und
 **Erinnerungen**.
 
 Kalender werden ausschließlich **gelesen**. Bei Erinnerungen schreibt Kalli
-genau eine Sache: das **Erledigt-Kennzeichen**, wenn du ein Häkchen setzt. Nichts
-wird angelegt, umbenannt oder gelöscht.
+zwei Dinge: das **Erledigt-Kennzeichen**, wenn du ein Häkchen setzt, und eine
+**neue Erinnerung**, wenn du sie über das „+“ anlegst. Umbenannt oder gelöscht
+wird nichts.
 
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
 Hinweis mit Direktlink in die Systemeinstellungen. Erteilst du ihn dort später,

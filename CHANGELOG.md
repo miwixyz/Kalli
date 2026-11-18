@@ -2,6 +2,28 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unveröffentlicht]
+
+### Behoben
+
+- **Neue Erinnerung:** Ein Datum, das keines ist („31.2.“, „Version 0.15.“) oder schon
+  vorbei ist („Rechnung vom 12.03.2024“), bleibt jetzt im Titel stehen, statt still daraus
+  zu verschwinden.
+- **Abgelehnte Einladungen** erscheinen nicht mehr als nächster Termin in der Menüleiste
+  und bei Gnotchi und bekommen keine Mitteilung mehr.
+- **Vollbild-Hinweis:** Verschiebst du eine dringende Erinnerung, nachdem ihr Hinweis
+  erschienen ist, kommt er zur neuen Zeit noch einmal.
+- **Aufgaben des Tages:** Passt das Fenster an der gemerkten Stelle nicht ganz auf den
+  Bildschirm (an Tagen mit mehr Aufgaben), wird es dort hineingeschoben, statt nach oben
+  links zu springen.
+- **Berechtigung Erinnerungen:** Der Text im macOS-Dialog und in der Hilfe sagt jetzt, dass
+  Kalli auch neue Erinnerungen anlegt.
+
+### Bedienhilfen
+
+- **Monatsraster:** VoiceOver liest jeden Tag mit Datum und „Einträge vorhanden“ vor und
+  kann ihn auswählen. Die Pfeiltasten verschieben den gewählten Tag.
+
 ## [0.15.1] — 2026-11-18
 
 Das Aufgaben-Fenster steht den Mitteilungen von macOS nicht mehr im Weg.

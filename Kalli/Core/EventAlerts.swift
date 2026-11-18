@@ -153,7 +153,7 @@ final class EventAlerts {
     /// Darf dieser Termin überhaupt eine Mitteilung bekommen — unabhängig vom
     /// Zeitpunkt? Gemeinsame Grundlage für Planen und Aufräumen.
     nonisolated static func isEligible(_ item: AgendaItem) -> Bool {
-        guard case .event = item.kind, !item.isAllDay, !item.hasAlarms,
+        guard case .event = item.kind, !item.isAllDay, !item.hasAlarms, !item.isDeclined,
               item.start != nil else { return false }
         return true
     }

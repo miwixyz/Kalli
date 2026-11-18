@@ -32,7 +32,7 @@ final class FullScreenAlerts {
     nonisolated static let grace: TimeInterval = 5 * 60
 
     private var timers: [Timer] = []
-    /// Bereits gezeigte Termine (Kennung je Vorkommen). Verhindert, dass derselbe
+    /// Bereits gezeigte Hinweise (`alertKey`: Kennung + Zeitpunkt). Verhindert, dass derselbe
     /// Termin nach dem Schließen durch ein Neuplanen noch einmal erscheint.
     private var shown: Set<String> = []
     /// Termine, bei denen „Zum Beginn nochmal" gedrückt wurde. Sie erscheinen genau zum
@@ -61,9 +61,9 @@ final class FullScreenAlerts {
         self.horizon = horizon
         lead = TimeInterval(max(0, leadMinutes) * 60)
         // Gezeigte Kennungen, die nicht mehr im Horizont stehen, vergessen.
-        let ids = Set(horizon.map(\.id))
-        shown.formIntersection(ids)
-        snoozed.formIntersection(ids)
+        let keys = Set(horizon.map(Self.alertKey))
+        shown.formIntersection(keys)
+        snoozed.formIntersection(keys)
 
         // Liegt ein Hinweis schon im Fenster (App gerade gestartet, Termin eben
         // angelegt), sofort zeigen statt ihn still zu verlieren.
@@ -74,7 +74,7 @@ final class FullScreenAlerts {
         })
         // Geschlummerte Termine: zum Beginn.
         fireDates.formUnion(horizon.compactMap { item in
-            guard snoozed.contains(item.id), let start = item.start, start > now else { return nil }
+            guard snoozed.contains(Self.alertKey(item)), let start = item.start, start > now else { return nil }
             return start
         })
         fireDates.forEach(schedule)
@@ -96,8 +96,8 @@ final class FullScreenAlerts {
         let first = Self.due(in: horizon, now: now, lead: lead, shown: shown)
         let again = Self.snoozeDue(in: horizon, now: now, snoozed: snoozed)
         guard !first.isEmpty || !again.isEmpty else { return }
-        shown.formUnion(first.map(\.id))
-        snoozed.subtract(again.map(\.id))
+        shown.formUnion(first.map(Self.alertKey))
+        snoozed.subtract(again.map(Self.alertKey))
         Self.log.notice("Vollbild-Hinweis: \(first.count, privacy: .public) neu, \(again.count, privacy: .public) zum Beginn erneut")
         presenter.show(first + again)
     }
@@ -106,7 +106,7 @@ final class FullScreenAlerts {
     /// Beginn wieder. Bereits laufende werden nicht erneut gezeigt.
     private func snooze(_ items: [AgendaItem], now: Date) {
         let later = Self.snoozable(items, now: now)
-        snoozed.formUnion(later.map(\.id))
+        snoozed.formUnion(later.map(Self.alertKey))
         Set(later.compactMap(\.start)).forEach(schedule)
         Self.log.notice("Vollbild geschlummert: \(later.count, privacy: .public) von \(items.count, privacy: .public) Termin(en) kommen zum Beginn wieder")
     }
@@ -134,6 +134,14 @@ final class FullScreenAlerts {
     #endif
 
     // MARK: - Regeln (rein, ohne Uhr testbar)
+
+    /// Merker für „schon gezeigt" und „geschlummert": Kennung **und** Zeitpunkt. Erinnerungen
+    /// behalten ihre Kennung, wenn man sie verschiebt — mit der Kennung allein kam zur neuen
+    /// Zeit kein zweiter Hinweis (Audit 2026-11-18). Termine tragen die Startzeit schon in der
+    /// Kennung, dort ändert sich nichts.
+    nonisolated static func alertKey(_ item: AgendaItem) -> String {
+        "\(item.id)|\(Int(item.start?.timeIntervalSince1970 ?? 0))"
+    }
 
     /// Darf ein Termin überhaupt einen Vollbild-Hinweis bekommen?
     /// Ganztägig: „beginnt gleich" ist bedeutungslos. Abgelehnt: sonst könnte eine
@@ -169,7 +177,7 @@ final class FullScreenAlerts {
                                 shown: Set<String>) -> [AgendaItem] {
         horizon.filter { item in
             guard isEligible(item), let start = item.start, let at = alertDate(item, lead: lead),
-                  !shown.contains(item.id) else { return false }
+                  !shown.contains(alertKey(item)) else { return false }
             return at <= now && now < start.addingTimeInterval(grace)
         }
         .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
@@ -192,7 +200,7 @@ final class FullScreenAlerts {
     nonisolated static func snoozeDue(in horizon: [AgendaItem], now: Date,
                                       snoozed: Set<String>) -> [AgendaItem] {
         horizon.filter { item in
-            guard isEligible(item), snoozed.contains(item.id), let start = item.start else { return false }
+            guard isEligible(item), snoozed.contains(alertKey(item)), let start = item.start else { return false }
             return start <= now && now < start.addingTimeInterval(grace)
         }
         .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }

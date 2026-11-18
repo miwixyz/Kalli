@@ -40,7 +40,7 @@ final class FullScreenAlertTests: XCTestCase {
     func testAlreadyShownIsNotShownAgain() {
         let item = Fixture.event(start: Fixture.at(0.5), end: Fixture.at(30))
         XCTAssertTrue(FullScreenAlerts.due(in: [item], now: now, lead: lead,
-                                           shown: [item.id]).isEmpty)
+                                           shown: [FullScreenAlerts.alertKey(item)]).isEmpty)
     }
 
     func testUpcomingOnlyWhenFireDateInFuture() {
@@ -70,24 +70,24 @@ final class FullScreenAlertTests: XCTestCase {
         let item = Fixture.event(start: Fixture.at(5), end: Fixture.at(30))
         let start = item.start!
         XCTAssertTrue(FullScreenAlerts.snoozeDue(in: [item], now: start.addingTimeInterval(-1),
-                                                 snoozed: [item.id]).isEmpty)
+                                                 snoozed: [FullScreenAlerts.alertKey(item)]).isEmpty)
         XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [item], now: start,
-                                                  snoozed: [item.id]).map(\.id), [item.id])
+                                                  snoozed: [FullScreenAlerts.alertKey(item)]).map(\.id), [item.id])
     }
 
     /// Geschlummert ist unabhängig von „schon gezeigt": Der erste Hinweis steht in `shown`,
     /// trotzdem muss er zum Beginn wiederkommen.
     func testSnoozedComesBackEvenThoughAlreadyShown() {
         let item = Fixture.event(start: Fixture.at(0), end: Fixture.at(30))
-        XCTAssertTrue(FullScreenAlerts.due(in: [item], now: now, lead: 300, shown: [item.id]).isEmpty)
-        XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [item], now: now, snoozed: [item.id]).count, 1)
+        XCTAssertTrue(FullScreenAlerts.due(in: [item], now: now, lead: 300, shown: [FullScreenAlerts.alertKey(item)]).isEmpty)
+        XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [item], now: now, snoozed: [FullScreenAlerts.alertKey(item)]).count, 1)
     }
 
     func testSnoozeAfterSleepOnlyWithinGrace() {
         let justStarted = Fixture.event(start: Fixture.at(-4), end: Fixture.at(30))
         let tooLate = Fixture.event(start: Fixture.at(-6), end: Fixture.at(30))
         XCTAssertEqual(FullScreenAlerts.snoozeDue(in: [justStarted, tooLate], now: now,
-                                                  snoozed: [justStarted.id, tooLate.id]).map(\.id),
+                                                  snoozed: [FullScreenAlerts.alertKey(justStarted), FullScreenAlerts.alertKey(tooLate)]).map(\.id),
                        [justStarted.id])
     }
 
@@ -96,7 +96,7 @@ final class FullScreenAlertTests: XCTestCase {
         var declined = Fixture.event(start: Fixture.at(0), end: Fixture.at(30))
         declined.isDeclined = true
         XCTAssertTrue(FullScreenAlerts.snoozeDue(in: [other, declined], now: now,
-                                                 snoozed: [declined.id]).isEmpty)
+                                                 snoozed: [FullScreenAlerts.alertKey(declined)]).isEmpty)
     }
 
     // MARK: Bildschirmwahl (Michael, 2026-10-08) — erstes Element = Hauptbildschirm

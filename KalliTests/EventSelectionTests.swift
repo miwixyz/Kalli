@@ -58,6 +58,20 @@ final class EventSelectionTests: XCTestCase {
         XCTAssertNil(CalendarStore.nextEvent(in: [allDay, task], now: now))
     }
 
+    /// Audit 2026-11-18: Eine abgelehnte Einladung ist weder nächster noch laufender
+    /// Termin und bekommt keine Mitteilung.
+    func testDeclinedInvitationIsIgnoredEverywhere() {
+        var declinedNext = Fixture.event(title: "abgelehnt", start: Fixture.at(30), end: Fixture.at(60))
+        declinedNext.isDeclined = true
+        let real = Fixture.event(title: "echt", start: Fixture.at(90), end: Fixture.at(120))
+        XCTAssertEqual(CalendarStore.nextEvent(in: [declinedNext, real], now: now)?.title, "echt")
+        XCTAssertFalse(EventAlerts.isEligible(declinedNext))
+
+        var declinedRunning = Fixture.event(title: "abgelehnt", start: Fixture.at(-10), end: Fixture.at(20))
+        declinedRunning.isDeclined = true
+        XCTAssertNil(CalendarStore.runningEvent(in: [declinedRunning], now: now, maxHours: maxHours))
+    }
+
     func testNextEventNilOnEmptyList() {
         XCTAssertNil(CalendarStore.nextEvent(in: [], now: now))
     }

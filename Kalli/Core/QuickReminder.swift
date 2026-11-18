@@ -113,9 +113,15 @@ enum QuickReminder {
     /// Reihenfolge zählt: Datum zuerst („24.10." ist keine 24:10), „übermorgen" vor „morgen".
     nonisolated private static func parseDay(_ rest: inout String, now: Date, calendar: Calendar) -> Date? {
         let today = calendar.startOfDay(for: now)
-        if let m = take(#"(?:am\s+)?(\d{1,2})\.(\d{1,2})\.(\d{2,4})?"#, from: &rest),
-           let d = m[1].flatMap({ Int($0) }), let mo = m[2].flatMap({ Int($0) }) {
-            return date(day: d, month: mo, year: m[3].flatMap { Int($0) }, today: today, calendar: calendar)
+        // Auf einer Kopie prüfen wie bei der Uhrzeit: „31.2.", „0.15." oder ein Datum in der
+        // Vergangenheit („Rechnung vom 12.03.2024") ist keine Fälligkeit und bleibt im Titel.
+        var probe = rest
+        if let m = take(#"(?:am\s+)?(\d{1,2})\.(\d{1,2})\.(\d{4}|\d{2})?"#, from: &probe),
+           let d = m[1].flatMap({ Int($0) }), let mo = m[2].flatMap({ Int($0) }),
+           let found = date(day: d, month: mo, year: m[3].flatMap { Int($0) }, today: today, calendar: calendar),
+           found >= today {
+            rest = probe
+            return found
         }
         let relative: [(pattern: String, days: Int)] = [("übermorgen", 2), ("morgen", 1), ("heute", 0)]
         for entry in relative where take(entry.pattern, from: &rest) != nil {

@@ -70,12 +70,24 @@ final class TaskDigestPresenter {
     }
 
     /// Obere linke Ecke des Fensters. Ab Werk oben **links** auf dem Hauptbildschirm — oben rechts
-    /// liegen die Mitteilungen von macOS. Eine von Hand gewählte Stelle gilt weiter, solange das
-    /// Fenster dort noch ganz auf einen Bildschirm passt (sonst: Bildschirm abgesteckt → ab Werk).
+    /// liegen die Mitteilungen von macOS. Eine von Hand gewählte Stelle gilt weiter: Ragt das
+    /// Fenster dort über den Rand (heute mehr Aufgaben, knapp über den Rand gezogen), wird es auf
+    /// diesem Bildschirm hineingeschoben, statt nach oben links zu springen (Audit 2026-11-18).
+    /// Ab Werk nur, wenn die Stelle auf keinem Bildschirm mehr liegt (Bildschirm abgesteckt).
+    /// Die gespeicherte Stelle selbst bleibt unverändert — an kürzeren Tagen sitzt es wieder genau dort.
     nonisolated static func topLeft(saved: NSPoint?, size: NSSize, areas: [NSRect]) -> NSPoint {
         if let saved {
             let frame = NSRect(x: saved.x, y: saved.y - size.height, width: size.width, height: size.height)
-            if areas.contains(where: { $0.contains(frame) }) { return saved }
+            let overlap = { (area: NSRect) -> CGFloat in
+                let cut = area.intersection(frame)
+                return cut.isNull ? 0 : cut.width * cut.height
+            }
+            if let area = areas.max(by: { overlap($0) < overlap($1) }), overlap(area) > 0 {
+                let x = min(max(saved.x, area.minX), area.maxX - size.width)
+                let top = max(min(saved.y, area.maxY), area.minY + size.height)
+                // Höher als der Bildschirm: oben bündig, die obere Kante (Knöpfe) bleibt erreichbar.
+                return NSPoint(x: max(x, area.minX), y: min(top, area.maxY))
+            }
         }
         let area = areas.first ?? .zero
         return NSPoint(x: area.minX + 16, y: area.maxY - 12)

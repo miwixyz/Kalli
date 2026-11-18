@@ -72,7 +72,8 @@ extension CalendarStore {
     nonisolated static func nextEvent(in items: [AgendaItem], now: Date) -> AgendaItem? {
         items
             .filter { item in
-                guard case .event = item.kind, !item.isAllDay,
+                // Abgelehnte Einladungen sind kein Termin des Nutzers (Audit 2026-11-18).
+                guard case .event = item.kind, !item.isAllDay, !item.isDeclined,
                       let start = item.start else { return false }
                 return start > now
             }
@@ -108,7 +109,7 @@ extension CalendarStore {
                                          maxHours: Double) -> AgendaItem? {
         items
             .filter { item in
-                guard case .event = item.kind, !item.isAllDay,
+                guard case .event = item.kind, !item.isAllDay, !item.isDeclined,
                       let start = item.start, let end = item.end else { return false }
                 guard start <= now, end > now else { return false }
                 return end.timeIntervalSince(start) <= maxHours * 3600
