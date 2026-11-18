@@ -136,10 +136,10 @@ Vollbild-Hinweis.
 Einmal am Tag zeigt Kalli dir die Aufgaben, die heute fällig sind. **Ab Werk aus**,
 einzuschalten unter Einstellungen → Menüleiste → **Aufgaben des Tages**.
 
-- Zur eingestellten **Uhrzeit** (volle Stunde, ab Werk 9 Uhr) erscheint oben rechts ein
+- Zur eingestellten **Uhrzeit** (volle Stunde, ab Werk 9 Uhr) erscheint oben links ein
   kleines Glasfenster mit den **offenen Erinnerungen, die heute fällig sind**. Es liegt
   über deinen Fenstern, nimmt dir aber weder Maus noch Tastatur weg. Du kannst es am
-  Hintergrund verschieben.
+  Hintergrund verschieben; Kalli merkt sich die Stelle und zeigt es beim nächsten Mal dort.
 - **Abhaken** direkt im Fenster: Klick auf den Kreis. Ist die letzte Aufgabe erledigt,
   schließt sich das Fenster von selbst.
 - **„In 1 Std. wieder“** schließt das Fenster und holt es eine Stunde später zurück, so oft

@@ -12,8 +12,8 @@ import OSLog
 /// **Entscheidungen:**
 /// - Nur **heute** fällige, offene Erinnerungen aus eingeblendeten Listen. Überfällige vom
 ///   Vortag gehören nicht dazu (die Tagesliste ordnet sie ebenfalls ihrem Tag zu).
-/// - Kein Vollbild und kein Tastaturfokus: Das Fenster liegt oben rechts über der Arbeit und
-///   nimmt keine Eingaben weg. Es bleibt stehen, bis man es schließt oder schlummert.
+/// - Kein Vollbild und kein Tastaturfokus: Das Fenster liegt oben links über der Arbeit (oben
+///   rechts stehen die Mitteilungen von macOS; Michael, 2026-11-18) und nimmt keine Eingaben weg. Es bleibt stehen, bis man es schließt oder schlummert.
 /// - War der Mac zur Uhrzeit aus oder im Ruhezustand, kommt das Pop-up beim nächsten Aufwachen
 ///   am selben Tag nach.
 /// - „Für heute erledigt" und der Schlummer-Zeitpunkt stehen in den UserDefaults, damit ein

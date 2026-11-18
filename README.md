@@ -69,7 +69,7 @@ ansteht, bezahlt das mit Oberfläche.
   Terminen und Aufgaben des Tages, verschiebbar, Aufgaben abhakbar. **Ab Werk aus**, liest
   dieselben Quellen wie das Popover
 - **Aufgaben des Tages** (ab 0.15.0) — einmal täglich zur eingestellten Stunde ein kleines
-  Glasfenster oben rechts mit den heute fälligen, offenen Erinnerungen, abhakbar. **„In 1 Std.
+  Glasfenster oben links (verschiebbar, Stelle bleibt gespeichert) mit den heute fälligen, offenen Erinnerungen, abhakbar. **„In 1 Std.
   wieder“** schlummert, „Schließen“ gilt für den Tag. Nimmt keinen Fokus, **ab Werk aus**
 - **Vollbild-Hinweis vor dem Termin** (ab 0.5.0, nach dem Vorbild von „In Your Face“) —
   Glasfläche über der unteren Bildschirmhälfte, bis Esc/Return. Bildschirme wählbar:

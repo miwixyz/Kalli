@@ -2,6 +2,14 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unveröffentlicht]
+
+### Geändert
+
+- **Aufgaben des Tages:** Das Fenster erscheint jetzt oben links statt oben rechts, wo es die
+  Mitteilungen von macOS überdeckt hat. Verschiebst du es, merkt sich Kalli die Stelle und
+  zeigt es beim nächsten Mal dort.
+
 ## [0.15.0] — 2026-11-17
 
 Einmal am Tag zeigt dir Kalli, was heute fällig ist.

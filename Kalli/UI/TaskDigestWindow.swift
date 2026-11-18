@@ -2,9 +2,10 @@ import AppKit
 import OSLog
 import SwiftUI
 
-/// Hält das Fenster des Aufgaben-Pop-ups (`TaskDigest`): randloses Glasfenster oben rechts auf dem
+/// Hält das Fenster des Aufgaben-Pop-ups (`TaskDigest`): randloses Glasfenster oben links auf dem
 /// Hauptbildschirm, über allen Fenstern und auf allen Spaces. Es wird **nicht** zum Tastaturfenster
-/// und aktiviert Kalli nicht — die laufende Arbeit behält den Fokus. Ziehbar am Hintergrund.
+/// und aktiviert Kalli nicht — die laufende Arbeit behält den Fokus. Ziehbar am Hintergrund; die
+/// gewählte Stelle bleibt gespeichert.
 @MainActor
 final class TaskDigestPresenter {
 
@@ -12,6 +13,13 @@ final class TaskDigestPresenter {
 
     private var panel: NSPanel?
     private var host: NSView?
+    private var moveObserver: NSObjectProtocol?
+    private var placedCorner: NSPoint?
+    private let defaults: UserDefaults
+
+    static let positionKey = "taskDigestTopLeft"
+
+    init(defaults: UserDefaults = .standard) { self.defaults = defaults }
 
     var isOpen: Bool { panel != nil }
 
@@ -33,8 +41,16 @@ final class TaskDigestPresenter {
         self.panel = panel
         self.host = host
         panel.setContentSize(host.fittingSize)
-        let area = (NSScreen.screens.first ?? NSScreen.main)?.visibleFrame ?? .zero
-        panel.setFrameTopLeftPoint(NSPoint(x: area.maxX - panel.frame.width - 16, y: area.maxY - 12))
+        let areas = NSScreen.screens.map(\.visibleFrame)
+        let saved = defaults.string(forKey: Self.positionKey).map(NSPointFromString)
+        let corner = Self.topLeft(saved: saved, size: panel.frame.size, areas: areas)
+        panel.setFrameTopLeftPoint(corner)
+        placedCorner = corner
+        moveObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didMoveNotification, object: panel, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.rememberPosition() }
+        }
         panel.orderFrontRegardless()
         DispatchQueue.main.async { [weak panel] in panel?.invalidateShadow() }
         // Messpunkt: „gezeigt" und „sichtbar" sind zwei Aussagen. Kein Titel, keine Inhalte.
@@ -53,7 +69,30 @@ final class TaskDigestPresenter {
         panel.invalidateShadow()
     }
 
+    /// Obere linke Ecke des Fensters. Ab Werk oben **links** auf dem Hauptbildschirm — oben rechts
+    /// liegen die Mitteilungen von macOS. Eine von Hand gewählte Stelle gilt weiter, solange das
+    /// Fenster dort noch ganz auf einen Bildschirm passt (sonst: Bildschirm abgesteckt → ab Werk).
+    nonisolated static func topLeft(saved: NSPoint?, size: NSSize, areas: [NSRect]) -> NSPoint {
+        if let saved {
+            let frame = NSRect(x: saved.x, y: saved.y - size.height, width: size.width, height: size.height)
+            if areas.contains(where: { $0.contains(frame) }) { return saved }
+        }
+        let area = areas.first ?? .zero
+        return NSPoint(x: area.minX + 16, y: area.maxY - 12)
+    }
+
+    /// Nur eine echte Verschiebung wird gemerkt — nicht die Stelle, an die `show` das Fenster setzt.
+    private func rememberPosition() {
+        guard let panel else { return }
+        let corner = NSPoint(x: panel.frame.minX, y: panel.frame.maxY)
+        guard corner != placedCorner else { return }
+        placedCorner = corner
+        defaults.set(NSStringFromPoint(corner), forKey: Self.positionKey)
+    }
+
     func close() {
+        if let moveObserver { NotificationCenter.default.removeObserver(moveObserver) }
+        moveObserver = nil
         panel?.orderOut(nil)
         panel = nil
         host = nil

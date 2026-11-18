@@ -19,6 +19,34 @@ final class TaskDigestTests: XCTestCase {
                             snoozeUntil: snooze, calendar: calendar)
     }
 
+    // MARK: Position (Michael, 2026-11-18: oben rechts liegen die Mitteilungen von macOS)
+
+    private let size = NSSize(width: 340, height: 120)
+    private let main = NSRect(x: 0, y: 0, width: 1920, height: 1050)
+    private let second = NSRect(x: 1920, y: 0, width: 1920, height: 1080)
+
+    func testWithoutSavedPositionItSitsTopLeftOfTheMainScreen() {
+        let corner = TaskDigestPresenter.topLeft(saved: nil, size: size, areas: [main, second])
+        XCTAssertEqual(corner, NSPoint(x: 16, y: 1038))
+    }
+
+    func testSavedPositionIsKept() {
+        let saved = NSPoint(x: 2400, y: 700)
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: saved, size: size, areas: [main, second]), saved)
+    }
+
+    func testSavedPositionOnAMissingScreenFallsBackToTopLeft() {
+        let saved = NSPoint(x: 2400, y: 700)
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: saved, size: size, areas: [main]),
+                       NSPoint(x: 16, y: 1038))
+    }
+
+    func testSavedPositionThatNoLongerFitsFallsBackToTopLeft() {
+        let saved = NSPoint(x: 1700, y: 700)   // ragt rechts über den Rand
+        XCTAssertEqual(TaskDigestPresenter.topLeft(saved: saved, size: size, areas: [main]),
+                       NSPoint(x: 16, y: 1038))
+    }
+
     // MARK: Auswahl
 
     func testOnlyOpenRemindersAreListed() {
