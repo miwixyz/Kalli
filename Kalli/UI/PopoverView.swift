@@ -17,6 +17,15 @@ struct PopoverView: View {
     @State private var justCompleted: Set<String> = []
     /// Eingabezeile „Neue Erinnerung" offen (0.10.0).
     @State private var addingReminder = false
+    /// Tag des letzten Öffnens. Der Zustand überlebt das Schließen (gemessen 2026-11-18):
+    /// Nach einem Tageswechsel stand sonst morgens noch der gestrige Tag in der Liste.
+    @State private var lastOpened = Date()
+    /// Sichtbare Höhe des Bildschirms, auf dem das Popover aufgeht, und gemessene Höhen —
+    /// damit die Tagesliste das Popover nicht über den Bildschirm hinaus wachsen lässt
+    /// (gemessen 2026-11-18: 1.167 pt bei „Sehr groß", ein 13"-MacBook hat rund 920).
+    @State private var screenHeight: CGFloat = .infinity
+    @State private var totalHeight: CGFloat = 0
+    @State private var listHeight: CGFloat = 0
 
     private var calendar: Calendar {
         var c = Calendar(identifier: .gregorian)
@@ -114,7 +123,9 @@ struct PopoverView: View {
         // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
         // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
         // GlassBackground.swift.
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { totalHeight = $0 }
         .glassSurface(in: RoundedRectangle(cornerRadius: 14))
+        .onAppear(perform: popoverOpened)
         .task(id: visibleMonth) {
             await store.load(month: visibleMonth, calendar: calendar)
             label.update()
@@ -247,10 +258,11 @@ struct PopoverView: View {
                     .padding(.trailing, 2)
                 }
                 .scrollIndicators(.automatic)
-                .frame(minHeight: min(CGFloat(groups.count) * 24 + CGFloat(visibleRowCount) * 46
-                                      + (addingReminder ? 150 : 0), 380)
-                                  * prefs.layoutScale,
-                       maxHeight: 560 * prefs.layoutScale)
+                .frame(minHeight: min(min(CGFloat(groups.count) * 24 + CGFloat(visibleRowCount) * 46
+                                          + (addingReminder ? 150 : 0), 380)
+                                      * prefs.layoutScale, listCap),
+                       maxHeight: min(560 * prefs.layoutScale, listCap))
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { listHeight = $0 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -498,5 +510,33 @@ private struct UpcomingBanner: View {
                         .strokeBorder(Theme.accent.opacity(0.22), lineWidth: 0.8)
                 }
         }
+    }
+}
+
+// MARK: - Öffnen und Höhe (2026-11-18)
+
+extension PopoverView {
+    /// Läuft bei jedem Öffnen. Neuer Tag seit dem letzten Öffnen → zurück auf heute; am selben
+    /// Tag bleibt der angeklickte Tag stehen (Michael, 2026-11-18).
+    func popoverOpened() {
+        let now = Date()
+        if !calendar.isDate(lastOpened, inSameDayAs: now) {
+            visibleMonth = now
+            selection = now
+        }
+        lastOpened = now
+        // Das Popover geht auf dem Bildschirm auf, in dessen Menüleiste geklickt wurde.
+        let mouse = NSEvent.mouseLocation
+        let screen = NSScreen.screens.first { $0.frame.contains(mouse) } ?? NSScreen.main
+        screenHeight = screen?.visibleFrame.height ?? .infinity
+    }
+
+    /// Höchste Höhe der Tagesliste, bei der das ganze Popover noch auf den Bildschirm passt.
+    /// Der Rest des Popovers (Raster, Kopf, Fuß) hängt nicht von der Liste ab, deshalb
+    /// schwingt die Rechnung nicht.
+    var listCap: CGFloat {
+        guard screenHeight.isFinite, totalHeight > 0 else { return .infinity }
+        let rest = totalHeight - listHeight
+        return max(120 * prefs.layoutScale, screenHeight - rest - 16)
     }
 }

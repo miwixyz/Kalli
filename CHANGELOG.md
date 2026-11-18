@@ -2,6 +2,20 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.15.3] — 2026-11-18
+
+Zwei Fehler im Popover behoben, beide gemessen.
+
+### Behoben
+
+- **Popover passt auf den Bildschirm:** Bei großer Schrift und vollem Tag wurde das Popover
+  höher als ein kleiner Bildschirm (gemessen 1.167 pt), die Zeile mit Einstellungen und
+  Beenden lag dann außerhalb. Die Tagesliste wird jetzt so weit gekürzt und gescrollt, dass
+  das Popover auf den Bildschirm passt, auf dem es aufgeht.
+- **Nach einem Tageswechsel zeigt Kalli heute:** Der zuletzt angeklickte Tag blieb über
+  Nacht markiert, morgens stand noch die Liste von gestern. Kalli springt jetzt beim ersten
+  Öffnen eines neuen Tages auf heute; am selben Tag bleibt der angeklickte Tag stehen.
+
 ## [0.15.2] — 2026-11-18
 
 Sechs Fehler aus einer Gesamtprüfung behoben, dazu Bedienhilfen im Monatsraster.
