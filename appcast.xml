@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.15.1</title>
+            <pubDate>Wed, 18 Nov 2026 11:38:00 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>112</sparkle:version>
+            <sparkle:shortVersionString>0.15.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Das Aufgaben-Fenster steht den Mitteilungen von macOS nicht mehr im Weg.</p><h3>Geändert</h3><ul><li><b>Aufgaben des Tages:</b> Das Fenster erscheint jetzt oben links statt oben rechts, wo es die Mitteilungen von macOS überdeckt hat. Verschiebst du es, merkt sich Kalli die Stelle und zeigt es beim nächsten Mal dort.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.1/Kalli-0.15.1.zip" length="3430402" type="application/octet-stream" sparkle:edSignature="nH7GMc+mszYqhwAfCIR5+6FQveogsy5v/svqXELMSYtJWcPJoksEVKU1GWKb6HaoKpzYtxPCWFoCoigIoB+GCw=="/>
+        </item>
+        <item>
             <title>0.15.0</title>
             <pubDate>Tue, 17 Nov 2026 23:23:31 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Das Papierblatt sieht zusammenhängender aus, und der Doppelklick springt richtig.</p><h3>Geändert</h3><ul><li><b>Papierblatt neu gezeichnet:</b> Das Brett ist jetzt eine Glasplatte in kräftigem Indigo mit heller Randkante und einem Glanz, der deinem Mauszeiger folgt. Das Blatt ist eine einzige Karte mit abgerundeten Ecken und einem Kopfband mit Monat und Jahr, darunter die Perforationslinie. Die Zahl ist größer. Der Schatten liegt innerhalb des Fensters, damit kein gepunkteter Rand mehr entsteht.</li></ul><h3>Behoben</h3><ul><li><b>Doppelklick auf die Zahl:</b> Von einem fernen Tag aus sprang das Blatt einmal zu weit zurück (etwa von Dienstag auf Samstag statt auf Sonntag). Jetzt landet es auf heute.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.1/Kalli-0.14.1.zip" length="3443229" type="application/octet-stream" sparkle:edSignature="Sn00+NEQ1pcbU+iAJKN1xYZWg12Lf3Z6TVB84+jQoqA1gcKLPnEXiOlmTTgrtyAgHhXqvCRgnA9ISVauw4j0Dw=="/>
-        </item>
-        <item>
-            <title>0.14.0</title>
-            <pubDate>Sun, 15 Nov 2026 11:43:13 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>98</sparkle:version>
-            <sparkle:shortVersionString>0.14.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Ein Tagesblatt für den Schreibtisch.</p><h3>Neu</h3><ul><li><b>Tagesblatt auf dem Schreibtisch:</b> Ein Blatt zeigt den Tag mit Datum, Terminen und Aufgaben, in denselben Gruppen und derselben Reihenfolge wie die Tagesliste. Es liegt hinter allen Fenstern auf dem Schreibtisch, auf jedem Space, und lässt sich mit der Maus verschieben. Zwei Aussehen: das <b>Papierblatt</b> (Abreißblock auf einem Brett in Kalli-Farben, großes Datum, Monatsraster am Fuß) und ein <b>Glas-Blatt</b>. Beim Papierblatt blätterst du durch Ziehen: nach oben schlägt das Blatt nach hinten weg, nach unten kommt das vorige zurück, seitlich ziehen reißt das Blatt an der Perforation ab (es schwingt aus, fällt weg und der nächste Tag liegt da), ein Doppelklick auf die Zahl springt auf heute. Beim Glas-Blatt blättert ‹ Heute ›. Aufgaben lassen sich abhaken, Rechtsklick auf das Blatt blendet es aus. Ab Werk aus; einschalten unter Einstellungen → Ansicht → Tagesblatt.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.0/Kalli-0.14.0.zip" length="3442101" type="application/octet-stream" sparkle:edSignature="y4tK7d8RKJ14LeQrufMC9YDkfk0y7JtI+b2aYqI8hWSY1XtS4fTyXuZYTrfxt4gKU0wWqEXi2rbfpBbsAGEVDQ=="/>
         </item>
     </channel>
 </rss>
