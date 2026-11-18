@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.15.3</title>
+            <pubDate>Wed, 18 Nov 2026 16:25:48 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>117</sparkle:version>
+            <sparkle:shortVersionString>0.15.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Zwei Fehler im Popover behoben, beide gemessen.</p><h3>Behoben</h3><ul><li><b>Popover passt auf den Bildschirm:</b> Bei großer Schrift und vollem Tag wurde das Popover höher als ein kleiner Bildschirm (gemessen 1.167 pt), die Zeile mit Einstellungen und Beenden lag dann außerhalb. Die Tagesliste wird jetzt so weit gekürzt und gescrollt, dass das Popover auf den Bildschirm passt, auf dem es aufgeht.</li><li><b>Nach einem Tageswechsel zeigt Kalli heute:</b> Der zuletzt angeklickte Tag blieb über Nacht markiert, morgens stand noch die Liste von gestern. Kalli springt jetzt beim ersten Öffnen eines neuen Tages auf heute; am selben Tag bleibt der angeklickte Tag stehen.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.3/Kalli-0.15.3.zip" length="3440442" type="application/octet-stream" sparkle:edSignature="Mky19jFrTUwazZ9XNujxM3/EDA0+iFt/LtejBuK/aFIfeumJdgr8LJ3pH+7CvvwCurwsEj/vTNPy1SsNzeNvAg=="/>
+        </item>
+        <item>
             <title>0.15.2</title>
             <pubDate>Wed, 18 Nov 2026 15:00:38 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Das Aufgaben-Fenster steht den Mitteilungen von macOS nicht mehr im Weg.</p><h3>Geändert</h3><ul><li><b>Aufgaben des Tages:</b> Das Fenster erscheint jetzt oben links statt oben rechts, wo es die Mitteilungen von macOS überdeckt hat. Verschiebst du es, merkt sich Kalli die Stelle und zeigt es beim nächsten Mal dort.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.1/Kalli-0.15.1.zip" length="3430402" type="application/octet-stream" sparkle:edSignature="nH7GMc+mszYqhwAfCIR5+6FQveogsy5v/svqXELMSYtJWcPJoksEVKU1GWKb6HaoKpzYtxPCWFoCoigIoB+GCw=="/>
-        </item>
-        <item>
-            <title>0.15.0</title>
-            <pubDate>Tue, 17 Nov 2026 23:23:31 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>108</sparkle:version>
-            <sparkle:shortVersionString>0.15.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Einmal am Tag zeigt dir Kalli, was heute fällig ist.</p><h3>Neu</h3><ul><li><b>Aufgaben des Tages:</b> Zur eingestellten Stunde (ab Werk 9 Uhr) erscheint oben rechts ein kleines Glasfenster mit den offenen Erinnerungen, die heute fällig sind. Du hakst sie direkt dort ab. <b>„In 1 Std. wieder“</b> schließt das Fenster und holt es eine Stunde später zurück, so oft du willst, <b>„Schließen“</b> beendet es für heute. Das Fenster liegt über deinen Fenstern, nimmt dir aber weder Maus noch Tastatur weg, und lässt sich verschieben. Sind keine offenen Aufgaben für heute da, erscheint nichts. War der Mac zur Uhrzeit aus, kommt es beim nächsten Aufwachen am selben Tag. Ab Werk aus; einschalten unter Einstellungen → Menüleiste → Aufgaben des Tages.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.0/Kalli-0.15.0.zip" length="3428833" type="application/octet-stream" sparkle:edSignature="wxWD7pQY5Y+8xQf0G4vOqH2rj2aNXONOAhLSslK+gJNVR/CtoSHp9lQoeUVogFEcdN/9zKI4x1m94pGqbUu5Aw=="/>
         </item>
     </channel>
 </rss>
