@@ -2,7 +2,9 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unveröffentlicht]
+## [0.15.2] — 2026-11-18
+
+Sechs Fehler aus einer Gesamtprüfung behoben, dazu Bedienhilfen im Monatsraster.
 
 ### Behoben
 
