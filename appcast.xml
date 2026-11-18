@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.15.2</title>
+            <pubDate>Wed, 18 Nov 2026 15:00:38 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>115</sparkle:version>
+            <sparkle:shortVersionString>0.15.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Sechs Fehler aus einer Gesamtprüfung behoben, dazu Bedienhilfen im Monatsraster.</p><h3>Behoben</h3><ul><li><b>Neue Erinnerung:</b> Ein Datum, das keines ist („31.2.“, „Version 0.15.“) oder schon vorbei ist („Rechnung vom 12.03.2024“), bleibt jetzt im Titel stehen, statt still daraus zu verschwinden.</li><li><b>Abgelehnte Einladungen</b> erscheinen nicht mehr als nächster Termin in der Menüleiste und bei Gnotchi und bekommen keine Mitteilung mehr.</li><li><b>Vollbild-Hinweis:</b> Verschiebst du eine dringende Erinnerung, nachdem ihr Hinweis erschienen ist, kommt er zur neuen Zeit noch einmal.</li><li><b>Aufgaben des Tages:</b> Passt das Fenster an der gemerkten Stelle nicht ganz auf den Bildschirm (an Tagen mit mehr Aufgaben), wird es dort hineingeschoben, statt nach oben links zu springen.</li><li><b>Berechtigung Erinnerungen:</b> Der Text im macOS-Dialog und in der Hilfe sagt jetzt, dass Kalli auch neue Erinnerungen anlegt.</li></ul><h3>Bedienhilfen</h3><ul><li><b>Monatsraster:</b> VoiceOver liest jeden Tag mit Datum und „Einträge vorhanden“ vor und kann ihn auswählen. Die Pfeiltasten verschieben den gewählten Tag.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.2/Kalli-0.15.2.zip" length="3435743" type="application/octet-stream" sparkle:edSignature="U5S2mmlvWAzYP9WqXK2njPegHbGTxMY8L8Xckt0DR5VwdZkiLYKbmAoCQVgEiYeiNSUh4skEiHDZo4pnLUVHBw=="/>
+        </item>
+        <item>
             <title>0.15.1</title>
             <pubDate>Wed, 18 Nov 2026 11:38:00 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Einmal am Tag zeigt dir Kalli, was heute fällig ist.</p><h3>Neu</h3><ul><li><b>Aufgaben des Tages:</b> Zur eingestellten Stunde (ab Werk 9 Uhr) erscheint oben rechts ein kleines Glasfenster mit den offenen Erinnerungen, die heute fällig sind. Du hakst sie direkt dort ab. <b>„In 1 Std. wieder“</b> schließt das Fenster und holt es eine Stunde später zurück, so oft du willst, <b>„Schließen“</b> beendet es für heute. Das Fenster liegt über deinen Fenstern, nimmt dir aber weder Maus noch Tastatur weg, und lässt sich verschieben. Sind keine offenen Aufgaben für heute da, erscheint nichts. War der Mac zur Uhrzeit aus, kommt es beim nächsten Aufwachen am selben Tag. Ab Werk aus; einschalten unter Einstellungen → Menüleiste → Aufgaben des Tages.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.0/Kalli-0.15.0.zip" length="3428833" type="application/octet-stream" sparkle:edSignature="wxWD7pQY5Y+8xQf0G4vOqH2rj2aNXONOAhLSslK+gJNVR/CtoSHp9lQoeUVogFEcdN/9zKI4x1m94pGqbUu5Aw=="/>
-        </item>
-        <item>
-            <title>0.14.1</title>
-            <pubDate>Sun, 15 Nov 2026 12:04:40 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>101</sparkle:version>
-            <sparkle:shortVersionString>0.14.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Das Papierblatt sieht zusammenhängender aus, und der Doppelklick springt richtig.</p><h3>Geändert</h3><ul><li><b>Papierblatt neu gezeichnet:</b> Das Brett ist jetzt eine Glasplatte in kräftigem Indigo mit heller Randkante und einem Glanz, der deinem Mauszeiger folgt. Das Blatt ist eine einzige Karte mit abgerundeten Ecken und einem Kopfband mit Monat und Jahr, darunter die Perforationslinie. Die Zahl ist größer. Der Schatten liegt innerhalb des Fensters, damit kein gepunkteter Rand mehr entsteht.</li></ul><h3>Behoben</h3><ul><li><b>Doppelklick auf die Zahl:</b> Von einem fernen Tag aus sprang das Blatt einmal zu weit zurück (etwa von Dienstag auf Samstag statt auf Sonntag). Jetzt landet es auf heute.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.14.1/Kalli-0.14.1.zip" length="3443229" type="application/octet-stream" sparkle:edSignature="Sn00+NEQ1pcbU+iAJKN1xYZWg12Lf3Z6TVB84+jQoqA1gcKLPnEXiOlmTTgrtyAgHhXqvCRgnA9ISVauw4j0Dw=="/>
         </item>
     </channel>
 </rss>
