@@ -2,7 +2,9 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unveröffentlicht]
+## [0.15.1] — 2026-11-18
+
+Das Aufgaben-Fenster steht den Mitteilungen von macOS nicht mehr im Weg.
 
 ### Geändert
 
