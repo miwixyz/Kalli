@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.16.0</title>
+            <pubDate>Thu, 19 Nov 2026 17:37:00 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>120</sparkle:version>
+            <sparkle:shortVersionString>0.16.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Neue Termine und Erinnerungen direkt aus der Notch, mit Gnotchi ab 0.40.0.</p><h3>Neu</h3><ul><li><b>Schnelleingabe aus Gnotchi:</b> Gnotchi hat eine Eingabezeile in der Notch für Termine und Erinnerungen in Alltagssprache („Zahnarzt morgen 15 Uhr“). Gespeichert wird über Kalli, denn Gnotchi selbst hat keinen Zugriff auf Kalender und Erinnerungen. Termine landen im Standardkalender für neue Termine, Erinnerungen wie bei „Neue Erinnerung“ in der Standardliste. Kalli liest jeden Eintrag nach dem Speichern noch einmal nach und meldet erst dann „gespeichert“. ⌘Z direkt danach nimmt den Eintrag über Kalli wieder zurück, aber nur, solange er frisch ist (30 Sekunden) und über diesen Weg angelegt wurde.</li><li><b>Kalli prüft jede Anfrage selbst</b> und vertraut Gnotchi nicht blind: Titel 1 bis 200 Zeichen ohne Steuerzeichen, Beginn zwischen gestern und in fünf Jahren, Termine höchstens 24 Stunden, höchstens 20 Einträge pro Minute. Abgelehntes kommt mit Grund zurück. Ins Protokoll kommt nur Art und Ergebnis, nie der Titel (Sicherheitsentwurf K2).</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.16.0/Kalli-0.16.0.zip" length="3471100" type="application/octet-stream" sparkle:edSignature="5KhDJ094esoYNJ9cuGEVmgyW3UAEEYGwAFg/bTuvKIb1+T1xTY/tTQYDRreiCvZXoYiLAk32wQeW5s3o91rFCQ=="/>
+        </item>
+        <item>
             <title>0.15.3</title>
             <pubDate>Wed, 18 Nov 2026 16:25:48 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Sechs Fehler aus einer Gesamtprüfung behoben, dazu Bedienhilfen im Monatsraster.</p><h3>Behoben</h3><ul><li><b>Neue Erinnerung:</b> Ein Datum, das keines ist („31.2.“, „Version 0.15.“) oder schon vorbei ist („Rechnung vom 12.03.2024“), bleibt jetzt im Titel stehen, statt still daraus zu verschwinden.</li><li><b>Abgelehnte Einladungen</b> erscheinen nicht mehr als nächster Termin in der Menüleiste und bei Gnotchi und bekommen keine Mitteilung mehr.</li><li><b>Vollbild-Hinweis:</b> Verschiebst du eine dringende Erinnerung, nachdem ihr Hinweis erschienen ist, kommt er zur neuen Zeit noch einmal.</li><li><b>Aufgaben des Tages:</b> Passt das Fenster an der gemerkten Stelle nicht ganz auf den Bildschirm (an Tagen mit mehr Aufgaben), wird es dort hineingeschoben, statt nach oben links zu springen.</li><li><b>Berechtigung Erinnerungen:</b> Der Text im macOS-Dialog und in der Hilfe sagt jetzt, dass Kalli auch neue Erinnerungen anlegt.</li></ul><h3>Bedienhilfen</h3><ul><li><b>Monatsraster:</b> VoiceOver liest jeden Tag mit Datum und „Einträge vorhanden“ vor und kann ihn auswählen. Die Pfeiltasten verschieben den gewählten Tag.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.2/Kalli-0.15.2.zip" length="3435743" type="application/octet-stream" sparkle:edSignature="U5S2mmlvWAzYP9WqXK2njPegHbGTxMY8L8Xckt0DR5VwdZkiLYKbmAoCQVgEiYeiNSUh4skEiHDZo4pnLUVHBw=="/>
-        </item>
-        <item>
-            <title>0.15.1</title>
-            <pubDate>Wed, 18 Nov 2026 11:38:00 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>112</sparkle:version>
-            <sparkle:shortVersionString>0.15.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Das Aufgaben-Fenster steht den Mitteilungen von macOS nicht mehr im Weg.</p><h3>Geändert</h3><ul><li><b>Aufgaben des Tages:</b> Das Fenster erscheint jetzt oben links statt oben rechts, wo es die Mitteilungen von macOS überdeckt hat. Verschiebst du es, merkt sich Kalli die Stelle und zeigt es beim nächsten Mal dort.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.1/Kalli-0.15.1.zip" length="3430402" type="application/octet-stream" sparkle:edSignature="nH7GMc+mszYqhwAfCIR5+6FQveogsy5v/svqXELMSYtJWcPJoksEVKU1GWKb6HaoKpzYtxPCWFoCoigIoB+GCw=="/>
         </item>
     </channel>
 </rss>
