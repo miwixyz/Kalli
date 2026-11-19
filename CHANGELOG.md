@@ -2,7 +2,9 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unreleased]
+## [0.16.0] — 2026-11-19
+
+Neue Termine und Erinnerungen direkt aus der Notch, mit Gnotchi ab 0.40.0.
 
 ### Neu
 

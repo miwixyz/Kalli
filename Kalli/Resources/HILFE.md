@@ -380,7 +380,7 @@ Kalenderfarbe, über eine lokale Verbindung, bei der beide Apps vorher die Signa
 prüfen; andere Programme bekommen nichts. Abschalten in Gnotchi: Einstellungen → „Termine aus
 Kalli anzeigen“.
 
-**Schnelleingabe aus Gnotchi (nach Kalli 0.15.3):** In Gnotchi lässt sich eine Eingabezeile in der
+**Schnelleingabe aus Gnotchi (ab Kalli 0.16.0, mit Gnotchi ab 0.40.0):** In Gnotchi lässt sich eine Eingabezeile in der
 Notch einschalten (Einstellungen → Aktivitäten → „Schnelleingabe“, Kürzel ab Werk control + option + N).
 Dort tippst du zum Beispiel „Zahnarzt morgen 15 Uhr“. Gespeichert wird über Kalli, deshalb muss
 Kalli laufen. Termine landen in deinem Standardkalender für neue Termine, Erinnerungen in der

@@ -111,7 +111,7 @@ Fensterbilder für eigene Mac-Apps“, 28.10.).
 - **Noch nicht gemessen:** ein echtes Fensterbild (braucht Michaels Freigabe) und die Drossel (10/s) im Lauf –
   sie ist aus Gnotchi übernommen, aber in Kalli nicht eigens ausgelöst.
 
-### K2 – Schnelleingabe aus Gnotchi: Kalli schreibt, prüft selbst, löscht nur Frisches (neu, 2026-11-19, nach 0.15.3)
+### K2 – Schnelleingabe aus Gnotchi: Kalli schreibt, prüft selbst, löscht nur Frisches (neu, 2026-11-19, 0.16.0)
 
 Kalli-Seite von Gnotchis G61 (`~/Coding/Gnotchi/docs/SECURE-DESIGN.md`, Spezifikation
 `~/Coding/Gnotchi/specs/2026-11-19-gnotchi-schnelleingabe.md`, mit Michael per `/grill-me` geklärt).

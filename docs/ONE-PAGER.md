@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.15: Was heute fällig ist, einmal am Tag vor Augen
+## Neu in 0.16: Termine aus der Notch eintippen
+
+Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.40.0, öffnet ein Tastenkürzel eine Zeile unter der Notch. Du schreibst „Zahnarzt morgen 15 Uhr“ oder „Rechnung zahlen bis 30.11.“, und Kalli legt daraus einen Termin oder eine Erinnerung an. Gnotchi selbst bekommt dafür keinen Zugriff auf deine Kalender. Kalli prüft jeden Eintrag, bevor es ihn speichert, und mit ⌘Z nimmst du ihn direkt danach wieder zurück.
+
+---
+
+## Seit 0.15: Was heute fällig ist, einmal am Tag vor Augen
 
 Auf Wunsch zeigt dir Kalli einmal am Tag zur Stunde deiner Wahl ein kleines Fenster mit den Aufgaben, die heute fällig sind. Du hakst sie direkt dort ab. Passt es gerade nicht, schickt „In 1 Std. wieder“ das Fenster weg, und eine Stunde später ist es wieder da. „Schließen“ beendet es für heute. Das Fenster nimmt dir weder Maus noch Tastatur weg, und wenn nichts fällig ist, erscheint es gar nicht. Ab Werk ist es aus.
 
@@ -80,6 +86,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Aufgaben erledigen und anlegen | Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an, Tag und Uhrzeit auch mitgetippt. Kalli liest danach nach, ob alles angekommen ist |
 | Den Tag auf dem Schreibtisch vor Augen haben | Auf Wunsch ein Tagesblatt hinter den Fenstern, mit Terminen und Aufgaben, als Papierblatt zum Blättern und Abreißen oder als Glas-Blatt |
 | Jeden Tag an die fälligen Aufgaben denken | Auf Wunsch einmal täglich ein kleines Fenster mit den heute fälligen Erinnerungen, abhakbar und um eine Stunde verschiebbar |
+| Einen Termin anlegen, ohne eine App zu öffnen | Mit Gnotchi eine Zeile unter der Notch: „Zahnarzt morgen 15 Uhr“ eintippen, Return, fertig. Kalli speichert und prüft nach |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
 | Rechtzeitig erinnert werden | Drei Wege nach Wahl: Mitteilung, pulsierender Punkt in der Leiste, Vollbild-Hinweis. Alle sind ab Werk aus |
 | Die eine wichtige Aufgabe des Tages im Blick behalten | „Die eine Sache“ steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst |

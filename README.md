@@ -28,7 +28,7 @@ ansteht, bezahlt das mit Oberfläche.
   ab 0.5.0 erscheint der nächste Termin 15 Minuten vor Beginn in der Notch. Nur Titel, Beginn und
   Farbe, über einen lokalen Socket, beide Apps prüfen vorher die Developer-ID-Signatur der anderen
   (Gnotchi SECURE-DESIGN G26).
-- **Schnelleingabe aus Gnotchi (nach 0.15.3):** Gnotchis Eingabezeile in der Notch legt Termine
+- **Schnelleingabe aus Gnotchi (ab 0.16.0, mit Gnotchi ab 0.40.0):** Gnotchis Eingabezeile in der Notch legt Termine
   und Erinnerungen in Alltagssprache an, gespeichert über Kalli auf derselben geprüften
   Verbindung. Kalli prüft jede Anfrage selbst und nimmt per ⌘Z nur gerade angelegte Einträge
   zurück (`docs/SECURE-DESIGN.md` K2, Gnotchi G61).
@@ -133,7 +133,7 @@ Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 
 Beim ersten Öffnen des Popovers fragt macOS nach Zugriff auf Kalender und
 Erinnerungen. Kalender werden gelesen; neue Termine legt Kalli nur an, wenn du
-sie in Gnotchis Schnelleingabe eingibst (nach 0.15.3). Bei Erinnerungen schreibt Kalli
+sie in Gnotchis Schnelleingabe eingibst (ab 0.16.0). Bei Erinnerungen schreibt Kalli
 das **Erledigt-Kennzeichen** (nur auf Klick) und legt ab 0.10.0 **neue Erinnerungen**
 an (über das „+“ oder Gnotchis Schnelleingabe). Bestehendes wird nie umbenannt,
 verschoben oder gelöscht. Gelöscht wird nur ein Eintrag, den du gerade über die
