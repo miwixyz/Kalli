@@ -28,6 +28,10 @@ ansteht, bezahlt das mit Oberfläche.
   ab 0.5.0 erscheint der nächste Termin 15 Minuten vor Beginn in der Notch. Nur Titel, Beginn und
   Farbe, über einen lokalen Socket, beide Apps prüfen vorher die Developer-ID-Signatur der anderen
   (Gnotchi SECURE-DESIGN G26).
+- **Schnelleingabe aus Gnotchi (nach 0.15.3):** Gnotchis Eingabezeile in der Notch legt Termine
+  und Erinnerungen in Alltagssprache an, gespeichert über Kalli auf derselben geprüften
+  Verbindung. Kalli prüft jede Anfrage selbst und nimmt per ⌘Z nur gerade angelegte Einträge
+  zurück (`docs/SECURE-DESIGN.md` K2, Gnotchi G61).
 
 - **Menüleiste:** Datum in frei wählbarem Format, optional ein Termin mit
   Countdown („10:00 P&O in 13 Min.", Titel auf feste Länge gekürzt, damit die
@@ -128,9 +132,12 @@ Voraussetzungen: macOS 26+, Xcode 27+, `xcodegen` (`brew install xcodegen`).
 ## Berechtigungen
 
 Beim ersten Öffnen des Popovers fragt macOS nach Zugriff auf Kalender und
-Erinnerungen. Kalender werden **nur gelesen**. Bei Erinnerungen schreibt Kalli
+Erinnerungen. Kalender werden gelesen; neue Termine legt Kalli nur an, wenn du
+sie in Gnotchis Schnelleingabe eingibst (nach 0.15.3). Bei Erinnerungen schreibt Kalli
 das **Erledigt-Kennzeichen** (nur auf Klick) und legt ab 0.10.0 **neue Erinnerungen**
-an (nur über das „+“) — nichts wird umbenannt, verschoben oder gelöscht.
+an (über das „+“ oder Gnotchis Schnelleingabe). Bestehendes wird nie umbenannt,
+verschoben oder gelöscht. Gelöscht wird nur ein Eintrag, den du gerade über die
+Schnelleingabe angelegt hast und per ⌘Z sofort zurücknimmst.
 
 Wird der Dialog abgelehnt, bleibt die Liste leer. Die App zeigt dann eine
 Anleitung mit Direktlink in die Systemeinstellungen, statt still nichts zu tun.
@@ -368,8 +375,8 @@ MIT — siehe [LICENSE](LICENSE). Rechtliche Hinweise und Datenschutz stehen in
 Rechtliches.
 
 **Kurz zum Datenschutz:** Kein Server, keine Analyse, keine Kennungen. Kalender
-werden nur gelesen; bei Erinnerungen wird das Erledigt-Kennzeichen gesetzt und
-auf Wunsch eine neue Erinnerung angelegt. Gespeichert werden nur die eigenen Einstellungen.
+werden gelesen, neue Termine nur über Gnotchis Schnelleingabe angelegt; bei Erinnerungen
+wird das Erledigt-Kennzeichen gesetzt und auf Wunsch eine neue Erinnerung angelegt. Gespeichert werden nur die eigenen Einstellungen.
 
 **Genau ein Netzwerkzugriff:** die Update-Prüfung bei GitHub — ab Werk **aus**,
 beim ersten Mal wird gefragt. GitHub sieht dabei IP-Adresse und installierte

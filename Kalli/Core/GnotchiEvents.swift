@@ -11,7 +11,8 @@ import Security
 /// rausgeht, prüft Kalli den Prozess am anderen Ende über sein Audit-Token gegen eine **Developer-ID**-Anforderung
 /// für `dev.mwlr.gnotchi` (Team LTKJ6Z2VYB) und wartet auf Gnotchis `ok`; Gnotchi prüft Kalli genauso.
 /// Gesendet werden nur Titel, Beginn und Kalenderfarbe des Termins, den Kallis Menüleiste ohnehin zeigt.
-/// Zurück kommt nichts außer Gnotchis `ok`; ein Klick in der Notch öffnet Apple Kalender (Gnotchi selbst).
+/// Zurück kam bis 0.15 nichts außer Gnotchis `ok`. Ab der Schnelleingabe (G61) schickt Gnotchi über dieselbe
+/// geprüfte Verbindung `v:2`-Anfragen (`create`/`undo`); `GnotchiQuickEntryService` prüft sie und Kalli antwortet.
 /// Nie Titel ins Protokoll.
 enum GnotchiEvents {
 
@@ -97,12 +98,27 @@ final class GnotchiEventSender {
     private var source: DispatchSourceRead?
     private var launchWatcher: GnotchiLaunchWatcher?
 
+    /// Anfragen von Gnotchi (Schnelleingabe, G61). Antwort `nil` = nichts zurückschicken.
+    typealias RequestHandler = @MainActor ([String: Any]?) async -> [String: Any]?
+    private let onRequest: RequestHandler?
+    /// Eingang, bis eine Nachricht vollständig ist.
+    private var inbound = Data()
+    /// Anfragen laufen streng nacheinander (ein `undo` nie vor seinem `create`).
+    private var queueTail: Task<Void, Never>?
+    private var queued = 0
+    /// Mehr wartende Anfragen gelten als Fehlverhalten → Verbindung zu.
+    static let maxQueued = 32
+    /// Zählt Verbindungen, damit eine späte Antwort nie in eine neue Verbindung geht.
+    private var connection = 0
+
     /// `current`: Kallis nächster Termin (beobachtet). `path`/`requirement` nur im Test anders.
     init(current: @escaping @MainActor () -> AgendaItem?,
-         path: String? = GnotchiEvents.socketPath, requirement: String = GnotchiEvents.requirement) {
+         path: String? = GnotchiEvents.socketPath, requirement: String = GnotchiEvents.requirement,
+         onRequest: RequestHandler? = nil) {
         self.current = current
         self.path = path
         self.requirement = requirement
+        self.onRequest = onRequest
     }
 
     func start() {
@@ -129,6 +145,11 @@ final class GnotchiEventSender {
     func sendCurrent() {
         if fd < 0 { connect() }
         guard fd >= 0, let data = GnotchiEvents.frame(GnotchiEvents.payload(current())) else { return }
+        send(data)
+    }
+
+    private func send(_ data: Data) {
+        guard fd >= 0 else { return }
         let n = data.withUnsafeBytes { write(fd, $0.baseAddress, data.count) }
         if n != data.count { close(reason: "Schreibfehler") }
     }
@@ -151,17 +172,22 @@ final class GnotchiEventSender {
             Darwin.close(s)
             return Self.log.error("Termine: Gegenseite ist kein echtes Gnotchi – nichts gesendet")
         }
-        guard readAck(s) else {
+        guard let rest = readAck(s) else {
             Darwin.close(s)
             return Self.log.notice("Termine: Gnotchi hat nicht bestätigt")
         }
         _ = fcntl(s, F_SETFL, fcntl(s, F_GETFL) | O_NONBLOCK)
         fd = s
+        connection += 1
+        // Was im selben Lesevorgang hinter dem `ok` kam, gehört schon zur nächsten Nachricht (Test 19.11.: sonst
+        // ging eine Anfrage direkt nach dem `ok` verloren).
+        inbound = onRequest == nil ? Data() : rest
         let src = DispatchSource.makeReadSource(fileDescriptor: s, queue: .main)
         src.setEventHandler { [weak self] in MainActor.assumeIsolated { self?.readIncoming() } }
         src.resume()
         source = src
         Self.log.notice("Termine: mit Gnotchi verbunden")
+        drainInbound()
     }
 
     /// Audit-Token des lauschenden Prozesses → Code → Anforderung (Audit-Token statt PID: kein Wettlauf).
@@ -178,29 +204,65 @@ final class GnotchiEventSender {
         return SecCodeCheckValidity(code, [], req) == errSecSuccess
     }
 
-    private func readAck(_ s: Int32) -> Bool {
+    /// `nil` = kein gültiges `ok`; sonst die Bytes, die hinter dem `ok` schon mitgelesen wurden.
+    private func readAck(_ s: Int32) -> Data? {
         var tv = timeval(tv_sec: 0, tv_usec: Int32(GnotchiEvents.ackTimeout * 1_000_000))
         setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, socklen_t(MemoryLayout<timeval>.size))
         var buf = Data()
         var chunk = [UInt8](repeating: 0, count: 256)
         while true {
             let n = read(s, &chunk, chunk.count)
-            guard n > 0 else { return false }
+            guard n > 0 else { return nil }
             buf.append(contentsOf: chunk[0..<n])
             switch GnotchiEvents.nextFrame(&buf) {
             case .needMore: continue
-            case .invalid: return false
-            case .message(let obj): return GnotchiEvents.isAck(obj)
+            case .invalid: return nil
+            case .message(let obj): return GnotchiEvents.isAck(obj) ? buf : nil
             }
         }
     }
 
-    /// Gnotchi schickt nach dem `ok` nichts mehr; gelesen wird nur, um eine Trennung zu bemerken.
+    /// Liest, was Gnotchi nach dem `ok` schickt: Schnelleingabe-Anfragen (G61) und die Trennung. Ohne
+    /// `onRequest` (alte Verdrahtung, Tests) wird verworfen wie bis 0.15. Ein kaputter Rahmen schließt die Verbindung.
     private func readIncoming() {
         var chunk = [UInt8](repeating: 0, count: 512)
-        let n = read(fd, &chunk, chunk.count)
-        if n == 0 { return close(reason: "Gnotchi getrennt") }
-        if n < 0, errno != EAGAIN { close(reason: "Lesefehler") }
+        while fd >= 0 {
+            let n = read(fd, &chunk, chunk.count)
+            if n == 0 { return close(reason: "Gnotchi getrennt") }
+            if n < 0 {
+                if errno != EAGAIN { close(reason: "Lesefehler") }
+                return
+            }
+            guard onRequest != nil else { continue }
+            inbound.append(contentsOf: chunk[0..<n])
+            drainInbound()
+        }
+    }
+
+    private func drainInbound() {
+        while fd >= 0 {
+            switch GnotchiEvents.nextFrame(&inbound) {
+            case .needMore: return
+            case .invalid: return close(reason: "ungültiger Rahmen von Gnotchi")
+            case .message(let obj): enqueue(obj)
+            }
+        }
+    }
+
+    private func enqueue(_ obj: [String: Any]?) {
+        guard let onRequest else { return }
+        guard queued < Self.maxQueued else { return close(reason: "zu viele Anfragen") }
+        queued += 1
+        let previous = queueTail
+        let current = connection
+        queueTail = Task { @MainActor [weak self] in
+            await previous?.value
+            let reply = await onRequest(obj)
+            guard let self else { return }
+            self.queued -= 1
+            guard let reply, self.connection == current, let data = GnotchiEvents.frame(reply) else { return }
+            self.send(data)
+        }
     }
 
     private func close(reason: String) {

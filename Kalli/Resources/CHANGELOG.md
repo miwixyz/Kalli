@@ -2,6 +2,22 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unreleased]
+
+### Neu
+
+- **Schnelleingabe aus Gnotchi:** Gnotchi hat eine Eingabezeile in der Notch für Termine und
+  Erinnerungen in Alltagssprache („Zahnarzt morgen 15 Uhr“). Gespeichert wird über Kalli, denn
+  Gnotchi selbst hat keinen Zugriff auf Kalender und Erinnerungen. Termine landen im
+  Standardkalender für neue Termine, Erinnerungen wie bei „Neue Erinnerung“ in der Standardliste.
+  Kalli liest jeden Eintrag nach dem Speichern noch einmal nach und meldet erst dann „gespeichert“.
+  ⌘Z direkt danach nimmt den Eintrag über Kalli wieder zurück, aber nur, solange er frisch ist
+  (30 Sekunden) und über diesen Weg angelegt wurde.
+- **Kalli prüft jede Anfrage selbst** und vertraut Gnotchi nicht blind: Titel 1 bis 200 Zeichen
+  ohne Steuerzeichen, Beginn zwischen gestern und in fünf Jahren, Termine höchstens 24 Stunden,
+  höchstens 20 Einträge pro Minute. Abgelehntes kommt mit Grund zurück. Ins Protokoll kommt nur
+  Art und Ergebnis, nie der Titel (Sicherheitsentwurf K2).
+
 ## [0.15.3] — 2026-11-18
 
 Zwei Fehler im Popover behoben, beide gemessen.

@@ -1,6 +1,6 @@
 # Kalli — Hilfe
 
-Kalli zeigt deinen Kalender im Menübalken. Termine werden nur gelesen; Aufgaben lassen sich direkt abhaken und schnell neu anlegen.
+Kalli zeigt deinen Kalender im Menübalken. Bestehende Termine werden nur gelesen; Aufgaben lassen sich direkt abhaken und schnell neu anlegen.
 
 ## Menüleiste
 
@@ -380,15 +380,25 @@ Kalenderfarbe, über eine lokale Verbindung, bei der beide Apps vorher die Signa
 prüfen; andere Programme bekommen nichts. Abschalten in Gnotchi: Einstellungen → „Termine aus
 Kalli anzeigen“.
 
+**Schnelleingabe aus Gnotchi (nach Kalli 0.15.3):** In Gnotchi lässt sich eine Eingabezeile in der
+Notch einschalten (Einstellungen → Aktivitäten → „Schnelleingabe“, Kürzel ab Werk control + option + N).
+Dort tippst du zum Beispiel „Zahnarzt morgen 15 Uhr“. Gespeichert wird über Kalli, deshalb muss
+Kalli laufen. Termine landen in deinem Standardkalender für neue Termine, Erinnerungen in der
+Standardliste wie bei „Neue Erinnerung“. Kalli prüft jeden Eintrag, bevor es ihn speichert, und
+liest ihn danach noch einmal nach. ⌘Z direkt nach dem Speichern nimmt ihn zurück. Kalli löscht
+dabei nur, was gerade eben über die Schnelleingabe entstanden ist, nie etwas anderes.
+
 ## Berechtigungen
 
 Beim ersten Öffnen fragt macOS nach Zugriff auf **Kalender** und
 **Erinnerungen**.
 
-Kalender werden ausschließlich **gelesen**. Bei Erinnerungen schreibt Kalli
-zwei Dinge: das **Erledigt-Kennzeichen**, wenn du ein Häkchen setzt, und eine
-**neue Erinnerung**, wenn du sie über das „+“ anlegst. Umbenannt oder gelöscht
-wird nichts.
+Kalender werden **gelesen**. Einen neuen Termin legt Kalli nur an, wenn du ihn in
+Gnotchis Schnelleingabe eingibst. Bei Erinnerungen schreibt Kalli zwei Dinge: das
+**Erledigt-Kennzeichen**, wenn du ein Häkchen setzt, und eine **neue Erinnerung**,
+wenn du sie über das „+“ oder die Schnelleingabe anlegst. Bestehendes wird nie
+umbenannt oder gelöscht. Gelöscht wird nur ein Eintrag, den du gerade über die
+Schnelleingabe angelegt hast und mit ⌘Z sofort zurücknimmst.
 
 Wurde der Zugriff abgelehnt, bleibt die Liste leer und Kalli zeigt einen
 Hinweis mit Direktlink in die Systemeinstellungen. Erteilst du ihn dort später,
@@ -436,7 +446,7 @@ beide sind ausgereifter und werden gepflegt.
 - **Liste bleibt leer** → Berechtigung prüfen, oder alle Kalender sind unter
   „Kalender" abgewählt.
 - **Termin fehlt** → Gehört er zu einem abgewählten Kalender?
-- **Ein Termin sieht falsch aus** → Termine werden nur gelesen; die Quelle ist
+- **Ein Termin sieht falsch aus** → Kalli ändert bestehende Termine nicht; die Quelle ist
   die Kalender-App. Dort korrigieren, Kalli zieht automatisch nach.
 - **Ein Häkchen kommt nicht an** → Kalli meldet den Fehler unter der Liste.
   Bleibt er bestehen, fehlt vermutlich die Schreibberechtigung für Erinnerungen

@@ -40,7 +40,12 @@ struct KalliApp: App {
         let service = OneThingService(oneThing: o)
         _oneThing = State(initialValue: o)
         _oneThingService = State(initialValue: service)
-        let events = GnotchiEventSender(current: { [s] in s.nextEvent })
+        // Schnelleingabe aus Gnotchi (G61): Gnotchi erkennt, Kalli prüft und speichert.
+        let quickEntry = GnotchiQuickEntryService(
+            create: { [s] entry in await s.createQuickEntry(entry) },
+            remove: { [s] id, kind in await s.removeQuickEntry(identifier: id, kind: kind) })
+        let events = GnotchiEventSender(current: { [s] in s.nextEvent },
+                                        onRequest: { [quickEntry] obj in await quickEntry.handle(obj) })
         _gnotchiEvents = State(initialValue: events)
         let pad = DeskPadController(prefs: p, store: s)
         _deskPad = State(initialValue: pad)

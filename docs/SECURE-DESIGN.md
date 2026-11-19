@@ -110,3 +110,53 @@ Fensterbilder für eigene Mac-Apps“, 28.10.).
   Fremdeingaben. **Kein `rafter run`** (Kontingent leer bis 26.11., Michael 28.10.).
 - **Noch nicht gemessen:** ein echtes Fensterbild (braucht Michaels Freigabe) und die Drossel (10/s) im Lauf –
   sie ist aus Gnotchi übernommen, aber in Kalli nicht eigens ausgelöst.
+
+### K2 – Schnelleingabe aus Gnotchi: Kalli schreibt, prüft selbst, löscht nur Frisches (neu, 2026-11-19, nach 0.15.3)
+
+Kalli-Seite von Gnotchis G61 (`~/Coding/Gnotchi/docs/SECURE-DESIGN.md`, Spezifikation
+`~/Coding/Gnotchi/specs/2026-11-19-gnotchi-schnelleingabe.md`, mit Michael per `/grill-me` geklärt).
+
+- **Wozu:** Gnotchi soll Termine und Erinnerungen aus einer Eingabezeile anlegen, ohne selbst Zugriff auf Kalender
+  oder Erinnerungen zu bekommen (für Erinnerungen gibt es keinen Nur-Schreiben-Zugriff). Kalli hat den Zugriff schon
+  und schreibt stellvertretend.
+- **Weg:** dieselbe Verbindung wie der nächste Termin (G26): `kalli.sock`, beide Seiten prüfen die andere **vor dem
+  ersten Byte** über das Audit-Token gegen die Developer-ID-Anforderung (Team LTKJ6Z2VYB, `com.kalli.app` /
+  `dev.mwlr.gnotchi`). Neu ist nur, dass Kalli nach Gnotchis `ok` weiterliest. Rahmen wie bisher: 4 Byte Länge +
+  JSON, höchstens 4 KB; ein kaputter Rahmen schließt die Verbindung.
+- **Nachrichten:** Gnotchi → Kalli `{"v":2,"create":{id,kind,title,start,end,allDay,urgent}}` und
+  `{"v":2,"undo":{"id"}}`; Kalli → Gnotchi `{"v":2,"result":{id,ok,error?}}`. Ohne `onRequest` (alte Verdrahtung,
+  Tests) verwirft Kalli Eingehendes wie bis 0.15.
+- **Kalli vertraut Gnotchi nicht blind** (`GnotchiQuickEntry.parse`, rein und getestet): Version genau 2, `id` eine
+  UUID, `kind` nur `event`/`reminder`, Titel nach Trimmen 1–200 Zeichen ohne Steuerzeichen, Beginn zwischen jetzt −1
+  Tag und +5 Jahren, Termin mit `end > start` und höchstens 24 h, unbekannte oder falsch getypte Felder → Ablehnung.
+  Höchstens 20 Anlagen je Minute (`QuickEntryRateLimiter`); dieselbe `id` zweimal → „schon angelegt“.
+- **Schreiben:** Termin in `defaultCalendarForNewEvents`, Erinnerung über `QuickReminder.save` (wie das „+“) bzw. ohne
+  Fälligkeit. Danach liest Kalli den Eintrag über seine Kennung nach; nur wenn er da ist, geht `ok` zurück, sonst ein
+  Fehler (kein falscher Erfolg). Kein Ort, keine Notiz, keine Teilnehmer, kein eigener Alarm.
+- **Löschen nur Frisches:** `QuickEntryUndoLedger` merkt sich `id → EventKit-Kennung` **nur im Arbeitsspeicher**,
+  30 s lang und nur für Einträge, die über diesen Weg entstanden. `undo` nimmt den Eintrag einmal heraus; fremde,
+  ältere oder schon zurückgenommene Kennungen → Fehler. Kalli löscht also nie etwas, das nicht gerade eben über die
+  Schnelleingabe entstand. Ist der Eintrag beim Zurücknehmen schon weg, meldet Kalli das als Fehler, nicht als Erfolg.
+  Nach dem Löschen wird nachgelesen, dass er weg ist.
+- **Reihenfolge und Last:** Anfragen laufen streng nacheinander (ein `undo` nie vor seinem `create`), höchstens 32
+  warten, mehr → Verbindung zu. Ein Verbindungszähler verhindert, dass eine späte Antwort in eine neue Verbindung geht.
+  Das Neuladen der Anzeige läuft nach der Antwort, damit Gnotchi nicht in sein Zeitlimit (4 s) läuft und Michael
+  doppelt speichert.
+- **Protokoll:** nur Art, Ergebnis und Ablehnungsgrund (feste Texte), nie Titel oder Zeitpunkt.
+- **STRIDE:**
+  - *S:* Nur ein Developer-ID-signiertes Gnotchi kommt durch die Peer-Prüfung; andere Programme erreichen den
+    Rückkanal nicht.
+  - *T:* Kalli prüft jedes Feld selbst; geschrieben wird genau, was geprüft wurde.
+  - *R:* Protokoll wie oben.
+  - *I:* Kalli schickt außer `ok`/Fehlertext nichts zurück, keine Kalendernamen, keine Kennungen aus EventKit.
+  - *D:* 20 Anlagen je Minute, 32 wartende Anfragen, 4-KB-Rahmen.
+  - *E:* Ein kompromittiertes Gnotchi könnte bis zu 20 Einträge je Minute anlegen und nur seine eigenen frischen
+    wieder löschen. Lesen, Ändern oder Löschen bestehender Einträge ist über diesen Weg nicht möglich.
+- **Zugriffstexte angepasst:** `NSCalendars…UsageDescription` sagte „ausschließlich lesend“; jetzt: neue Termine nur
+  über Gnotchis Schnelleingabe, Bestehendes wird nicht geändert. Ebenso Hilfe, README, RECHTLICHES, Website.
+- **Prüfung (19.11.):** `/code-audit` (Default) mit zwei Funden, beide behoben: (1) `undo` meldete Erfolg, wenn der
+  Eintrag nicht gefunden wurde; (2) das Neuladen vor der Antwort ließ Gnotchi in sein Zeitlimit laufen („antwortet
+  nicht“ → Michael hätte doppelt gespeichert). Sichttest am echten System mit Gnotchi: ein dritter Fehler, `readAck`
+  verwarf Bytes, die im selben Lesevorgang hinter Gnotchis `ok` kamen; jetzt gehen sie in den Eingangspuffer, Test
+  mit echter Socket-Verbindung. gitleaks und Swift-Advisories sauber. Kein `rafter run` (Zweitmeinung erst vor dem
+  Release).

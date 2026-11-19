@@ -48,7 +48,8 @@ final class CalendarStore {
     /// zu viel — also erst messen.
     nonisolated private static let log = Logger(subsystem: "com.kalli.app", category: "erinnerungen")
 
-    private let store = EKEventStore()
+    /// Intern statt privat, damit die Erweiterung `CalendarStore+Schnelleingabe` schreiben kann.
+    let store = EKEventStore()
     /// `nil` nur in Tests: Das Testziel läuft ohne Host-App, und ohne App-Bündel
     /// wirft `UNUserNotificationCenter.current()` (gemessen 2026-10-28).
     private let alerts: EventAlerts?
