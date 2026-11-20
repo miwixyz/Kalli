@@ -3,7 +3,7 @@
 ## Wer
 
 Kalli wird entwickelt von **Michael Wildenauer**, München.
-Kontakt: mw@cinesocial.de
+Kontakt: tippi@mwlr.dev
 
 ## Lizenz
 
