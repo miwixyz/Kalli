@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.17.0</title>
+            <pubDate>Sun, 22 Nov 2026 11:52:43 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>125</sparkle:version>
+            <sparkle:shortVersionString>0.17.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Der nächste Termin auch auf einem Schreibtischgerät.</p><h3>Neu</h3><ul><li><b>Nächster Termin fürs Schreibtischgerät:</b> Einstellungen → Menüleiste → „Schreibtischgerät“. Kalli legt den Termin, den die Menüleiste als nächsten kennt, in einem eigenen Briefkasten ab (ein kleiner Server, den du selbst betreibst, Adresse und Schlüssel trägst du ein). Ein Gerät auf dem Schreibtisch holt ihn dort ab und zeigt ihn an. Gesendet werden nur Titel (höchstens 40 Zeichen) und Beginn, bei jeder Änderung und alle 5 Minuten. Keine Teilnehmer, Orte, Notizen oder Kalendernamen. Ganztägige Termine und Erinnerungen nicht. Ab Werk aus.</li><li>Der Schlüssel liegt in einem eigenen Eintrag im Schlüsselbund, nicht in den Einstellungen. Kalli folgt keiner Weiterleitung, damit der Schlüssel nie an eine andere Adresse geht, und zeigt unter dem Schalter, ob das letzte Senden geklappt hat.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.17.0/Kalli-0.17.0.zip" length="3492742" type="application/octet-stream" sparkle:edSignature="V4kudbNrzzW/Pf1vNLiqPJ1hWMLoO/p96gPzFtFVrZrJNU+hg3+ST7hGWqmoG9lyAvg7E9hHGbSz47jYbpN1Bg=="/>
+        </item>
+        <item>
             <title>0.16.0</title>
             <pubDate>Thu, 19 Nov 2026 17:37:00 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Zwei Fehler im Popover behoben, beide gemessen.</p><h3>Behoben</h3><ul><li><b>Popover passt auf den Bildschirm:</b> Bei großer Schrift und vollem Tag wurde das Popover höher als ein kleiner Bildschirm (gemessen 1.167 pt), die Zeile mit Einstellungen und Beenden lag dann außerhalb. Die Tagesliste wird jetzt so weit gekürzt und gescrollt, dass das Popover auf den Bildschirm passt, auf dem es aufgeht.</li><li><b>Nach einem Tageswechsel zeigt Kalli heute:</b> Der zuletzt angeklickte Tag blieb über Nacht markiert, morgens stand noch die Liste von gestern. Kalli springt jetzt beim ersten Öffnen eines neuen Tages auf heute; am selben Tag bleibt der angeklickte Tag stehen.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.3/Kalli-0.15.3.zip" length="3440442" type="application/octet-stream" sparkle:edSignature="Mky19jFrTUwazZ9XNujxM3/EDA0+iFt/LtejBuK/aFIfeumJdgr8LJ3pH+7CvvwCurwsEj/vTNPy1SsNzeNvAg=="/>
-        </item>
-        <item>
-            <title>0.15.2</title>
-            <pubDate>Wed, 18 Nov 2026 15:00:38 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>115</sparkle:version>
-            <sparkle:shortVersionString>0.15.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Sechs Fehler aus einer Gesamtprüfung behoben, dazu Bedienhilfen im Monatsraster.</p><h3>Behoben</h3><ul><li><b>Neue Erinnerung:</b> Ein Datum, das keines ist („31.2.“, „Version 0.15.“) oder schon vorbei ist („Rechnung vom 12.03.2024“), bleibt jetzt im Titel stehen, statt still daraus zu verschwinden.</li><li><b>Abgelehnte Einladungen</b> erscheinen nicht mehr als nächster Termin in der Menüleiste und bei Gnotchi und bekommen keine Mitteilung mehr.</li><li><b>Vollbild-Hinweis:</b> Verschiebst du eine dringende Erinnerung, nachdem ihr Hinweis erschienen ist, kommt er zur neuen Zeit noch einmal.</li><li><b>Aufgaben des Tages:</b> Passt das Fenster an der gemerkten Stelle nicht ganz auf den Bildschirm (an Tagen mit mehr Aufgaben), wird es dort hineingeschoben, statt nach oben links zu springen.</li><li><b>Berechtigung Erinnerungen:</b> Der Text im macOS-Dialog und in der Hilfe sagt jetzt, dass Kalli auch neue Erinnerungen anlegt.</li></ul><h3>Bedienhilfen</h3><ul><li><b>Monatsraster:</b> VoiceOver liest jeden Tag mit Datum und „Einträge vorhanden“ vor und kann ihn auswählen. Die Pfeiltasten verschieben den gewählten Tag.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.15.2/Kalli-0.15.2.zip" length="3435743" type="application/octet-stream" sparkle:edSignature="U5S2mmlvWAzYP9WqXK2njPegHbGTxMY8L8Xckt0DR5VwdZkiLYKbmAoCQVgEiYeiNSUh4skEiHDZo4pnLUVHBw=="/>
         </item>
     </channel>
 </rss>
