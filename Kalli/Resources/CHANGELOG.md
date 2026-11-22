@@ -18,6 +18,11 @@ Der nächste Termin auch auf einem Schreibtischgerät.
   Kalli folgt keiner Weiterleitung, damit der Schlüssel nie an eine andere Adresse geht, und
   zeigt unter dem Schalter, ob das letzte Senden geklappt hat.
 
+### Intern
+
+- Einstellungsgruppe „Schreibtischgerät“ in eigener Datei (`KumikiTerminSettings.swift`), weil
+  `SettingsView.swift` sonst über der Längengrenze des Lint lag.
+
 ## [0.16.0] — 2026-11-19
 
 Neue Termine und Erinnerungen direkt aus der Notch, mit Gnotchi ab 0.40.0.
