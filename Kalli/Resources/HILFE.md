@@ -380,6 +380,13 @@ Kalenderfarbe, über eine lokale Verbindung, bei der beide Apps vorher die Signa
 prüfen; andere Programme bekommen nichts. Abschalten in Gnotchi: Einstellungen → „Termine aus
 Kalli anzeigen“.
 
+**Nächster Termin fürs Schreibtischgerät (ab 0.17.0):** Einstellungen → Menüleiste →
+„Schreibtischgerät“. Ein Gerät auf dem Schreibtisch, das den Mac selbst nicht erreicht, kann den
+nächsten Termin aus einem Briefkasten abholen, den du selbst betreibst. Trag dort dessen Adresse
+(beginnt mit https://) und den Schreibschlüssel ein und tippe auf „Speichern“. Kalli sendet nur
+Titel (höchstens 40 Zeichen) und Beginn des nächsten Termins, bei jeder Änderung und alle
+5 Minuten. Unter dem Schalter steht, ob das letzte Senden geklappt hat. Ab Werk aus.
+
 **Schnelleingabe aus Gnotchi (ab Kalli 0.16.0, mit Gnotchi ab 0.40.0):** In Gnotchi lässt sich eine Eingabezeile in der
 Notch einschalten (Einstellungen → Aktivitäten → „Schnelleingabe“, Kürzel ab Werk control + option + N).
 Dort tippst du zum Beispiel „Zahnarzt morgen 15 Uhr“. Gespeichert wird über Kalli, deshalb muss

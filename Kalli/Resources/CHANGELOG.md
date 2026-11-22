@@ -2,6 +2,22 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.17.0] — 2026-11-22
+
+Der nächste Termin auch auf einem Schreibtischgerät.
+
+### Neu
+
+- **Nächster Termin fürs Schreibtischgerät:** Einstellungen → Menüleiste → „Schreibtischgerät“.
+  Kalli legt den Termin, den die Menüleiste als nächsten kennt, in einem eigenen Briefkasten ab
+  (ein kleiner Server, den du selbst betreibst, Adresse und Schlüssel trägst du ein). Ein Gerät
+  auf dem Schreibtisch holt ihn dort ab und zeigt ihn an. Gesendet werden nur Titel (höchstens
+  40 Zeichen) und Beginn, bei jeder Änderung und alle 5 Minuten. Keine Teilnehmer, Orte, Notizen
+  oder Kalendernamen. Ganztägige Termine und Erinnerungen nicht. Ab Werk aus.
+- Der Schlüssel liegt in einem eigenen Eintrag im Schlüsselbund, nicht in den Einstellungen.
+  Kalli folgt keiner Weiterleitung, damit der Schlüssel nie an eine andere Adresse geht, und
+  zeigt unter dem Schalter, ob das letzte Senden geklappt hat.
+
 ## [0.16.0] — 2026-11-19
 
 Neue Termine und Erinnerungen direkt aus der Notch, mit Gnotchi ab 0.40.0.

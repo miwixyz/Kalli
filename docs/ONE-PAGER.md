@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.16: Termine aus der Notch eintippen
+## Neu in 0.17: Der nächste Termin auf dem Schreibtisch
+
+Hast du ein kleines Gerät auf dem Schreibtisch, das den Mac nicht direkt erreicht, kann Kalli ihm den nächsten Termin über einen eigenen Briefkasten im Netz zuschicken. Kalli sendet dafür nur den Titel (höchstens 40 Zeichen) und die Uhrzeit, sonst nichts. Ab Werk ist das aus, Adresse und Schlüssel trägst du selbst ein.
+
+---
+
+## Seit 0.16: Termine aus der Notch eintippen
 
 Nutzt du [Gnotchi](https://github.com/miwixyz/Gnotchi) ab 0.40.0, öffnet ein Tastenkürzel eine Zeile unter der Notch. Du schreibst „Zahnarzt morgen 15 Uhr“ oder „Rechnung zahlen bis 30.11.“, und Kalli legt daraus einen Termin oder eine Erinnerung an. Gnotchi selbst bekommt dafür keinen Zugriff auf deine Kalender. Kalli prüft jeden Eintrag, bevor es ihn speichert, und mit ⌘Z nimmst du ihn direkt danach wieder zurück.
 
