@@ -28,6 +28,10 @@ ansteht, bezahlt das mit Oberfläche.
   ab 0.5.0 erscheint der nächste Termin 15 Minuten vor Beginn in der Notch. Nur Titel, Beginn und
   Farbe, über einen lokalen Socket, beide Apps prüfen vorher die Developer-ID-Signatur der anderen
   (Gnotchi SECURE-DESIGN G26).
+- **Nächster Termin fürs Schreibtischgerät (kommt mit 0.17.0, ab Werk aus):** Einstellungen → Menüleiste →
+  „Schreibtischgerät“. Kalli legt Titel (höchstens 40 Zeichen) und Beginn des nächsten Termins per HTTPS in einem
+  eigenen Briefkasten-Worker ab, den ein Schreibtischgerät abholt. Keine Teilnehmer, Orte oder Notizen; Schlüssel im
+  Schlüsselbund, keine Weiterleitungen (`Kalli/Core/KumikiTermin.swift`).
 - **Schnelleingabe aus Gnotchi (ab 0.16.0, mit Gnotchi ab 0.40.0):** Gnotchis Eingabezeile in der Notch legt Termine
   und Erinnerungen in Alltagssprache an, gespeichert über Kalli auf derselben geprüften
   Verbindung. Kalli prüft jede Anfrage selbst und nimmt per ⌘Z nur gerade angelegte Einträge

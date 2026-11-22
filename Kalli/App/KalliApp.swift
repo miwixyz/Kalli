@@ -18,6 +18,8 @@ struct KalliApp: App {
     @State private var deskPad: DeskPadController
     /// Tägliches Pop-up mit den heute fälligen Aufgaben (0.15.0), ab Werk aus.
     @State private var taskDigest: TaskDigest
+    /// Nächster Termin für ein Schreibtischgerät über einen Briefkasten (0.17.0), ab Werk aus.
+    @State private var kumikiTermin: KumikiTerminSender
 
     init() {
         // Schrift der App-Familie (0.6.0) VOR dem ersten Zeichnen registrieren. Ohne
@@ -51,6 +53,8 @@ struct KalliApp: App {
         _deskPad = State(initialValue: pad)
         let digest = TaskDigest(prefs: p, store: s)
         _taskDigest = State(initialValue: digest)
+        let kumiki = KumikiTerminSender(current: { [s] in s.nextEvent })
+        _kumikiTermin = State(initialValue: kumiki)
         // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
         Task { @MainActor in p.appearanceMode.apply() }
         // Bild-Testkopie (docs/SECURE-DESIGN.md K1, nur Debug-Build): keine Termine an Gnotchi – ihr leerer
@@ -58,6 +62,7 @@ struct KalliApp: App {
         guard !Self.startedAsBildKopie(prefs: p, store: s, label: l) else { return }
         Task { @MainActor in events.start() }
         Task { @MainActor in pad.start() }
+        Task { @MainActor in kumiki.start() }
         Task { @MainActor in
             digest.start()
             #if DEBUG
@@ -89,6 +94,7 @@ struct KalliApp: App {
                 .environment(label)
                 .environment(updater)
                 .environment(oneThing)
+                .environment(kumikiTermin)
                 .tint(Theme.accent)
                 .task {
                     // Berechtigung erst beim ersten Öffnen erfragen, nicht beim
