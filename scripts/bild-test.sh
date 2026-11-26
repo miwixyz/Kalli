@@ -27,6 +27,9 @@ SRC="build-dev/Build/Products/Debug/Kalli.app"
 DEST_DIR=$(mktemp -d /tmp/kalli-bild.XXXXXX)
 APP="$DEST_DIR/Kalli Bild.app"
 ditto "$SRC" "$APP"
+# Ohne Widget-Erweiterung (ab 0.18.0): Die Kopie hat keinen Kalenderzugriff (K1), und eine zweite registrierte
+# Erweiterung derselben Kennung nimmt macOS womöglich statt der echten als Widget-Quelle (gemessen 2026-11-26).
+[ -d "$APP/Contents/PlugIns" ] && mv "$APP/Contents/PlugIns" "$DEST_DIR/PlugIns-nicht-in-der-Kopie"
 PLIST="$APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $BUNDLE_ID" "$PLIST"
 /usr/libexec/PlistBuddy -c "Set :CFBundleName Kalli Bild" "$PLIST"

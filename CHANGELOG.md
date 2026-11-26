@@ -2,7 +2,9 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unreleased]
+## [0.18.0] — 2026-11-26
+
+Das Tagesblatt als Widget und im Punkti-Look, und es passt auf kleine Bildschirme.
 
 ### Neu
 
@@ -27,6 +29,7 @@ Alle nennenswerten Änderungen an Kalli.
 - Neue Widget-Erweiterung `KalliWidget` (Sandbox, nur lesender Kalender- und
   Erinnerungszugriff). `release.sh` prüft, dass sie mit Sandbox signiert im Paket liegt;
   `dev-signed.sh` signiert sie mit eigenen Rechten nach.
+- `bild-test.sh`: Die Bild-Testkopie enthält die Widget-Erweiterung nicht (kein Kalenderzugriff, keine zweite Widget-Quelle).
 - Punkti-Bausteine (`PunktiStyle.swift`, `PunktiDayParts.swift`) teilen sich Widget und Fenster.
 - Kalli lädt das Widget beim Start neu (sonst bis zu einer Stunde alter Stand nach einem Update).
 - `AgendaGroupKind` aus `Preferences.swift` in eine eigene Datei verschoben (unverändert),

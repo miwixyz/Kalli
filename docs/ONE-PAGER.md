@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.17: Der nächste Termin auf dem Schreibtisch
+## Neu in 0.18: Das Tagesblatt als Widget
+
+Kallis Tagesblatt gibt es jetzt als Widget für den Schreibtisch, in drei Größen und im Glas-Look der Punkti-Widgets: Ein Ring aus Punkten zeigt den Tag im Monat, die Zahl leuchtet wie eine LED-Anzeige, daneben stehen die Termine und Aufgaben, die heute noch anstehen. Das Blatt hinter den Fenstern kann dieses Aussehen auch, und auf einem kleinen Bildschirm wird es so weit verkleinert, dass es ganz draufpasst. Das Widget liest deine Kalender nur, mit der Erlaubnis, die du Kalli gegeben hast, und hat keinen Zugang zum Netz.
+
+---
+
+## Seit 0.17: Der nächste Termin auf dem Schreibtisch
 
 Hast du ein kleines Gerät auf dem Schreibtisch, das den Mac nicht direkt erreicht, kann Kalli ihm den nächsten Termin über einen eigenen Briefkasten im Netz zuschicken. Kalli sendet dafür nur den Titel (höchstens 40 Zeichen) und die Uhrzeit, sonst nichts. Ab Werk ist das aus, Adresse und Schlüssel trägst du selbst ein.
 
@@ -90,7 +96,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Bestimmte Wochentage sofort finden | Jeder Wochentag bekommt auf Wunsch eine eigene Farbe, zum Beispiel jeder Donnerstag Rot |
 | Den Tag sortiert vor dir haben | Tagesliste getrennt nach Aufgaben, ganztägig und Terminen. Die Reihenfolge stellst du selbst ein, Ganztägiges und Aufgaben lassen sich zuklappen |
 | Aufgaben erledigen und anlegen | Ein Klick auf den Kreis hakt die Erinnerung ab, das Plus legt eine neue an, Tag und Uhrzeit auch mitgetippt. Kalli liest danach nach, ob alles angekommen ist |
-| Den Tag auf dem Schreibtisch vor Augen haben | Auf Wunsch ein Tagesblatt hinter den Fenstern, mit Terminen und Aufgaben, als Papierblatt zum Blättern und Abreißen oder als Glas-Blatt |
+| Den Tag auf dem Schreibtisch vor Augen haben | Auf Wunsch ein Tagesblatt hinter den Fenstern, mit Terminen und Aufgaben, als Papierblatt zum Blättern und Abreißen, als Glas-Blatt oder im Punkti-Look. Dazu ein Widget in drei Größen |
 | Jeden Tag an die fälligen Aufgaben denken | Auf Wunsch einmal täglich ein kleines Fenster mit den heute fälligen Erinnerungen, abhakbar und um eine Stunde verschiebbar |
 | Einen Termin anlegen, ohne eine App zu öffnen | Mit Gnotchi eine Zeile unter der Notch: „Zahnarzt morgen 15 Uhr“ eintippen, Return, fertig. Kalli speichert und prüft nach |
 | Wissen, wie lange ein Termin noch läuft | Fortschrittsbalken im Fenster, Restzeit in der Leiste |
