@@ -1,6 +1,6 @@
 # Kalli
 
-<img src="assets/Kalli-App_Icon.png" width="128" align="right" alt="Kalli">
+<img src="assets/Kalli-App_Icon-1024.png" width="128" align="right" alt="Kalli">
 
 Menüleisten-Kalender für macOS. Bewusst klein.
 
@@ -87,7 +87,9 @@ ansteht, bezahlt das mit Oberfläche.
   alle, Hauptbildschirm oder andere. **„Zum Beginn nochmal“** holt den Hinweis
   genau zum Terminbeginn zurück. Eigener Vorlauf 0/1/2/5 Min., **ab Werk aus**. Gilt für alle Termine mit Uhrzeit,
   auch mit eigenem Alarm, nicht für ganztägige und abgelehnte. **„Link öffnen“** für
-  den ersten Web-Link im Termin, nur `http`/`https`, nur auf Klick
+  den ersten Web-Link im Termin, nur `http`/`https`, nur auf Klick. **„Ton zum Hinweis“**
+  (unveröffentlicht, **ab Werk aus**): Kallis kurzer Ton der App-Familie (Blatt-Schnippen, 0,24 s),
+  sobald der Hinweis erscheint (`Kalli/Core/AlertSound.swift`)
 - **Die eine Sache** (ab 0.7.0, nach dem Vorbild von [One Thing](https://sindresorhus.com/one-thing)) —
   ein Text als eigener Leisteneintrag neben dem Datum, nur solange gesetzt. Setzen im Feld oben
   im Popover, per Rechtsklick auf eine Erinnerung (verschwindet beim Abhaken, auch in der
@@ -172,6 +174,7 @@ Kalli/
            EventAlerts (Systemmitteilungen; plant idempotent, nur für Termine ohne eigenen Alarm),
            DeskPad (reine Logik des Tagesblatts: Gruppen, Blättern, Abreißen, Monatsraster)
            TaskDigest (tägliches Aufgaben-Pop-up: Zeitpunkt, Schlummern, Auswahl)
+           AlertSound (Ton zum Vollbild-Hinweis, NSSound, ab Werk aus)
   UI/      PopoverView, AgendaList, MonthGrid, SettingsView, GlassBackground, GlassEffects (Glasgruppen, gleitende Pille),
            PaperPadView + DeskPadView + DeskPadWindow (Tagesblatt: Papierblatt, Glas-Blatt, Fenster), WindowDragArea,
            TaskDigestWindow (Fenster und Ansicht des Aufgaben-Pop-ups)
@@ -239,7 +242,7 @@ weiß es nicht.
    `build-dev/` und signiert eine frische Kopie unter `/tmp`
    (`./scripts/dev-signed.sh -vollbildDemo` zeigt den Vollbild-Hinweis sofort, `-aufgabenDemo` das Aufgaben-Pop-up,
    nur in Debug-Builds). Das App-Symbol entsteht mit `scripts/make-icon.py` aus
-   `assets/Kalli-App_Icon.png`.
+   `assets/Kalli-App_Icon-quelle.png` (Maskottchen der App-Familie; das alte Glas-Symbol liegt in `design/`).
 
 ## Dokumentation
 

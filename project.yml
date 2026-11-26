@@ -42,6 +42,8 @@ targets:
       - path: Kalli/Resources/THIRD-PARTY-LICENSES.md
       - path: Kalli/Resources/CHANGELOG.md
       - path: Kalli/Resources/AppIcon.icns
+      # Ton der App-Familie (2026-11-26): „Ton zum Hinweis“ beim Vollbild-Hinweis, ab Werk aus
+      - path: Kalli/Resources/kalli.caf
       # Schrift der App-Familie (ab 0.6.0), SIL OFL 1.1 — Lizenztext in THIRD-PARTY-LICENSES.md
       - path: Kalli/Resources/PlusJakartaSans-Variable.ttf
     dependencies:

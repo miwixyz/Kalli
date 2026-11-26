@@ -27,6 +27,7 @@ final class Preferences {
         static let fullScreen = "fullScreenBeforeEvent"
         static let fullScreenLead = "fullScreenLeadMinutes"
         static let fullScreenScreens = "fullScreenScreens"
+        static let fullScreenSound = "fullScreenSound"
         static let appearance = "appearanceMode"
         static let weekdayHighlights = "weekdayHighlights"
         static let collapsedGroups = "collapsedAgendaGroups"
@@ -240,6 +241,12 @@ final class Preferences {
         didSet { defaults.set(fullScreenScreens.rawValue, forKey: Key.fullScreenScreens) }
     }
 
+    /// „Ton zum Hinweis" (App-Familie, 2026-11-26): Kallis Ton (Blatt-Schnippen, 0,24 s), wenn
+    /// der Vollbild-Hinweis erscheint. Ab Werk aus: Ein Ton ist eine Änderung, die man bemerkt.
+    var fullScreenSound: Bool {
+        didSet { defaults.set(fullScreenSound, forKey: Key.fullScreenSound) }
+    }
+
     /// Hell/Dunkel/System. Ab Werk System. Angewendet wird es in `AppearanceMode.apply()`.
     var appearanceMode: AppearanceMode {
         didSet { defaults.set(appearanceMode.rawValue, forKey: Key.appearance) }
@@ -294,6 +301,7 @@ final class Preferences {
         fullScreenScreens = FullScreenScreens(
             rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0
         ) ?? .all
+        fullScreenSound = defaults.object(forKey: Key.fullScreenSound) as? Bool ?? false
         appearanceMode = AppearanceMode(
             rawValue: defaults.object(forKey: Key.appearance) as? Int ?? 0
         ) ?? .system

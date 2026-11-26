@@ -2,6 +2,30 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## Unveröffentlicht
+
+### Neu
+
+- **Ton zum Hinweis (ab Werk aus):** Einstellungen → Menüleiste → Vollbild-Hinweis → „Ton zum
+  Hinweis“. Kallis kurzer Ton aus der App-Familie (Blatt-Schnippen mit Ton, 0,24 s), sobald der
+  Vollbild-Hinweis erscheint, auch beim „Zum Beginn nochmal“. Die Systemmitteilung behält ihren
+  eigenen Ton.
+
+### Geändert
+
+- **Neues App-Symbol:** das Kalli-Maskottchen der App-Familie statt des Glas-Symbols, in derselben
+  Geometrie wie Tippi, TippAI und Seam (Squircle 1000 × 1000 im 1024er-Feld, transparente Ecken).
+  Das Menüleisten-Symbol bleibt: Es trägt die Tageszahl und ist damit Information, kein festes Symbol.
+
+### Intern
+
+- `Kalli/Core/AlertSound.swift` spielt `Kalli/Resources/kalli.caf` per `NSSound`; fehlende oder
+  unlesbare Datei → `Logger` `.notice` (Kategorie `ton`). Ausgelöst in `FullScreenAlerts.fire`
+  nach `presenter.show`, Einstellung `fullScreenSound` (Schlüssel `fullScreenSound`).
+- `scripts/make-icon.py` baut aus der freigestellten Familien-Vorlage
+  (`assets/Kalli-App_Icon-quelle.png`), schneidet den grauen Schattensaum unten ab; alte Vorlage
+  nach `design/Kalli-App_Icon-alt.jpg`.
+
 ## [0.18.0] — 2026-11-26
 
 Das Tagesblatt als Widget und im Punkti-Look, und es passt auf kleine Bildschirme.

@@ -127,6 +127,9 @@ Vollbild-Hinweis.
   bekommt den Hinweis ebenfalls, und zwar **genau zur Fälligkeit**, ohne Vorlauf. Oben
   steht dann „Dringend · jetzt fällig“. „Zum Beginn nochmal“ gibt es dafür nicht.
   Der Schalter „Vollbild-Hinweis“ muss dafür an sein.
+- **Ton zum Hinweis** (ab Werk aus): Kallis kurzer Ton (ein Blatt-Schnippen,
+  knapp eine Viertelsekunde), sobald der Hinweis erscheint, auch beim zweiten Mal
+  zum Beginn. Die Systemmitteilung behält ihren eigenen Ton.
 - Beginnen mehrere Termine gleichzeitig, stehen sie in **einem** Hinweis.
 - Schläft der Mac zum Zeitpunkt, holt Kalli den Hinweis nach dem Aufwachen nach,
   aber nur bis 5 Minuten nach Beginn.

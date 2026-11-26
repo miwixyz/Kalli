@@ -2,7 +2,7 @@
 
 **Datum, Termine und Erinnerungen in der Menüleiste. Bewusst klein.**
 
-<img src="../assets/Kalli-App_Icon.png" width="128" alt="Kalli">
+<img src="../assets/Kalli-App_Icon-1024.png" width="128" alt="Kalli">
 
 Kostenlos · Open Source (MIT) · für macOS 26 · kein Server, keine Analyse
 

@@ -94,7 +94,7 @@ final class CalendarStore {
         #if DEBUG
         Task { @MainActor [weak self] in
             guard let self else { return }
-            fullScreenAlerts.showDemoIfRequested(screens: prefs.fullScreenScreens)
+            fullScreenAlerts.showDemoIfRequested(screens: prefs.fullScreenScreens, sound: prefs.fullScreenSound)
         }
         #endif
     }
@@ -348,7 +348,7 @@ final class CalendarStore {
         fullScreenAlerts.sync(horizon: barItems + urgentReminders,
                               enabled: prefs.fullScreenBeforeEvent,
                               leadMinutes: prefs.fullScreenLeadMinutes,
-                              screens: prefs.fullScreenScreens)
+                              screens: prefs.fullScreenScreens, sound: prefs.fullScreenSound)
     }
 
     /// Termine rund um **jetzt** — die Quelle für Leiste, Puls und Popover-Hinweis.

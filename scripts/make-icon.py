@@ -1,63 +1,43 @@
 #!/usr/bin/env python3
-"""make-icon.py — baut Kalli/Resources/AppIcon.icns aus assets/Kalli-App_Icon.png.
+"""make-icon.py — baut Kalli/Resources/AppIcon.icns aus assets/Kalli-App_Icon-quelle.png.
 
-Warum (2026-09-29): Die bisherige AppIcon.icns zeigte in ALLEN Größen nur einen
-winzigen Ausschnitt unten links, der Rest war leer. Die Vorlage selbst war gut,
-nur der Weg dahin kaputt und nicht nachvollziehbar. Dieses Skript ist der Weg.
+Ab 2026-11-26 ist die Vorlage das freigestellte Kalli-Maskottchen der App-Familie
+(Vault: 07 Anhänge/Brand-Characters/familie/freigestellt/kalli.png). Geometrie wie
+bei Tippi, TippAI und Seam: Squircle 1000 × 1000 im 1024er-Feld, 12 px Rand,
+transparente Ecken.
 
-Die Vorlage ist ein JPEG (trotz .png-Endung) ohne Transparenz: Die Icon-Fläche
-sitzt auf Weiß. Deshalb:
-  1. Icon-Fläche ausschneiden (gemessen: x 86–937, y 85–938)
-  2. Ecken per Superellipse (Exponent 5,3, gemessen an der Vorlage) durchsichtig
-     machen, 2 px nach innen, damit kein weißer Saum bleibt
-  3. nach Apples Raster setzen: 824 px Icon mit 100 px Rand im 1024er-Feld
+Die Vorlage (1649 × 1664, RGBA) trägt unten einen grauen Schattensaum, der nicht
+zum Symbol gehört. Deshalb:
+  1. Squircle ausschneiden (gemessen: x 3–1646, y 0–1638; darunter beginnt der Saum)
+  2. Maske = eigene Transparenz ∩ ihr vertikales Spiegelbild. Die obere Kante ist
+     sauber, gespiegelt schneidet sie die untere Kante samt Saumresten in Form.
+  3. auf 1000 × 1000 skalieren, mit 12 px Rand ins 1024er-Feld setzen
   4. alle zehn Größen erzeugen, `iconutil` baut die .icns
 
-Aufruf:  python3 scripts/make-icon.py
+Die alte Vorlage (Glas-JPEG bis 0.18.0) liegt in design/Kalli-App_Icon-alt.jpg.
+
+Aufruf:  python3 scripts/make-icon.py   (braucht Pillow)
 """
 import os
 import subprocess
 import tempfile
 
-from PIL import Image
+from PIL import Image, ImageChops, ImageOps
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SOURCE = os.path.join(ROOT, "assets", "Kalli-App_Icon.png")
+SOURCE = os.path.join(ROOT, "assets", "Kalli-App_Icon-quelle.png")
 MASTER = os.path.join(ROOT, "assets", "Kalli-App_Icon-1024.png")
 ICNS = os.path.join(ROOT, "Kalli", "Resources", "AppIcon.icns")
 
-CROP = (86, 85, 938, 938)      # Icon-Fläche in der Vorlage (gemessen)
-EXPONENT = 5.3                 # Eckenform der Vorlage (gemessen an der Diagonale)
-INSET = 2                      # px nach innen gegen weißen Saum
+CROP = (3, 0, 1647, 1639)      # Squircle ohne Schattensaum (gemessen, Ende exklusiv)
 CANVAS = 1024
-ICON = 824                     # Apples Raster für macOS-App-Icons
-SUPERSAMPLE = 4
-
-
-def superellipse_mask(size: int) -> Image.Image:
-    big = size * SUPERSAMPLE
-    mask = Image.new("L", (big, big), 0)
-    px = mask.load()
-    a = (big / 2) - INSET * SUPERSAMPLE
-    c = big / 2
-    for y in range(big):
-        dy = abs((y + 0.5 - c) / a)
-        if dy >= 1:
-            continue
-        # |x|^n + |y|^n <= 1  →  |x| <= (1 - |y|^n)^(1/n)
-        half = a * (1 - dy ** EXPONENT) ** (1 / EXPONENT)
-        x0 = int(round(c - half))
-        x1 = int(round(c + half))
-        for x in range(max(0, x0), min(big, x1)):
-            px[x, y] = 255
-    return mask.resize((size, size), Image.LANCZOS)
+ICON = 1000                    # wie Tippi: 12 px Rand
 
 
 def main() -> None:
-    art = Image.open(SOURCE).convert("RGB").crop(CROP)
-    side = min(art.size)
-    art = art.resize((side, side), Image.LANCZOS).convert("RGBA")
-    art.putalpha(superellipse_mask(side))
+    art = Image.open(SOURCE).convert("RGBA").crop(CROP)
+    alpha = art.getchannel("A")
+    art.putalpha(ImageChops.darker(alpha, ImageOps.flip(alpha)))
 
     icon = art.resize((ICON, ICON), Image.LANCZOS)
     master = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))

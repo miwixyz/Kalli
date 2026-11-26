@@ -409,12 +409,16 @@ private struct MenuBarSection: View {
             }
             .onChange(of: prefs.fullScreenScreens) { store.syncFullScreenAlerts() }
 
+            Toggle("Ton zum Hinweis", isOn: $prefs.fullScreenSound)
+                .onChange(of: prefs.fullScreenSound) { store.syncFullScreenAlerts() }
+
             SettingsHint("Bleibt stehen, bis du ihn schließt (Esc oder Return). "
                  + "\u{201E}Zum Beginn nochmal\u{201C} holt ihn genau zum Terminbeginn zurück. "
                  + "Ist bei \u{201E}Andere Bildschirme\u{201C} nur einer angeschlossen, erscheint er dort. "
                  + "Gilt für alle Termine mit Uhrzeit, auch mit eigenem Kalender-Alarm — "
                  + "nicht für ganztägige und abgelehnte. Steht im Termin ein Web-Link, "
-                 + "zeigt der Hinweis \u{201E}Link öffnen\u{201C} mit der Zieladresse.")
+                 + "zeigt der Hinweis \u{201E}Link öffnen\u{201C} mit der Zieladresse. "
+                 + "\u{201E}Ton zum Hinweis\u{201C} spielt Kallis kurzen Ton, sobald der Hinweis erscheint.")
         }
     }
 }

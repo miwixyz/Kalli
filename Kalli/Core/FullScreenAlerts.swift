@@ -41,6 +41,8 @@ final class FullScreenAlerts {
     private var snoozed: Set<String> = []
     private var horizon: [AgendaItem] = []
     private var lead: TimeInterval = 60
+    /// „Ton zum Hinweis" (Einstellung, ab Werk aus).
+    private var sound = false
     private let presenter = FullScreenAlertPresenter()
 
     init() {
@@ -50,8 +52,9 @@ final class FullScreenAlerts {
     /// Idempotent. Läuft bei jedem `refreshBar()`: stündlich, bei EventKit-Änderungen,
     /// beim Umschalten in den Einstellungen.
     func sync(horizon: [AgendaItem], enabled: Bool, leadMinutes: Int,
-              screens: FullScreenScreens = .all, now: Date = Date()) {
+              screens: FullScreenScreens = .all, sound: Bool = false, now: Date = Date()) {
         presenter.screens = screens
+        self.sound = sound
         timers.forEach { $0.invalidate() }
         timers = []
         guard enabled else {
@@ -100,6 +103,7 @@ final class FullScreenAlerts {
         snoozed.subtract(again.map(Self.alertKey))
         Self.log.notice("Vollbild-Hinweis: \(first.count, privacy: .public) neu, \(again.count, privacy: .public) zum Beginn erneut")
         presenter.show(first + again)
+        if sound { AlertSound.play() }
     }
 
     /// „Zum Beginn nochmal": Termine, die noch nicht begonnen haben, kommen genau zum
@@ -116,7 +120,7 @@ final class FullScreenAlerts {
     /// sofort mit zwei Beispielterminen. Damit lässt sich das Fenster ansehen, ohne
     /// einen echten Termin anzulegen. Im Release-Build gibt es diesen Weg nicht.
     /// `screens` direkt aus den Einstellungen: Die Demo kann vor dem ersten `sync` laufen.
-    func showDemoIfRequested(screens: FullScreenScreens) {
+    func showDemoIfRequested(screens: FullScreenScreens, sound: Bool) {
         guard ProcessInfo.processInfo.arguments.contains("-vollbildDemo") else { return }
         Self.log.notice("Vollbild-Demo angefordert")
         presenter.screens = screens
@@ -130,6 +134,7 @@ final class FullScreenAlerts {
                        end: nil, isAllDay: false, hasTime: true, kind: .event,
                        sourceID: "demo", color: .fallback, hasAlarms: false)
         ])
+        if sound { AlertSound.play() }
     }
     #endif
 
