@@ -34,6 +34,15 @@ enum DeskPad {
         }
     }
 
+    /// Faktor, mit dem das Blatt gezeichnet wird: die eingestellte Textgröße, aber nie größer, als
+    /// der Bildschirm Platz hat (Michael 2026-11-26: auf dem kleinen Bildschirm war das Papierblatt
+    /// unten abgeschnitten). Kleiner als die Hälfte wird es nicht, sonst ist die Schrift unlesbar.
+    static func fitScale(base: CGSize, scale: Double, available: CGSize) -> Double {
+        guard base.width > 0, base.height > 0, available.width > 0, available.height > 0 else { return scale }
+        let fit = min(available.width / base.width, available.height / base.height)
+        return min(scale, max(fit, 0.5))
+    }
+
     /// Tag um `days` verschoben, immer auf 00:00 Ortszeit. Ohne Ergebnis bleibt der Tag stehen.
     static func shifted(_ day: Date, by days: Int, calendar: Calendar) -> Date {
         let start = calendar.startOfDay(for: day)

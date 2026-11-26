@@ -1,6 +1,7 @@
 import AppKit
 import OSLog
 import SwiftUI
+import WidgetKit
 
 @main
 struct KalliApp: App {
@@ -55,6 +56,9 @@ struct KalliApp: App {
         _taskDigest = State(initialValue: digest)
         let kumiki = KumikiTerminSender(current: { [s] in s.nextEvent })
         _kumikiTermin = State(initialValue: kumiki)
+        // Widget „Tagesblatt“ beim Start frisch zeichnen lassen: nach einem Update zeigt es sonst bis
+        // zu einer Stunde den zwischengespeicherten Stand der alten Version (gemessen 2026-11-26).
+        WidgetCenter.shared.reloadTimelines(ofKind: "KalliTagesblatt")
         // Hell/Dunkel beim Start setzen, erst wenn NSApp steht.
         Task { @MainActor in p.appearanceMode.apply() }
         // Bild-Testkopie (docs/SECURE-DESIGN.md K1, nur Debug-Build): keine Termine an Gnotchi – ihr leerer

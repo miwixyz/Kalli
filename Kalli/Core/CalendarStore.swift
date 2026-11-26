@@ -3,6 +3,7 @@ import EventKit
 import Foundation
 import OSLog
 import Observation
+import WidgetKit
 
 /// Liest Termine und Erinnerungen.
 ///
@@ -71,6 +72,9 @@ final class CalendarStore {
             Task { @MainActor [weak self] in
                 await self?.reload()
             }
+            // Widget „Tagesblatt“ liest selbst und erfährt so von der Änderung. Nur hier und beim
+            // Tageswechsel, nicht bei jedem `reload()`: WidgetKit teilt Aktualisierungen zu.
+            WidgetCenter.shared.reloadTimelines(ofKind: "KalliTagesblatt")
         }
         // Aufwachen und Tageswechsel: Nach dem Ruhezustand ist das Leisten-
         // Fenster veraltet und die Mitteilungs-Planung womöglich auch — bis
@@ -85,6 +89,7 @@ final class CalendarStore {
             forName: .NSCalendarDayChanged, object: nil, queue: .main
         ) { [weak self] _ in
             Task { @MainActor [weak self] in await self?.reload() }
+            WidgetCenter.shared.reloadTimelines(ofKind: "KalliTagesblatt")
         }
         #if DEBUG
         Task { @MainActor [weak self] in

@@ -2,6 +2,36 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unreleased]
+
+### Neu
+
+- **Tagesblatt als Widget:** Rechtsklick auf den Schreibtisch → „Widgets bearbeiten“ → Kalli →
+  „Tagesblatt“, in Klein, Mittel und Groß. Im Glas-Look der Punkti-Widgets: Glasscheibe mit
+  Tagesring und LED-Tageszahl, die anstehenden Termine und Aufgaben von heute mit LED-Uhrzeit,
+  in Groß dazu der Monat. Nur anzeigend; liest Kalender und Erinnerungen lokal mit Kallis
+  Erlaubnis, nichts verlässt den Mac.
+
+- **Tagesblatt im Punkti-Look:** Einstellungen → Ansicht → Tagesblatt → Aussehen „Punkti“. Dunkles
+  Glas wie die Punkti-Widgets, Tagesring mit LED-Tageszahl, Monat daneben, alle Einträge des Tages
+  mit LED-Uhrzeit; heute steht oben, was läuft oder ansteht. Blättern mit ‹ HEUTE ›, Aufgaben abhakbar.
+
+### Verbessert
+
+- **Tagesblatt auf kleinen Bildschirmen:** Ist der Bildschirm niedriger als das Blatt, wird es
+  so weit verkleinert, dass es ganz draufpasst (vorher war es unten abgeschnitten). Auch nach
+  dem Umstecken eines Bildschirms und nach dem Ziehen auf einen anderen.
+
+### Intern
+
+- Neue Widget-Erweiterung `KalliWidget` (Sandbox, nur lesender Kalender- und
+  Erinnerungszugriff). `release.sh` prüft, dass sie mit Sandbox signiert im Paket liegt;
+  `dev-signed.sh` signiert sie mit eigenen Rechten nach.
+- Punkti-Bausteine (`PunktiStyle.swift`, `PunktiDayParts.swift`) teilen sich Widget und Fenster.
+- Kalli lädt das Widget beim Start neu (sonst bis zu einer Stunde alter Stand nach einem Update).
+- `AgendaGroupKind` aus `Preferences.swift` in eine eigene Datei verschoben (unverändert),
+  damit das Widget es ohne die Einstellungen nutzen kann.
+
 ## [0.17.0] — 2026-11-22
 
 Der nächste Termin auch auf einem Schreibtischgerät.

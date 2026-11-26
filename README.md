@@ -73,9 +73,12 @@ ansteht, bezahlt das mit Oberfläche.
   Die Mitteilung enthält Titel und Uhrzeit; was das für Mitteilungszentrale und
   Sperrbildschirm bedeutet, steht in `Kalli/Resources/RECHTLICHES.md`
 - **Tagesblatt auf dem Schreibtisch** (ab 0.14.0) — Papierblatt (Abreißblock mit Perforation, durch
-  Ziehen blätterbar, seitlich abreißbar, Doppelklick = heute) oder Glas-Blatt hinter allen Fenstern, mit Datum,
+  Ziehen blätterbar, seitlich abreißbar, Doppelklick = heute), Glas-Blatt oder Punkti-Blatt (Glas-Look der Punkti-Widgets) hinter allen Fenstern, mit Datum,
   Terminen und Aufgaben des Tages, verschiebbar, Aufgaben abhakbar. **Ab Werk aus**, liest
-  dieselben Quellen wie das Popover
+  dieselben Quellen wie das Popover. Passt sich an kleine Bildschirme an.
+- **Tagesblatt als Widget** — Schreibtisch-Widget (Klein, Mittel, Groß) im Glas-Look der Punkti-Widgets:
+  Tagesring mit LED-Tageszahl, anstehende Termine und Aufgaben von heute, in Groß mit Monat. Nur anzeigend,
+  liest lokal per EventKit
 - **Aufgaben des Tages** (ab 0.15.0) — einmal täglich zur eingestellten Stunde ein kleines
   Glasfenster oben links (verschiebbar, Stelle bleibt gespeichert) mit den heute fälligen, offenen Erinnerungen, abhakbar. **„In 1 Std.
   wieder“** schlummert, „Schließen“ gilt für den Tag. Nimmt keinen Fokus, **ab Werk aus**

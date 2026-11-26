@@ -185,6 +185,12 @@ echo "${SIGN_INFO}" | grep -q "Authority=Developer ID Application" \
 echo "${SIGN_INFO}" | grep -q "flags=.*runtime" \
     || fail "Hardened Runtime fehlt — Apple würde die Notarisierung ablehnen"
 echo "  ✓ Developer ID + Hardened Runtime bestätigt"
+# Widget (ab 2026-11-26): Ohne Sandbox-Recht lädt macOS die Erweiterung still nicht.
+APPEX_PATH="${APP_PATH}/Contents/PlugIns/KalliWidget.appex"
+[ -d "${APPEX_PATH}" ] || fail "Widget-Erweiterung fehlt im Paket"
+codesign -d --entitlements - "${APPEX_PATH}" 2>/dev/null | grep -q "com.apple.security.app-sandbox" \
+    || fail "Widget-Erweiterung ohne Sandbox signiert — macOS würde das Widget nicht anbieten"
+echo "  ✓ Widget-Erweiterung mit Sandbox signiert"
 
 # ---------------------------------------------------------------------------
 # 4. Notarisieren

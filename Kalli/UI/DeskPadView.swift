@@ -33,7 +33,8 @@ struct DeskPadView: View {
         return f
     }()
 
-    private var scale: Double { prefs.layoutScale }
+    @Environment(DeskPadScale.self) private var fit
+    private var scale: Double { fit.value }
     private var isToday: Bool { calendar.isDateInToday(day) }
 
     private var sections: [DeskPad.Section] {

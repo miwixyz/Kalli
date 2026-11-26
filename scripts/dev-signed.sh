@@ -34,6 +34,18 @@ IDENTITY=$(security find-identity -v -p codesigning \
 codesign --force --deep --options runtime \
     --entitlements Kalli/Resources/Kalli.entitlements \
     --sign "$IDENTITY" "$DEST_DIR/Kalli.app"
+# Widget (2026-11-26): `--deep` gibt der Erweiterung Kallis Rechte, also ohne Sandbox — dann lädt
+# macOS das Widget nicht. Deshalb die Erweiterung mit ihren eigenen Rechten nachsignieren und
+# danach die App neu versiegeln (ohne `--deep`, sonst wäre die Erweiterung wieder überschrieben).
+APPEX="$DEST_DIR/Kalli.app/Contents/PlugIns/KalliWidget.appex"
+if [ -d "$APPEX" ]; then
+    codesign --force --options runtime \
+        --entitlements KalliWidget/KalliWidget-macOS.entitlements \
+        --sign "$IDENTITY" "$APPEX"
+    codesign --force --options runtime \
+        --entitlements Kalli/Resources/Kalli.entitlements \
+        --sign "$IDENTITY" "$DEST_DIR/Kalli.app"
+fi
 
 mkdir -p build-test
 ln -sfn "$DEST_DIR/Kalli.app" build-test/Kalli.app

@@ -6,6 +6,29 @@ final class DeskPadTests: XCTestCase {
 
     private let order: [AgendaGroupKind] = [.tasks, .allDay, .timed]
 
+    // MARK: Fenster passt auf den Bildschirm (2026-11-26)
+
+    private let paper = CGSize(width: 388, height: 628)
+
+    func testFitKeepsScaleWhenScreenIsLargeEnough() {
+        XCTAssertEqual(DeskPad.fitScale(base: paper, scale: 1.15, available: CGSize(width: 3392, height: 1400)), 1.15)
+    }
+
+    func testFitShrinksToSmallScreenHeight() {
+        // 504-pt-Bildschirm (gemessen 2026-11-18), abzüglich 16 pt Rand: 488 / 628.
+        let fit = DeskPad.fitScale(base: paper, scale: 1, available: CGSize(width: 1296, height: 488))
+        XCTAssertEqual(fit, 488.0 / 628.0, accuracy: 0.0001)
+        XCTAssertLessThanOrEqual((paper.height * fit).rounded(), 488)
+    }
+
+    func testFitNeverGrowsBeyondChosenScale() {
+        XCTAssertEqual(DeskPad.fitScale(base: paper, scale: 0.85, available: CGSize(width: 5000, height: 5000)), 0.85)
+    }
+
+    func testFitHasLowerBound() {
+        XCTAssertEqual(DeskPad.fitScale(base: paper, scale: 1, available: CGSize(width: 100, height: 100)), 0.5)
+    }
+
     private var mixed: [AgendaItem] {
         [
             Fixture.event(id: "t", title: "Zahnarzt", start: Fixture.at(60), end: Fixture.at(120)),

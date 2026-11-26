@@ -47,6 +47,8 @@ targets:
     dependencies:
       - package: Sparkle
         product: Sparkle
+      # Widget „Tagesblatt“ (2026-11-26), landet in Kalli.app/Contents/PlugIns.
+      - target: KalliWidget
     settings:
       base:
         INFOPLIST_FILE: Kalli/Resources/Info.plist
@@ -56,6 +58,42 @@ targets:
         CODE_SIGN_STYLE: Automatic
         COMBINE_HIDPI_IMAGES: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+
+  # Widget „Tagesblatt“ (2026-11-26): das Papierblatt als Schreibtisch-Widget, nur anzeigend.
+  # Sandbox ist Pflicht für WidgetKit (Kalli selbst läuft ohne). Liest Kalender und
+  # Erinnerungen selbst per EventKit; die Erlaubnis erteilt der Nutzer der App Kalli.
+  # Geteilt mit der App: Modelle und Monatsraster (DeskPad). Aussehen wie Punkti (Kalli/UI/PunktiStyle.swift, PunktiDayParts.swift).
+  KalliWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: KalliWidget
+        excludes:
+          - Info.plist
+          - KalliWidget-macOS.entitlements
+      - path: Kalli/Core/Models.swift
+      - path: Kalli/Core/DeskPad.swift
+      - path: Kalli/Core/AgendaGroupKind.swift
+      - path: Kalli/UI/PunktiStyle.swift
+      - path: Kalli/UI/PunktiDayParts.swift
+    info:
+      path: KalliWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Kalli
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSCalendarsFullAccessUsageDescription: "Das Kalli-Widget zeigt deine Termine von heute. Es ändert nichts."
+        NSRemindersFullAccessUsageDescription: "Das Kalli-Widget zeigt deine Aufgaben von heute. Es ändert nichts."
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kalli.app.widget
+        CODE_SIGN_ENTITLEMENTS: KalliWidget/KalliWidget-macOS.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: YES
+        CODE_SIGN_STYLE: Automatic
+        SKIP_INSTALL: YES
 
   # Prüft ausschliesslich REINE Entscheidungslogik — keine EventKit-Zugriffe,
   # keine Berechtigungen, keine Uhr. Alle geprüften Funktionen bekommen `now`

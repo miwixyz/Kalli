@@ -28,7 +28,8 @@ struct PaperPadView: View {
     @State private var pointer: CGPoint?
 
     private let calendar = Calendar.current
-    private var scale: Double { prefs.layoutScale }
+    @Environment(DeskPadScale.self) private var fit
+    private var scale: Double { fit.value }
 
     private enum Metrics {
         static let board = CGSize(width: 340, height: 580)

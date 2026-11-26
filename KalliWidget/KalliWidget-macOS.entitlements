@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Widget „Kalenderblatt“ (2026-11-26). WidgetKit verlangt die Sandbox, auch wenn Kalli
+	     selbst ohne läuft. Dazu nur lesender Zugriff auf Kalender und Erinnerungen: kein Netz,
+	     keine Dateien. Die Erlaubnis erteilt der Nutzer der App Kalli; das Widget kann nicht fragen. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
+	<key>com.apple.security.personal-information.reminders</key>
+	<true/>
+</dict>
+</plist>
