@@ -2,7 +2,7 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## [Unveröffentlicht]
+## [0.20.0] — 2026-11-27
 
 Kalli bekommt die Glas-Sprache der App-Familie (wie Knippi 0.7.0).
 
@@ -29,6 +29,8 @@ Kalli bekommt die Glas-Sprache der App-Familie (wie Knippi 0.7.0).
   Die Insel-Lichter des Kits sind bewusst nicht im Popover: Sie sind für große Fenster bemessen
   und wurden im 360 pt breiten Popover zu einem dunklen Schrägbalken.
 - Die Bild-Testkopie zeigt Einstellungen und Hilfe auf demselben Hintergrund wie das Popover.
+- SwiftLint: `FamilyGlassKit.swift` ausgenommen (Vorlagen-Kopie), Fußleiste von `PopoverView` in eine
+  Erweiterung verschoben (Typ-Rumpf unter 350 Zeilen).
 
 ## [0.19.0] — 2026-11-27
 

@@ -10,6 +10,9 @@ excluded:
   - build
   - dist
   - .build
+  # Kopie des Glas-Kits aus der Vault-Vorlage „App-Familie Design-System“ (ab 0.20.0). Wird dort
+  # gepflegt, nicht in Kalli; eine Kürzung hier liefe beim nächsten Sync auseinander.
+  - Kalli/UI/FamilyGlassKit.swift
 
 disabled_rules:
   # Komma nach dem letzten Element macht Diffs sauberer (eine Zeile statt zwei).

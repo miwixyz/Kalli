@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.19: Ein Klick aufs Widget öffnet den Kalender
+## Neu in 0.20: Ein ruhigeres, klareres Popover
+
+Das Popover sieht neu aus. Hinter Monat und Tagesliste liegt jetzt ein ruhiger Farbverlauf in Kallis Blau, und ein buntes Schreibtischbild färbt das Popover nicht mehr ein. Monat, Termine und Einstellungen stehen auf klaren Karten, Kopf- und Fußleiste schweben als Glasleisten darüber, und der heutige Tag leuchtet im Akzent. Kalli sieht damit aus wie die anderen Apps der Familie.
+
+---
+
+## Seit 0.19: Ein Klick aufs Widget öffnet den Kalender
 
 Klickst du auf das Tagesblatt-Widget, öffnet Kalli Apple Kalender in der Tagesansicht von heute. Beim ersten Klick fragt macOS, ob Kalli den Kalender steuern darf. Kalli liest oder ändert dabei nichts. Neu ist auch ein kurzer Ton zum Vollbild-Hinweis, ab Werk aus, und Kalli trägt jetzt das Symbol der App-Familie.
 

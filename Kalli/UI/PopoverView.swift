@@ -359,82 +359,6 @@ struct PopoverView: View {
         .padding(.vertical, 4)
     }
 
-    private var footer: some View {
-        // Runde 2 der Glas-Sprache: Die ganze Fußleiste ist eine Glas-Insel; alle Knöpfe darin ohne
-        // eigenes Glas, mit gleitendem Hover-Schatten (vorher Glasgruppe + einzelne Glas-Kapseln).
-        let size = 26 * prefs.layoutScale
-        return HStack(spacing: 1) {
-            HStack(spacing: 1) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
-                } label: {
-                    Image(systemName: showingSettings ? "chevron.left" : "gearshape")
-                        .frame(width: size, height: size).contentShape(Capsule())
-                }
-                .buttonStyle(.glassPress)
-                .glassGhostItem()
-                .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
-                .accessibilityLabel(Text(showingSettings ? "Zurück zum Kalender" : "Einstellungen"))
-
-                // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
-                // den aktuellen Stand (Michael, 2026-09-29).
-                Button {
-                    prefs.appearanceMode = prefs.appearanceMode.next
-                    prefs.appearanceMode.apply()
-                } label: {
-                    Image(systemName: prefs.appearanceMode.symbol)
-                        .contentTransition(.symbolEffect(.replace))
-                        .frame(width: size, height: size).contentShape(Capsule())
-                }
-                .buttonStyle(.glassPress)
-                .glassGhostItem()
-                .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
-                .accessibilityLabel(Text("Erscheinungsbild: \(prefs.appearanceMode.title)"))
-            }
-            .foregroundStyle(FamilyTheme.textPrimary)
-
-            // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
-            // auszulösen — die automatische Suche ist ab Werk aus, weil sie
-            // eine Netzverbindung ist, die niemand erteilt hat.
-            //
-            // **Mit Text, nicht nur Symbol.** In 0.4.0 stand hier allein ein
-            // Kreispfeil, und Michael sagte zu Recht: „Das Reload-Icon allein
-            // ist nicht zu verstehen." Ein Kreispfeil in einer Kalender-App
-            // liest sich wie „Termine neu laden", nicht wie „Updates". Das
-            // Zahnrad daneben darf symbolfrei bleiben, weil es überall
-            // dasselbe bedeutet — dieses hier nicht.
-            Button {
-                updater.checkForUpdates()
-            } label: {
-                // Hat eine automatische Prüfung etwas gefunden, sagt der Knopf
-                // es — die zweite Stelle neben der Mitteilung, falls die aus ist.
-                Label(updater.bereitesUpdate.map { "Update \($0)" } ?? "Updates",
-                      systemImage: updater.bereitesUpdate == nil ? "arrow.down.circle" : "arrow.down.circle.fill")
-                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
-                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
-            }
-            .buttonStyle(.glassPress)
-            .glassGhostItem(updater.canCheck)
-            .disabled(!updater.canCheck)
-            .help(updater.bereitesUpdate == nil ? "Nach Updates suchen" : "Update ansehen und installieren")
-
-            Spacer()
-            Button { NSApplication.shared.terminate(nil) } label: {
-                Text("Beenden")
-                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
-                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
-            }
-            .buttonStyle(.glassPress)
-            .glassGhostItem()
-        }
-        .foregroundStyle(FamilyTheme.textPrimary)
-        .frame(height: size + 4)
-        .glassGhostHost()
-        .padding(.horizontal, 4)
-        .padding(.vertical, 4)
-        .floatingGlassIsland(in: Capsule(style: .continuous))
-    }
-
     /// Hakt ab oder nimmt zurueck — mit sichtbarem Nachleuchten.
     private func toggle(_ item: AgendaItem) {
         let wasCompleted = item.isCompleted
@@ -564,5 +488,84 @@ extension PopoverView {
         guard screenHeight.isFinite, totalHeight > 0 else { return .infinity }
         let rest = totalHeight - listHeight
         return max(120 * prefs.layoutScale, screenHeight - rest - 16)
+    }
+}
+
+// Fußleiste als eigene Erweiterung: hält den Typ-Rumpf unter der SwiftLint-Sperrklinke (350 Zeilen).
+extension PopoverView {
+    private var footer: some View {
+        // Runde 2 der Glas-Sprache: Die ganze Fußleiste ist eine Glas-Insel; alle Knöpfe darin ohne
+        // eigenes Glas, mit gleitendem Hover-Schatten (vorher Glasgruppe + einzelne Glas-Kapseln).
+        let size = 26 * prefs.layoutScale
+        return HStack(spacing: 1) {
+            HStack(spacing: 1) {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
+                } label: {
+                    Image(systemName: showingSettings ? "chevron.left" : "gearshape")
+                        .frame(width: size, height: size).contentShape(Capsule())
+                }
+                .buttonStyle(.glassPress)
+                .glassGhostItem()
+                .help(showingSettings ? "Zurück zum Kalender" : "Einstellungen")
+                .accessibilityLabel(Text(showingSettings ? "Zurück zum Kalender" : "Einstellungen"))
+
+                // Hell/Dunkel mit einem Klick: System → Hell → Dunkel. Das Symbol zeigt
+                // den aktuellen Stand (Michael, 2026-09-29).
+                Button {
+                    prefs.appearanceMode = prefs.appearanceMode.next
+                    prefs.appearanceMode.apply()
+                } label: {
+                    Image(systemName: prefs.appearanceMode.symbol)
+                        .contentTransition(.symbolEffect(.replace))
+                        .frame(width: size, height: size).contentShape(Capsule())
+                }
+                .buttonStyle(.glassPress)
+                .glassGhostItem()
+                .help("Erscheinungsbild: \(prefs.appearanceMode.title) — klicken zum Wechseln")
+                .accessibilityLabel(Text("Erscheinungsbild: \(prefs.appearanceMode.title)"))
+            }
+            .foregroundStyle(FamilyTheme.textPrimary)
+
+            // Ohne diesen Knopf gibt es keinen Weg, eine Prüfung willentlich
+            // auszulösen — die automatische Suche ist ab Werk aus, weil sie
+            // eine Netzverbindung ist, die niemand erteilt hat.
+            //
+            // **Mit Text, nicht nur Symbol.** In 0.4.0 stand hier allein ein
+            // Kreispfeil, und Michael sagte zu Recht: „Das Reload-Icon allein
+            // ist nicht zu verstehen." Ein Kreispfeil in einer Kalender-App
+            // liest sich wie „Termine neu laden", nicht wie „Updates". Das
+            // Zahnrad daneben darf symbolfrei bleiben, weil es überall
+            // dasselbe bedeutet — dieses hier nicht.
+            Button {
+                updater.checkForUpdates()
+            } label: {
+                // Hat eine automatische Prüfung etwas gefunden, sagt der Knopf
+                // es — die zweite Stelle neben der Mitteilung, falls die aus ist.
+                Label(updater.bereitesUpdate.map { "Update \($0)" } ?? "Updates",
+                      systemImage: updater.bereitesUpdate == nil ? "arrow.down.circle" : "arrow.down.circle.fill")
+                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
+            }
+            .buttonStyle(.glassPress)
+            .glassGhostItem(updater.canCheck)
+            .disabled(!updater.canCheck)
+            .help(updater.bereitesUpdate == nil ? "Nach Updates suchen" : "Update ansehen und installieren")
+
+            Spacer()
+            Button { NSApplication.shared.terminate(nil) } label: {
+                Text("Beenden")
+                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
+            }
+            .buttonStyle(.glassPress)
+            .glassGhostItem()
+        }
+        .foregroundStyle(FamilyTheme.textPrimary)
+        .frame(height: size + 4)
+        .glassGhostHost()
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .floatingGlassIsland(in: Capsule(style: .continuous))
     }
 }
