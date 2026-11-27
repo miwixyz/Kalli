@@ -147,8 +147,13 @@ struct SlidingPickerPalette {
     var ghostOpacity: Double = 0.06
     /// `nil` = Karten-Pille (`SlidingPillShape`), sonst schlichte Fläche in dieser Farbe.
     var pillFill: Color?
+    /// Leuchtende Akzent-Pille der Glas-Sprache (`FamilyAccentPill`, Knippi 0.7.0) statt Karten-Pille.
+    var accentPill = false
 
     static let family = SlidingPickerPalette()
+    /// Glas-Sprache: weiße Schrift auf leuchtender Akzent-Pille, für eine schwebende Glas-Insel ohne Spur.
+    static let glass = SlidingPickerPalette(selectedText: .white, text: FamilyTheme.textPrimary,
+                                            ghostOpacity: 0.07, accentPill: true)
 }
 
 /// Auswahl in einer vertieften Kapsel-Spur; die Pille der Auswahl gleitet auf zwei Federn
@@ -260,7 +265,9 @@ struct SlidingPicker<Value: Hashable, Label: View>: View {
 
     @ViewBuilder
     private var pillShape: some View {
-        if let fill = palette.pillFill {
+        if palette.accentPill {
+            FamilyAccentPill(shape: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        } else if let fill = palette.pillFill {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(fill)
         } else {
             SlidingPillShape(dark: scheme == .dark, cornerRadius: cornerRadius)

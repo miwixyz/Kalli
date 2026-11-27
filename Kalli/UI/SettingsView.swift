@@ -24,12 +24,16 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            // Gleitende Pille statt Segment-Umschalter (Porter-Optik, 13.11.2026).
+            // Glas-Sprache (Knippi 0.7.0): schwebende Glas-Insel mit leuchtender, gleitender
+            // Akzent-Pille. SlidingPicker bleibt (passt sich der Größenstufe an), nur die Optik wechselt.
             SlidingPicker(Tab.allCases, selection: $tab, height: 26,
-                          accessibilityTitle: Text("Einstellungsbereich")) { tab, selected in
+                          accessibilityTitle: Text("Einstellungsbereich"), track: false,
+                          palette: .glass) { tab, selected in
                 Text(tab.rawValue).font(FamilyTheme.font(13, weight: selected ? .semibold : .medium))
                     .lineLimit(1)
             }
+            .padding(3)
+            .floatingGlassIsland(in: Capsule(style: .continuous))
 
             // Die Hilfe bringt ihren eigenen Scrollbereich mit (sie rendert
             // lange Dokumente). Zwei ineinander verschachtelte ScrollViews

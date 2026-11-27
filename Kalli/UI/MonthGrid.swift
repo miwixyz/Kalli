@@ -185,12 +185,11 @@ private struct DayCell: View {
             //
             // Markiert = Ring. Zwei Zustaende brauchen zwei Gestalten, nicht
             // dieselbe Farbe in zwei Helligkeiten.
+            // Glas-Sprache: dieselbe leuchtende Akzent-Pille wie in den Einstellungen.
             if isToday {
-                Circle()
-                    .fill(Theme.accentFill)
+                FamilyAccentPill(shape: Circle())
                     .frame(width: min(width, height) - 4 * scale,
                            height: min(width, height) - 4 * scale)
-                    .shadow(color: Theme.accentGlow, radius: 5 * scale, y: 1.5 * scale)
             } else if isSelected {
                 Circle()
                     .fill(.primary.opacity(0.07))
@@ -202,7 +201,7 @@ private struct DayCell: View {
             if isSelected {
                 Circle()
                     .strokeBorder(
-                        isToday ? AnyShapeStyle(Theme.onAccent.opacity(0.85))
+                        isToday ? AnyShapeStyle(Color.white.opacity(0.85))
                                 : AnyShapeStyle(Theme.accent.opacity(0.75)),
                         lineWidth: 1.6
                     )
@@ -218,7 +217,8 @@ private struct DayCell: View {
     /// Hervorgehobene Tage außerhalb des Monats bleiben farbig, aber blass wie
     /// ihre Nachbarn.
     private var todayStyle: AnyShapeStyle {
-        if isToday { return AnyShapeStyle(Theme.onAccent) }
+        // Weiß auf `accentFill` (Pille der Glas-Sprache), gerechnet ≥ 4,6 : 1 in Hell und Dunkel.
+        if isToday { return AnyShapeStyle(Color.white) }
         if let highlight { return AnyShapeStyle(highlight.opacity(isInMonth ? 1 : 0.35)) }
         return AnyShapeStyle(isInMonth ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
     }

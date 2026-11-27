@@ -47,10 +47,11 @@ ansteht, bezahlt das mit Oberfläche.
 - **Wochentage hervorheben** in einer wählbaren Farbe (z. B. jeder Donnerstag rot)
 - **Kalender und Erinnerungslisten einzeln ein- und ausblendbar**, nach Account gruppiert
 - **Hell/Dunkel** folgt dem System, oder fest per Knopf unten im Popover (System → Hell → Dunkel)
-- **Liquid Glass** auf dem Popover (macOS 26+), Glas-Knöpfe, Einstellungen als Karten im Stil der Systemeinstellungen
-- **Glasgruppen** (ab 0.13.0): Zurück/Heute/Weiter und Zahnrad/Hell-Dunkel in je einer Glaskapsel mit
-  Lichtkante, die dem Mauszeiger folgt; die Reiter der Einstellungen sind eine gleitende Pille.
-  Gleiche Optik wie Porter, Tippi, TippAI, Gnotchi (`Kalli/UI/GlassEffects.swift`)
+- **Glas-Sprache der App-Familie** (wie Knippi 0.7.0): ruhig lebender Verlauf als Popover-Hintergrund,
+  Kopf- und Fußleiste als schwebende Glaskapseln, Inhalte auf festen Karten, leuchtende Akzent-Pille
+  für den gewählten Reiter und den heutigen Tag (`Kalli/UI/FamilyGlassKit.swift`, `PopoverChrome.swift`)
+- **Glasgruppen** (ab 0.13.0): Lichtkante, die dem Mauszeiger folgt; die Reiter der Einstellungen
+  sind eine gleitende Pille (`Kalli/UI/GlassEffects.swift`)
 - **Bedienungshilfen:** kräftigere Farben bei „Kontrast erhöhen“ (ab 0.13.0), jeder Symbol-Knopf
   hat einen Namen für VoiceOver
 - **Neuerungen im Update-Fenster** (ab 0.13.0): Sparkle zeigt, was in der neuen Version steckt
@@ -230,11 +231,11 @@ weiß es nicht.
    `SMAppService.mainApp.status` wird bei jedem Anzeigen frisch erfragt, und
    nach dem Umschalten wird der *tatsächliche* Zustand übernommen, nicht der
    gewünschte.
-4. **Liquid Glass nur auf dem Popover.** Vollflächige Transluzenz mittelt das
-   Hintergrundbild auf seine Durchschnittsfarbe; auf buntem Schreibtisch werden
-   Fenster zu farbigem Nebel. Die Einstellungen liegen deshalb im
-   Popover selbst, nicht in einem eigenen Fenster. Ihre Karten sind nur leicht
-   getönt, kein Glas auf Glas. Die zweite Glasfläche ist der Vollbild-Hinweis:
+4. **Deckender Hintergrund, Glas nur auf Schwebendem.** Vollflächige Transluzenz
+   mittelt das Hintergrundbild auf seine Durchschnittsfarbe; auf buntem Schreibtisch
+   werden Fenster zu farbigem Nebel. Das Popover hat deshalb einen deckenden,
+   lebenden Verlauf; Glas tragen nur Kopf- und Fußleiste und die Reiter. Inhalte
+   liegen auf festen Karten, kein Glas auf Glas. Die zweite Glasfläche ist der Vollbild-Hinweis:
    eine kurzlebige, schwebende Fläche, also genau der Einsatzort nach Apples HIG.
 5. **Signierte Testbuilds nie im Build-Ordner.** Ein mit Developer ID signiertes
    Paket schützt macOS danach vor Änderungen, und weitere Builds scheitern dann

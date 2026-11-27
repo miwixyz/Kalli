@@ -33,14 +33,8 @@ struct SettingsGroup<Content: View>: View {
             .controlSize(.small)
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(.primary.opacity(0.045))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(.primary.opacity(0.07), lineWidth: 0.8)
-                    }
-            }
+            // Glas-Sprache: Inhalte auf fester Karte über dem lebenden Hintergrund (Regel G1).
+            .familyContentCard(radius: 12)
         }
     }
 }

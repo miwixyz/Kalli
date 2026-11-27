@@ -121,6 +121,8 @@ targets:
       - path: Kalli/App/CalendarToday.swift
       - path: Kalli/UI/Theme.swift
       - path: Kalli/UI/FamilyTheme.swift
+      # Glas-Sprache (Knippi 0.7.0): GlassEffects und MonthGrid nutzen die Akzent-Pille des Kits.
+      - path: Kalli/UI/FamilyGlassKit.swift
       - path: Kalli/UI/GlassBackground.swift
       - path: Kalli/UI/GlassEffects.swift
       - path: Kalli/UI/MonthGrid.swift

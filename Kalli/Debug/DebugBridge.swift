@@ -112,14 +112,18 @@ final class DebugBridge {
             if isTasks { TaskDigest.demoView() } else if isHelp { HelpView() } else { SettingsView() }
         }
         .padding(12)
+        // Oben Platz für die unsichtbare Titelleiste; Hintergrund wie im Popover (Glas-Sprache).
+        .padding(.top, isTasks ? 0 : 22)
         .frame(width: isTasks ? nil : (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
+        .background { if !isTasks { Color.clear.popoverChrome(cornerRadius: 0) } }
         .environment(prefs)
         .environment(store)
         .environment(label)
         .tint(Theme.accent)
         let controller = NSHostingController(rootView: content)
         let w = NSWindow(contentViewController: controller)
-        w.styleMask = [.titled, .closable]
+        w.styleMask = isTasks ? [.titled, .closable] : [.titled, .closable, .fullSizeContentView]
+        w.titlebarAppearsTransparent = !isTasks
         w.title = isTasks ? "Aufgaben heute" : (isHelp ? "Hilfe" : "Einstellungen")
         w.identifier = NSUserInterfaceItemIdentifier(id)
         w.isReleasedWhenClosed = false

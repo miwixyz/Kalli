@@ -100,7 +100,13 @@ struct PopoverView: View {
                     hasItems: { store.hasItems(on: $0, calendar: calendar) },
                     highlight: { prefs.highlight(for: $0, calendar: calendar)?.color }
                 )
+                .padding(.vertical, 6)
+                .frame(maxWidth: .infinity)
+                .familyContentCard()
                 agenda
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 9)
+                    .familyContentCard()
             }
 
             // Die Fehlermeldung stand bis 2026-09-22 INNERHALB der ScrollView,
@@ -120,11 +126,10 @@ struct PopoverView: View {
         .padding(12)
         .frame(width: (prefs.showWeekNumbers ? 396 : 360) * prefs.layoutScale)
 
-        // Liquid Glass gehört genau hierhin: ein Popover ist eine schwebende
-        // Fläche. Fensterkörper bekommen das ausdrücklich NICHT — siehe
-        // GlassBackground.swift.
+        // Glas-Sprache (ab Knippi 0.7.0): lebender, deckender Verlauf statt getöntem Glas —
+        // Monat und Tagesliste liegen darauf auf festen Karten, Schwebendes auf Glas (PopoverChrome.swift).
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { totalHeight = $0 }
-        .glassSurface(in: RoundedRectangle(cornerRadius: 14))
+        .popoverChrome()
         .onAppear(perform: popoverOpened)
         .task(id: visibleMonth) {
             await store.load(month: visibleMonth, calendar: calendar)
@@ -146,8 +151,10 @@ struct PopoverView: View {
                 // Eine Glasgruppe statt drei Einzelknöpfe (Porter-Optik, 13.11.2026): Lichtkante
                 // folgt dem Zeiger, Hover-Schatten gleitet, Drücken staucht. Neutral, nicht in der
                 // Akzentfarbe — drei blaue Knöpfe waren zu laut (0.6.0-Test).
+                // Runde 2 der Glas-Sprache: Die ganze Kopfzeile ist eine Glas-Insel, die Knöpfe darin
+                // tragen kein eigenes Glas mehr (kein Glas auf Glas), nur den gleitenden Hover-Schatten.
                 let size = 26 * prefs.layoutScale
-                GlassGroup(height: size + 4) {
+                HStack(spacing: 1) {
                     Button { step(-1) } label: {
                         Image(systemName: "chevron.left").font(.system(size: 11, weight: .semibold))
                             .frame(width: size, height: size).contentShape(Capsule())
@@ -175,9 +182,16 @@ struct PopoverView: View {
                     .help("Nächster Monat")
                     .accessibilityLabel(Text("Nächster Monat"))
                 }
+                .frame(height: size + 4)
+                .glassGhostHost()
                 .foregroundStyle(FamilyTheme.textPrimary)
             }
         }
+        .padding(.leading, 14 * prefs.layoutScale)
+        .padding(.trailing, 4)
+        .padding(.vertical, 4)
+        .frame(minHeight: 38 * prefs.layoutScale)
+        .floatingGlassIsland(in: Capsule(style: .continuous))
     }
 
     private var agenda: some View {
@@ -346,10 +360,11 @@ struct PopoverView: View {
     }
 
     private var footer: some View {
-        HStack {
-            // Zahnrad und Hell/Dunkel als eine Glasgruppe (Porter-Optik, 13.11.2026).
-            let size = 26 * prefs.layoutScale
-            GlassGroup(height: size + 4) {
+        // Runde 2 der Glas-Sprache: Die ganze Fußleiste ist eine Glas-Insel; alle Knöpfe darin ohne
+        // eigenes Glas, mit gleitendem Hover-Schatten (vorher Glasgruppe + einzelne Glas-Kapseln).
+        let size = 26 * prefs.layoutScale
+        return HStack(spacing: 1) {
+            HStack(spacing: 1) {
                 Button {
                     withAnimation(.easeInOut(duration: 0.15)) { showingSettings.toggle() }
                 } label: {
@@ -396,17 +411,28 @@ struct PopoverView: View {
                 Label(updater.bereitesUpdate.map { "Update \($0)" } ?? "Updates",
                       systemImage: updater.bereitesUpdate == nil ? "arrow.down.circle" : "arrow.down.circle.fill")
                     .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
             }
+            .buttonStyle(.glassPress)
+            .glassGhostItem(updater.canCheck)
             .disabled(!updater.canCheck)
             .help(updater.bereitesUpdate == nil ? "Nach Updates suchen" : "Update ansehen und installieren")
 
             Spacer()
-            Button("Beenden") { NSApplication.shared.terminate(nil) }
-                .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+            Button { NSApplication.shared.terminate(nil) } label: {
+                Text("Beenden")
+                    .font(Theme.font(Theme.Size.itemTime, prefs.layoutScale))
+                    .padding(.horizontal, size * 0.42).frame(height: size).contentShape(Capsule())
+            }
+            .buttonStyle(.glassPress)
+            .glassGhostItem()
         }
-        // Neutrale Glas-Kapseln (Design-System), Kreise oben einzeln gesetzt.
-        .buttonStyle(.familyGlass(.capsule, size: 26 * prefs.layoutScale))
-        .padding(.top, 2)
+        .foregroundStyle(FamilyTheme.textPrimary)
+        .frame(height: size + 4)
+        .glassGhostHost()
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .floatingGlassIsland(in: Capsule(style: .continuous))
     }
 
     /// Hakt ab oder nimmt zurueck — mit sichtbarem Nachleuchten.

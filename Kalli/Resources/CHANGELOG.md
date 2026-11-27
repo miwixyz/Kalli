@@ -2,6 +2,34 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [Unveröffentlicht]
+
+Kalli bekommt die Glas-Sprache der App-Familie (wie Knippi 0.7.0).
+
+### Geändert
+
+- **Neuer Popover-Hintergrund:** ein ruhig lebender Verlauf mit leichtem Glühen im Kalli-Indigo
+  statt getöntem Glas. Er ist deckend, ein buntes Schreibtischbild färbt das Popover nicht mehr ein.
+  Bei „Bewegung reduzieren“ steht er still. Bei „Transparenz reduzieren“ und „Kontrast erhöhen“
+  ist er ein fester Verlauf.
+- **Schwebende Glas-Inseln:** Kopfzeile (Monat, Zurück/Heute/Weiter) und Fußleiste (Zahnrad,
+  Hell/Dunkel, Updates, Beenden) liegen je in einer Glaskapsel. Die Reiter der Einstellungen
+  sind ebenfalls eine Glaskapsel.
+- **Leuchtende Akzent-Pille:** Der gewählte Reiter und der heutige Tag im Monatsraster tragen
+  dieselbe Pille im Akzent, mit weißer Schrift.
+- **Feste Karten:** Monatsraster, Tagesliste und die Gruppen der Einstellungen liegen auf
+  Karten mit feinem Rand und weichem Schatten.
+
+### Intern
+
+- `Kalli/UI/FamilyGlassKit.swift` (neu) ist eine Kopie des Glas-Kits aus der Vault-Vorlage
+  „App-Familie Design-System“. `Kalli/UI/FamilyTheme.swift` wurde auf die aktuelle Vorlage
+  gebracht (mit `accentFill`). Das Testziel kompiliert das Kit mit.
+- `Kalli/UI/PopoverChrome.swift` (neu): `popoverChrome()` und `familyContentCard()`.
+  Die Insel-Lichter des Kits sind bewusst nicht im Popover: Sie sind für große Fenster bemessen
+  und wurden im 360 pt breiten Popover zu einem dunklen Schrägbalken.
+- Die Bild-Testkopie zeigt Einstellungen und Hilfe auf demselben Hintergrund wie das Popover.
+
 ## [0.19.0] — 2026-11-27
 
 Ein Klick aufs Tagesblatt-Widget öffnet Apple Kalender am heutigen Tag, dazu ein Ton zum

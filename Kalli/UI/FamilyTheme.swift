@@ -68,11 +68,13 @@ private extension NSColor {
 enum FamilyTheme {
 
     /// Welche App — bestimmt nur den Akzent. Alles andere ist für alle gleich.
-    enum App { case tippi, kalli, tippAI, qotti }
+    enum App { case tippi, kalli, tippAI, qotti, seam }
 
     /// In jeder App genau einmal setzen (z. B. im App-Einstieg).
     nonisolated(unsafe) static var app: App = .kalli
 
+    // Kontrast erhöhen (29.10.): *HC-Werte gerechnet auf 7 : 1 gegen Weiß, F3F5F9, D9DDE8 bzw. 1B2130, 0D1019,
+    // 1F2433; Füllungen 7 : 1 gegen Weiß; cardStroke 3 : 1 (Nicht-Text). Ohne HC-Wert reicht der normale schon.
     // Akzente „Schiefer“ (Variante B, Michael 29.09.): aus #56607E abgeleitet, Farbton 208–242°, gedämpft, Kontrast geprüft (WCAG ≥ 4,5 : 1
     // für Text auf Weiß bzw. auf der dunklen Karte, gerechnet 2026-09-29).
     static var accent: Color {
@@ -81,8 +83,23 @@ enum FamilyTheme {
         case .kalli:  Color(light: 0x3E4D98, dark: 0x98A4E1, lightHC: 0x33407E, darkHC: 0xA1ACE4)   // Schieferindigo
         case .tippAI: Color(light: 0x413E98, dark: 0x9B98E1, lightHC: 0x3D3A8F, darkHC: 0xACAAE6)   // Schieferviolett
         case .qotti:  Color(light: 0x3E6E98, dark: 0x98BFE1, lightHC: 0x284763)   // Schiefer-Himmelblau
+        case .seam:   Color(light: 0x3E5398, dark: 0x98A9E1, lightHC: 0x32427A, darkHC: 0x9DADE2)   // Iris (Seam-Website)
         }
     }
+    /// Füllung für Flächen mit WEISSER Schrift (`.borderedProminent`, gefüllte Kapseln).
+    /// Hell = `accent`. Dunkel ein satterer Ton: Der helle Dunkelmodus-Akzent ist für
+    /// Text/Symbole gedacht, Weiß darauf hätte nur 2,2 : 1 (Tippi, gemessen 29.09.).
+    /// Diese Werte halten Weiß ≥ 4,6 : 1. Einsatz: `.tint(FamilyTheme.accentFill)`.
+    static var accentFill: Color {
+        switch app {
+        case .tippi:  Color(light: 0x3E5998, dark: 0x5172BD, lightHC: 0x3D5795, darkHC: 0x395697)
+        case .kalli:  Color(light: 0x3E4D98, dark: 0x5C6DC1, darkHC: 0x4052A9)
+        case .tippAI: Color(light: 0x413E98, dark: 0x6B67C5, darkHC: 0x4D49B9)
+        case .qotti:  Color(light: 0x3E6E98, dark: 0x4179AA, lightHC: 0x345C80, darkHC: 0x315C81)
+        case .seam:   Color(light: 0x3E5398, dark: 0x5A6DC0, darkHC: 0x3F52A5)
+        }
+    }
+
     /// Gemeinsamer Familienton (Iris) — für Übergreifendes: Website, Icons, Marketing.
     static let iris = Color(light: 0x3E5398, dark: 0x98A9E1)
 
@@ -109,7 +126,8 @@ enum FamilyTheme {
     static let textPrimary   = Color(light: 0x1E2433, dark: 0xECEFF6)
     static let textSecondary = Color(light: 0x56607E, dark: 0xA3ACC8, lightHC: 0x3E455B, darkHC: 0xA6AECA)   // Michaels Referenzton
 
-    // Status (sparsam — Farbe trägt nie allein die Bedeutung)
+    // Status (sparsam — Farbe trägt nie allein die Bedeutung). Achtung (gerechnet 29.10.): hell auf
+    // backgroundBottom nur 3,2–3,8 : 1 – für kleinen Text auf dem Verlauf zu wenig, auf Karte/Weiß ok.
     static let success = Color(light: 0x1F8A6B, dark: 0x6FE0C1, lightHC: 0x114D3C)
     static let warning = Color(light: 0xB25E09, dark: 0xF5B35C, lightHC: 0x6B3805)
     static let danger  = Color(light: 0xC23B4E, dark: 0xFF8A9A, lightHC: 0x7C2632, darkHC: 0xFF8E9D)
