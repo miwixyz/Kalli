@@ -160,3 +160,21 @@ Kalli-Seite von Gnotchis G61 (`~/Coding/Gnotchi/docs/SECURE-DESIGN.md`, Spezifik
   verwarf Bytes, die im selben Lesevorgang hinter Gnotchis `ok` kamen; jetzt gehen sie in den Eingangspuffer, Test
   mit echter Socket-Verbindung. gitleaks und Swift-Advisories sauber. Kein `rafter run` (Zweitmeinung erst vor dem
   Release).
+
+### K3 – Widget-Klick: URL-Schema `kalli:` und Apple Events an Kalender (neu, 2026-11-27, 0.18.1)
+
+- **Anlass:** Der Klick aufs Tagesblatt-Widget tat nichts (Kalli ist Menüleisten-App ohne Fenster). Michael: Klick
+  öffnet Apple Kalender am heutigen Tag.
+- **Neue Fläche:** URL-Schema `kalli:` (jede App und Webseite kann einen solchen Link öffnen) und die Berechtigung
+  `com.apple.security.automation.apple-events` mit `NSAppleEventsUsageDescription`.
+- **Eingrenzung:** Angenommen wird nur genau `kalli://kalender-heute`, ohne Nutzer, Port, Pfad, Abfrage, Anker
+  (`CalendarToday.matches`, Tests). Der Link trägt keine Daten. Das Skript ist fester Text ohne Parameter, Ziel fest
+  Apple Kalender, nur Ansicht wechseln. Schlimmstenfalls öffnet ein fremder Link Kalender am heutigen Tag. Protokoll
+  bei fremden Links nur Schema und Host.
+- **Zeitlimit 60 s** im Skript, auf eigener Warteschlange: Beim ersten Klick wartet es auf die Abfrage „Kalli darf
+  Kalender steuern“ (mit 5 s lief es ab, Fehler -1712). Fehlt die Erlaubnis, öffnet Kalli Kalender ohne Tageswahl.
+- **Vordergrund:** `activate` im Skript holte Kalender nicht nach vorn (Hintergrund-App). Kalli gibt den Vordergrund
+  mit `yieldActivation` an Kalender ab und öffnet ihn über `NSWorkspace` (gemessen: danach ist Kalender vorn).
+- **Prüfung (27.11.):** `/code-audit` (Default) ohne Defekt, zwei ⚪ umgesetzt (Messpunkt entfernt, Hinweis auf die
+  Automation-Erlaubnis in Hilfe und CHANGELOG). osv, Swift-Advisories, gitleaks sauber.
+

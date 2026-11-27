@@ -6,6 +6,9 @@ import WidgetKit
 @main
 struct KalliApp: App {
 
+    /// Nimmt den Link vom Widget-Klick an (0.18.1): öffnet Apple Kalender am heutigen Tag.
+    @NSApplicationDelegateAdaptor(KalliAppDelegate.self) private var appDelegate
+
     @State private var prefs: Preferences
     @State private var store: CalendarStore
     @State private var label: MenuBarLabel

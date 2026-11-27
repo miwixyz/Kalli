@@ -95,5 +95,20 @@
 	<string>Kalli zeigt deine Erinnerungen neben den Terminen an, lässt dich sie dort abhaken und neue anlegen. Geändert wird nur das Erledigt-Kennzeichen. Gelöscht wird nur ein Eintrag, den du gerade über Gnotchis Schnelleingabe angelegt hast und sofort zurücknimmst.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Kalli zeigt deine Erinnerungen neben den Terminen an, lässt dich sie dort abhaken und neue anlegen. Geändert wird nur das Erledigt-Kennzeichen. Gelöscht wird nur ein Eintrag, den du gerade über Gnotchis Schnelleingabe angelegt hast und sofort zurücknimmst.</string>
+	<!-- Klick aufs Widget „Tagesblatt“ (0.18.1): Das Widget öffnet kalli://kalender-heute, Kalli
+	     schickt Apple Kalender auf heute. Angenommen wird nur genau dieser Link (CalendarToday). -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.kalli.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kalli</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Kalli öffnet Apple Kalender am heutigen Tag, wenn du auf das Tagesblatt-Widget klickst. Kalli liest oder ändert dabei nichts in Kalender.</string>
 </dict>
 </plist>

@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.18: Das Tagesblatt als Widget
+## Neu in 0.19: Ein Klick aufs Widget öffnet den Kalender
+
+Klickst du auf das Tagesblatt-Widget, öffnet Kalli Apple Kalender in der Tagesansicht von heute. Beim ersten Klick fragt macOS, ob Kalli den Kalender steuern darf. Kalli liest oder ändert dabei nichts. Neu ist auch ein kurzer Ton zum Vollbild-Hinweis, ab Werk aus, und Kalli trägt jetzt das Symbol der App-Familie.
+
+---
+
+## Seit 0.18: Das Tagesblatt als Widget
 
 Kallis Tagesblatt gibt es jetzt als Widget für den Schreibtisch, in drei Größen und im Glas-Look der Punkti-Widgets: Ein Ring aus Punkten zeigt den Tag im Monat, die Zahl leuchtet wie eine LED-Anzeige, daneben stehen die Termine und Aufgaben, die heute noch anstehen. Das Blatt hinter den Fenstern kann dieses Aussehen auch, und auf einem kleinen Bildschirm wird es so weit verkleinert, dass es ganz draufpasst. Das Widget liest deine Kalender nur, mit der Erlaubnis, die du Kalli gegeben hast, und hat keinen Zugang zum Netz.
 

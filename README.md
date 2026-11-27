@@ -78,7 +78,7 @@ ansteht, bezahlt das mit Oberfläche.
   dieselben Quellen wie das Popover. Passt sich an kleine Bildschirme an.
 - **Tagesblatt als Widget** — Schreibtisch-Widget (Klein, Mittel, Groß) im Glas-Look der Punkti-Widgets:
   Tagesring mit LED-Tageszahl, anstehende Termine und Aufgaben von heute, in Groß mit Monat. Nur anzeigend,
-  liest lokal per EventKit
+  liest lokal per EventKit; ein Klick öffnet Apple Kalender am heutigen Tag
 - **Aufgaben des Tages** (ab 0.15.0) — einmal täglich zur eingestellten Stunde ein kleines
   Glasfenster oben links (verschiebbar, Stelle bleibt gespeichert) mit den heute fälligen, offenen Erinnerungen, abhakbar. **„In 1 Std.
   wieder“** schlummert, „Schließen“ gilt für den Tag. Nimmt keinen Fokus, **ab Werk aus**

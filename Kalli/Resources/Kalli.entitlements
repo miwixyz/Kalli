@@ -26,5 +26,9 @@
 	<true/>
 	<key>com.apple.security.personal-information.reminders</key>
 	<true/>
+	<!-- Widget-Klick öffnet Apple Kalender am heutigen Tag (0.18.1, CalendarToday): festes Skript
+	     ohne Parameter, Ziel fest Kalender. Hardened Runtime verlangt dafür dieses Entitlement. -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
 </dict>
 </plist>

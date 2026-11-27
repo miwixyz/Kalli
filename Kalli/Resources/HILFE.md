@@ -297,6 +297,10 @@ Hinzufügen: Rechtsklick auf den Schreibtisch → **Widgets bearbeiten** → **K
 
 - Das Widget zeigt nur an. Blättern und Abhaken gehen im Blatt auf dem Schreibtisch oder
   im Popover.
+- Ein Klick aufs Widget öffnet Apple Kalender in der Tagesansicht von heute. Beim ersten
+  Klick fragt macOS, ob Kalli Kalender steuern darf. Springt Kalender nicht auf heute:
+  Systemeinstellungen → **Datenschutz & Sicherheit** → **Automation** → **Kalli** →
+  **Kalender** einschalten.
 - Vorbei ist vorbei: Termine, die schon zu Ende sind, und erledigte Aufgaben fehlen im
   Widget. Passt nicht alles hinein, steht in der letzten Zeile „+2“ usw.
 - Es liest Kalender und Erinnerungen selbst, mit der Erlaubnis, die du Kalli gegeben hast.

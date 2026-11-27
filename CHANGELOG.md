@@ -2,7 +2,17 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
-## Unveröffentlicht
+## [0.19.0] — 2026-11-27
+
+Ein Klick aufs Tagesblatt-Widget öffnet Apple Kalender am heutigen Tag, dazu ein Ton zum
+Vollbild-Hinweis und das neue App-Symbol der App-Familie.
+
+### Behoben
+
+- **Klick aufs Tagesblatt-Widget tat nichts:** Er öffnet jetzt Apple Kalender in der Tagesansicht
+  von heute. Beim ersten Klick fragt macOS, ob Kalli Kalender steuern darf. Springt Kalender nicht
+  auf heute: Systemeinstellungen → Datenschutz & Sicherheit → Automation → Kalli → Kalender
+  einschalten. Kalli liest oder ändert dabei nichts in Kalender.
 
 ### Neu
 
@@ -19,6 +29,11 @@ Alle nennenswerten Änderungen an Kalli.
 
 ### Intern
 
+- `Kalli/App/CalendarToday.swift`: URL-Schema `kalli:`, angenommen wird nur `kalli://kalender-heute`;
+  festes AppleScript an Apple Kalender (60 s Zeitlimit, eigene Warteschlange), danach
+  `yieldActivation` + `NSWorkspace`, damit Kalender nach vorn kommt. Neue Berechtigung
+  `com.apple.security.automation.apple-events` mit `NSAppleEventsUsageDescription`.
+  Sicherheitsentwurf K3 in `docs/SECURE-DESIGN.md`.
 - `Kalli/Core/AlertSound.swift` spielt `Kalli/Resources/kalli.caf` per `NSSound`; fehlende oder
   unlesbare Datei → `Logger` `.notice` (Kategorie `ton`). Ausgelöst in `FullScreenAlerts.fire`
   nach `presenter.show`, Einstellung `fullScreenSound` (Schlüssel `fullScreenSound`).

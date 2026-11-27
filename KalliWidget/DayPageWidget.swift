@@ -60,6 +60,8 @@ struct DayPageView: View {
             }
         }
         .containerBackground(for: .widget) { PunktiGlassBackground() }
+        // Klick öffnet Apple Kalender am heutigen Tag (über Kalli, siehe CalendarToday).
+        .widgetURL(URL(string: "kalli://kalender-heute"))
     }
 
     /// Zeile unter der Tageszahl: Monat und, was heute ansteht.
