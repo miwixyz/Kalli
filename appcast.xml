@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.21.0</title>
+            <pubDate>Sat, 28 Nov 2026 12:57:20 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>136</sparkle:version>
+            <sparkle:shortVersionString>0.21.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Zeiterfassung aus MacStd, damit eine App genügt.</p><h3>Neu</h3><ul><li><b>Reiter „Zeit“ im Popover</b> (neben „Kalender“): Projekte anlegen, umbenennen, löschen; Erfassung mit dem Abspielknopf starten und stoppen, Pause und Weiter; die laufende Zeit steht groß im Reiter.</li><li><b>Menüleiste:</b> Läuft eine Erfassung, zeigt das Kopf-Symbol ein Abspielzeichen statt der Tageszahl und die Netto-Laufzeit („1:05“) steht vorn; bei Pause zwei Striche, die Zeit steht still.</li><li><b>Kommentar zum Timer:</b> Während eine Erfassung läuft, steht ein Feld „Kommentar“ im Reiter; der Text wandert beim Stoppen in den Eintrag. Mehrere Timer im selben Projekt sind einfach mehrere Einträge, jeder mit eigenem Kommentar.</li><li><b>Übersicht Woche/Monat</b> nach Projekt gruppiert, darunter die einzelnen Timer mit Kommentar; ein Eintrag lässt sich nachträglich bearbeiten (Projekt, Von/Bis, Notiz, Pausen) oder löschen.</li><li><b>Export</b> des angezeigten Zeitraums als CSV (Semikolon, Excel-tauglich) oder Markdown.</li><li><b>Ton</b> beim Starten und Stoppen per Knopf (<code>zeit.caf</code>), ab Werk aus, Schalter im Reiter.</li><li>Dauern unter einer Minute stehen in Sekunden („20 s“) statt als „0:00“.</li><li>Eine laufende Erfassung steht sofort in der Datei und übersteht Absturz, Abmelden und Ausschalten. „Beenden“ von Kalli bucht sie bis jetzt als Eintrag.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.21.0/Kalli-0.21.0.zip" length="4671938" type="application/octet-stream" sparkle:edSignature="yIHAjDYolmRfPgHRSecP6Ocfv9W+XJFFJYOXjxe0vKIHV+9zsJRiWlJyzOXeYh5ems0HGvInaXoPjwwSape3BA=="/>
+        </item>
+        <item>
             <title>0.20.0</title>
             <pubDate>Fri, 27 Nov 2026 16:24:07 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Ein Klick aufs Tagesblatt-Widget öffnet Apple Kalender am heutigen Tag, dazu ein Ton zum Vollbild-Hinweis und das neue App-Symbol der App-Familie.</p><h3>Behoben</h3><ul><li><b>Klick aufs Tagesblatt-Widget tat nichts:</b> Er öffnet jetzt Apple Kalender in der Tagesansicht von heute. Beim ersten Klick fragt macOS, ob Kalli Kalender steuern darf. Springt Kalender nicht auf heute: Systemeinstellungen → Datenschutz &amp; Sicherheit → Automation → Kalli → Kalender einschalten. Kalli liest oder ändert dabei nichts in Kalender.</li></ul><h3>Neu</h3><ul><li><b>Ton zum Hinweis (ab Werk aus):</b> Einstellungen → Menüleiste → Vollbild-Hinweis → „Ton zum Hinweis“. Kallis kurzer Ton aus der App-Familie (Blatt-Schnippen mit Ton, 0,24 s), sobald der Vollbild-Hinweis erscheint, auch beim „Zum Beginn nochmal“. Die Systemmitteilung behält ihren eigenen Ton.</li></ul><h3>Geändert</h3><ul><li><b>Neues App-Symbol:</b> das Kalli-Maskottchen der App-Familie statt des Glas-Symbols, in derselben Geometrie wie Tippi, TippAI und Seam (Squircle 1000 × 1000 im 1024er-Feld, transparente Ecken). Das Menüleisten-Symbol bleibt: Es trägt die Tageszahl und ist damit Information, kein festes Symbol.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.19.0/Kalli-0.19.0.zip" length="4483948" type="application/octet-stream" sparkle:edSignature="MW0IzGCftxYGDjZBbqFR3dDns4wVP9A04EZbesmyqFxOnPXl1TiVXZYXBMq46QpWgPdj262AI6QErBB9JVkJAg=="/>
-        </item>
-        <item>
-            <title>0.18.0</title>
-            <pubDate>Thu, 26 Nov 2026 15:45:39 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>128</sparkle:version>
-            <sparkle:shortVersionString>0.18.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Das Tagesblatt als Widget und im Punkti-Look, und es passt auf kleine Bildschirme.</p><h3>Neu</h3><ul><li><b>Tagesblatt als Widget:</b> Rechtsklick auf den Schreibtisch → „Widgets bearbeiten“ → Kalli → „Tagesblatt“, in Klein, Mittel und Groß. Im Glas-Look der Punkti-Widgets: Glasscheibe mit Tagesring und LED-Tageszahl, die anstehenden Termine und Aufgaben von heute mit LED-Uhrzeit, in Groß dazu der Monat. Nur anzeigend; liest Kalender und Erinnerungen lokal mit Kallis Erlaubnis, nichts verlässt den Mac.</li><li><b>Tagesblatt im Punkti-Look:</b> Einstellungen → Ansicht → Tagesblatt → Aussehen „Punkti“. Dunkles Glas wie die Punkti-Widgets, Tagesring mit LED-Tageszahl, Monat daneben, alle Einträge des Tages mit LED-Uhrzeit; heute steht oben, was läuft oder ansteht. Blättern mit ‹ HEUTE ›, Aufgaben abhakbar.</li></ul><h3>Verbessert</h3><ul><li><b>Tagesblatt auf kleinen Bildschirmen:</b> Ist der Bildschirm niedriger als das Blatt, wird es so weit verkleinert, dass es ganz draufpasst (vorher war es unten abgeschnitten). Auch nach dem Umstecken eines Bildschirms und nach dem Ziehen auf einen anderen.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.18.0/Kalli-0.18.0.zip" length="3647374" type="application/octet-stream" sparkle:edSignature="uAJC4R5/qVFiqB5/lnmzlue6qHPp/QnmB3a44vCK6mXSWca4bFt31JlbGZJNw83RWUUlbf68cyQ3rKMVOnB0Dw=="/>
         </item>
     </channel>
 </rss>
