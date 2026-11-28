@@ -13,7 +13,7 @@ settings:
     ARCHS: arm64
     ONLY_ACTIVE_ARCH: YES
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "0.20.0"
+    MARKETING_VERSION: "0.21.0"
     CURRENT_PROJECT_VERSION: "6"
 
 # Genau EINE direkte Abhaengigkeit, null transitive.
@@ -44,6 +44,8 @@ targets:
       - path: Kalli/Resources/AppIcon.icns
       # Ton der App-Familie (2026-11-26): „Ton zum Hinweis“ beim Vollbild-Hinweis, ab Werk aus
       - path: Kalli/Resources/kalli.caf
+      # Ton der Zeiterfassung bei Start/Stopp (0.21.0, aus MacStd), „Ton“ im Reiter Zeit, ab Werk aus
+      - path: Kalli/Resources/zeit.caf
       # Schrift der App-Familie (ab 0.6.0), SIL OFL 1.1 — Lizenztext in THIRD-PARTY-LICENSES.md
       - path: Kalli/Resources/PlusJakartaSans-Variable.ttf
     dependencies:
@@ -116,6 +118,8 @@ targets:
       - path: Kalli/Core
         excludes:
           - Updater.swift
+      # Zeiterfassung (0.21.0): Modell, Speicher, Logik, Export — ohne UI.
+      - path: Kalli/Zeit
       - path: Kalli/App/MenuBarLabel.swift
       - path: Kalli/App/MenuBarIcon.swift
       - path: Kalli/App/CalendarToday.swift

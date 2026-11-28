@@ -23,6 +23,7 @@ extension SelfTest {
         steps.append(bundleSeal())
         steps.append(preferencesRoundTrip())
         steps.append(reminderParser())
+        steps.append(zeiterfassung())
         steps.append(contentsOf: await windows(windowFor))
         steps.append(await observerSmoke())
         return steps
@@ -101,6 +102,36 @@ extension SelfTest {
         return Step(name: "Erinnerungs-Erkennung", ok: ok,
                     detail: "Titel „\(parsed.title)“, morgen " + (dayOK ? "erkannt" : "NICHT erkannt")
                         + ", Zeit " + (parsed.time == QuickReminder.Time(hour: 15, minute: 0) ? "15:00" : "FALSCH"))
+    }
+
+    /// Zeiterfassung im echten Bündel: Ton im Bündel, Speicherort der Kopie nicht der echte Ordner, und ein
+    /// Durchlauf Start → Pause → Weiter → Stopp in einer Wegwerf-Datei, danach mit neuer Instanz gelesen.
+    private static func zeiterfassung() -> Step {
+        let real = ZeitStore.standardURL().deletingLastPathComponent().lastPathComponent != "Kalli"
+        let sound = ZeitSound.isAvailable
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("kalli-zeit-selftest-\(UUID().uuidString)")
+        let url = dir.appendingPathComponent("zeit.json")
+        final class Clock: @unchecked Sendable { var now = Date() }
+        let clock = Clock()
+        let erfassung = ZeitErfassung(store: ZeitStore(url: url), now: { clock.now })
+        erfassung.addProject(name: "Selbsttest")
+        guard let id = erfassung.projects.first?.id else {
+            return Step(name: "Zeiterfassung", ok: false, detail: "Projekt nicht angelegt")
+        }
+        erfassung.toggle(projectID: id)
+        clock.now += 600; erfassung.pause()
+        clock.now += 300; erfassung.resume()
+        clock.now += 900
+        let restored = ZeitErfassung(store: ZeitStore(url: url), now: { clock.now })
+        let resumedOK = restored.zustand == .laeuft && Int(restored.elapsed(at: clock.now)) == 1500
+        erfassung.stopByUser()
+        let booked = ZeitErfassung(store: ZeitStore(url: url), now: { clock.now }).entries
+        let netOK = booked.count == 1 && Int(booked[0].netDuration) == 1500 && Int(booked[0].grossDuration) == 1800
+        let ok = real && sound && resumedOK && netOK
+        return Step(name: "Zeiterfassung", ok: ok,
+                    detail: "Ton " + (sound ? "da" : "FEHLT") + ", eigener Ordner " + (real ? "ja" : "NEIN")
+                        + ", Wiederherstellen " + (resumedOK ? "ok" : "FALSCH") + ", gebucht netto "
+                        + (booked.first.map { "\(Int($0.netDuration / 60)) min" } ?? "nichts"))
     }
 
     /// Einstellungen und Hilfe öffnen sich wirklich (sichtbar mit ihrer Kennung). Danach wieder zu.

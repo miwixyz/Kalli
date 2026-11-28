@@ -2,6 +2,36 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.21.0] — 2026-11-28
+
+Zeiterfassung aus MacStd, damit eine App genügt.
+
+### Neu
+
+- **Reiter „Zeit“ im Popover** (neben „Kalender“): Projekte anlegen, umbenennen, löschen; Erfassung mit dem
+  Abspielknopf starten und stoppen, Pause und Weiter; die laufende Zeit steht groß im Reiter.
+- **Menüleiste:** Läuft eine Erfassung, zeigt das Kopf-Symbol ein Abspielzeichen statt der Tageszahl und die
+  Netto-Laufzeit („1:05“) steht vorn; bei Pause zwei Striche, die Zeit steht still.
+- **Kommentar zum Timer:** Während eine Erfassung läuft, steht ein Feld „Kommentar“ im Reiter; der Text wandert beim
+  Stoppen in den Eintrag. Mehrere Timer im selben Projekt sind einfach mehrere Einträge, jeder mit eigenem Kommentar.
+- **Übersicht Woche/Monat** nach Projekt gruppiert, darunter die einzelnen Timer mit Kommentar; ein Eintrag lässt sich nachträglich bearbeiten
+  (Projekt, Von/Bis, Notiz, Pausen) oder löschen.
+- **Export** des angezeigten Zeitraums als CSV (Semikolon, Excel-tauglich) oder Markdown.
+- **Ton** beim Starten und Stoppen per Knopf (`zeit.caf`), ab Werk aus, Schalter im Reiter.
+- Dauern unter einer Minute stehen in Sekunden („20 s“) statt als „0:00“.
+- Eine laufende Erfassung steht sofort in der Datei und übersteht Absturz, Abmelden und Ausschalten. „Beenden“
+  von Kalli bucht sie bis jetzt als Eintrag.
+
+### Intern
+
+- `Kalli/Zeit/` (Modell, Speicher, Logik, Export, Ton), Oberfläche `ZeitView` und `ZeitEintragEditor`.
+  Datei `zeit.json` in „Application Support/Kalli“, im Format von MacStd (Schema 3).
+- Eine unlesbare `zeit.json` wird nicht überschrieben, sondern als `zeit-defekt-<Zeit>.json` zur Seite gelegt und
+  gemeldet (in MacStd ging sie beim nächsten Speichern still verloren).
+- Die Bild-Testkopie bekommt einen eigenen Zeit-Ordner (nach ihrer Kennung); der Selbsttest hat den Schritt
+  „Zeiterfassung“, `kallictl snapshot zeit` zeigt den Reiter mit Beispieldaten.
+- Nicht übernommen aus MacStd: PDF- und TXT-Export, eigener Dock-Modus, eigene Hell/Dunkel-Wahl.
+
 ## [0.20.0] — 2026-11-27
 
 Kalli bekommt die Glas-Sprache der App-Familie (wie Knippi 0.7.0).

@@ -3,7 +3,7 @@
 // `scripts/bild-test.sh` baut und signiert es nach build-dev/kallictl.
 //
 //   kallictl status
-//   kallictl snapshot einstellungen|hilfe|aufgaben
+//   kallictl snapshot einstellungen|hilfe|aufgaben|zeit
 //   kallictl appearance light|dark|system
 //   kallictl selftest          → PASS/FAIL je Schritt, Exit 0 = alles bestanden, 1 = Fehlschlag
 //
@@ -12,7 +12,7 @@ import Darwin
 import Foundation
 import Security
 
-let usage = "Nutzung: kallictl status | snapshot einstellungen|hilfe|aufgaben | appearance light|dark|system | selftest"
+let usage = "Nutzung: kallictl status | snapshot einstellungen|hilfe|aufgaben|zeit | appearance light|dark|system | selftest"
 let args = Array(CommandLine.arguments.dropFirst())
 guard let cmd = args.first else { print(usage); exit(64) }
 var message: [String: Any] = ["v": 1, "cmd": cmd]

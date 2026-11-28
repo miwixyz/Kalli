@@ -18,8 +18,18 @@ import AppKit
 /// sähe in genau einem der beiden Modi falsch aus.
 enum MenuBarIcon {
 
+    /// Was im Gesichtsfeld steht: die Tageszahl oder, bei laufender Zeiterfassung (0.21.0), ein Abspielzeichen
+    /// bzw. zwei Pausenstriche.
+    enum Face: Equatable {
+        case day(Int)
+        case running
+        case paused
+    }
+
     /// Kopf-Silhouette mit `day` als Zahl. Ergebnis ist ein Template-Image.
-    static func image(day: Int) -> NSImage {
+    static func image(day: Int) -> NSImage { image(face: .day(day)) }
+
+    static func image(face: Face) -> NSImage {
         // Quadratisch, damit es auf Leisten mit und ohne Notch gleich sitzt.
         let side: CGFloat = 18
         let size = NSSize(width: side, height: side)
@@ -54,25 +64,46 @@ enum MenuBarIcon {
             skull.lineWidth = line
             skull.stroke()
 
-            // Tageszahl im Gesichtsfeld.
-            let text = "\(day)"
-            let fontSize: CGFloat = text.count > 1 ? 8.0 : 9.0
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: fontSize, weight: .bold),
-                .foregroundColor: NSColor.black,
-            ]
-            let measured = text.size(withAttributes: attributes)
-            text.draw(
-                at: NSPoint(
-                    x: head.midX - measured.width / 2,
-                    y: head.midY - measured.height / 2 - 0.3
-                ),
-                withAttributes: attributes
-            )
+            switch face {
+            case .day(let day):
+                drawDay(day, in: head)
+            case .running:
+                // Abspielzeichen: ausgefülltes Dreieck, optisch leicht nach rechts gerückt.
+                let h = head.height * 0.36
+                let w = h * 0.86
+                let x = head.midX - w / 2 + 0.5
+                let tri = NSBezierPath()
+                tri.move(to: NSPoint(x: x, y: head.midY - h / 2 - 0.3))
+                tri.line(to: NSPoint(x: x, y: head.midY + h / 2 - 0.3))
+                tri.line(to: NSPoint(x: x + w, y: head.midY - 0.3))
+                tri.close()
+                tri.fill()
+            case .paused:
+                let h = head.height * 0.36
+                let barW: CGFloat = 1.8
+                for dx in [-2.0, 2.0] {
+                    NSBezierPath(roundedRect: NSRect(x: head.midX + dx - barW / 2, y: head.midY - h / 2 - 0.3,
+                                                     width: barW, height: h), xRadius: 0.6, yRadius: 0.6).fill()
+                }
+            }
             return true
         }
 
         image.isTemplate = true
         return image
+    }
+
+    private static func drawDay(_ day: Int, in head: NSRect) {
+        let text = "\(day)"
+        let fontSize: CGFloat = text.count > 1 ? 8.0 : 9.0
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: fontSize, weight: .bold),
+            .foregroundColor: NSColor.black,
+        ]
+        let measured = text.size(withAttributes: attributes)
+        text.draw(
+            at: NSPoint(x: head.midX - measured.width / 2, y: head.midY - measured.height / 2 - 0.3),
+            withAttributes: attributes
+        )
     }
 }

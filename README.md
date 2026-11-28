@@ -24,6 +24,9 @@ ansteht, bezahlt das mit Oberfläche.
 
 ## Funktionen
 
+- **Zeiterfassung (ab 0.21.0, aus MacStd übernommen):** Reiter „Zeit“ im Popover: Projekte, Start/Stopp, Pause,
+  Einträge nachträglich ändern, Übersicht Woche/Monat, Export CSV/Markdown, Ton ab Werk aus. Läuft sie, zeigt die
+  Menüleiste Abspielzeichen und Laufzeit. Lokal in `zeit.json` (`Kalli/Zeit/`).
 - **Nächster Termin in der Notch (ab 0.12.0):** Mit [Gnotchi](https://github.com/miwixyz/Gnotchi)
   ab 0.5.0 erscheint der nächste Termin 15 Minuten vor Beginn in der Notch. Nur Titel, Beginn und
   Farbe, über einen lokalen Socket, beide Apps prüfen vorher die Developer-ID-Signatur der anderen

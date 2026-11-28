@@ -169,6 +169,27 @@ keine einzelnen Videokonferenz-Dienste, es nimmt den ersten Web-Link.
 Das **App-Symbol** — Kalli als Maskottchen — steht unten in diesem Reiter. Es
 taucht sonst nirgends auf: Kalli hat kein Dock-Symbol und kein „Über"-Fenster.
 
+## Zeiterfassung (ab 0.21.0)
+
+Im Popover oben zwischen **Kalender** und **Zeit** umschalten.
+
+- **Projekt anlegen:** im Reiter Zeit unten bei „Neues Projekt“ den Namen tippen, Return. Rechtsklick auf ein
+  Projekt: Umbenennen oder Löschen (löscht auch seine Einträge).
+- **Starten und Stoppen:** Abspielknopf beim Projekt. Läuft schon eine Erfassung, bucht der Klick auf ein anderes
+  Projekt die alte und startet die neue. **Pause** und **Weiter** halten die Zeit an; **Stoppen & buchen** legt
+  den Eintrag an.
+- **In der Menüleiste:** Läuft die Erfassung, zeigt das Symbol ein Abspielzeichen statt der Tageszahl und davor
+  steht die Netto-Laufzeit, bei Pause zwei Striche und die Zeit steht still.
+- **Kommentar:** Läuft ein Timer, kannst du im Feld „Kommentar (optional)“ notieren, woran du arbeitest. Der Text
+  kommt in den Eintrag. Jeder Start und Stopp ist ein eigener Eintrag, ein Projekt hat also beliebig viele Timer.
+- **Übersicht:** Woche oder Monat, nach Projekt gruppiert, mit den Pfeilen blättern. Ein Klick auf einen Eintrag öffnet ihn zum Ändern
+  (Projekt, Von, Bis, Notiz, Pausen) oder Löschen.
+- **Exportieren:** unten im Reiter, CSV oder Markdown, für den angezeigten Zeitraum.
+- **Ton:** Schalter „Ton“ unten im Reiter, ab Werk aus; klingt nur bei Klick, nie beim Beenden.
+- **Ablage:** `zeit.json` im Ordner „Application Support/Kalli“. Eine laufende Erfassung steht sofort darin und
+  übersteht Absturz, Abmelden und Ausschalten. **Beenden** von Kalli bucht sie bis jetzt. Ist die Datei einmal
+  unlesbar, legt Kalli sie unverändert als `zeit-defekt-…json` daneben und meldet es im Reiter.
+
 ## Die eine Sache (ab 0.7.0)
 
 Ein Text als **eigener Eintrag in der Menüleiste**, neben dem Datum — die eine Aufgabe,

@@ -48,7 +48,9 @@ nichts** — weder Termine noch Erinnerungen noch Kalender.
 
 Was Kalli speichert: die eigenen Einstellungen in den macOS-UserDefaults unter
 `com.kalli.app` — welche Kalender ausgeblendet sind, das Datumsformat, die
-Schalter. **Keine Termininhalte.**
+Schalter. **Keine Termininhalte.** Ab 0.21.0 kommt die Zeiterfassung dazu: Projektnamen, Zeiten und
+Notizen, die du selbst eingibst, liegen als Datei `zeit.json` in „Application Support/Kalli“ auf deinem Mac. Sie
+werden nirgends hingeschickt.
 
 ### Eine Ausnahme, die du kennen musst: Systemmitteilungen
 

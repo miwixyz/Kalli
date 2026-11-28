@@ -11,6 +11,8 @@ struct PopoverView: View {
     @State private var visibleMonth = Date()
     @State private var selection = Date()
     @State private var showingSettings = false
+    /// Reiter Kalender / Zeit (0.21.0, Zeiterfassung aus MacStd).
+    @State private var tab: PopoverTab = .kalender
     @State private var toggleError: String?
     /// Gerade abgehakte Aufgaben. Sie bleiben kurz stehen, damit das Abhaken
     /// sichtbar wird, bevor der Filter sie entfernt.
@@ -55,6 +57,9 @@ struct PopoverView: View {
 
             // „Die eine Sache" (0.7.0) — oben, weil sie der Tag ist, nicht ein Termin darin.
             if !showingSettings {
+                tabBar
+            }
+            if !showingSettings && tab == .kalender {
                 OneThingField(scale: prefs.layoutScale)
             }
 
@@ -64,6 +69,8 @@ struct PopoverView: View {
                     .environment(store)
                     .environment(label)
                     .environment(updater)
+            } else if tab == .zeit {
+                ZeitView()
             } else if case .denied = store.access {
                 accessHint
             } else {
@@ -143,11 +150,11 @@ struct PopoverView: View {
         HStack {
             Text(showingSettings
                  ? "Einstellungen"
-                 : monthFormatter.string(from: visibleMonth).capitalized)
+                 : tab == .zeit ? "Zeit" : monthFormatter.string(from: visibleMonth).capitalized)
                 .font(Theme.font(Theme.Size.monthTitle + 2, prefs.layoutScale, weight: .bold))
                 .contentTransition(.numericText())
             Spacer()
-            if !showingSettings {
+            if !showingSettings && tab == .kalender {
                 // Eine Glasgruppe statt drei Einzelknöpfe (Porter-Optik, 13.11.2026): Lichtkante
                 // folgt dem Zeiger, Hover-Schatten gleitet, Drücken staucht. Neutral, nicht in der
                 // Akzentfarbe — drei blaue Knöpfe waren zu laut (0.6.0-Test).
@@ -192,6 +199,12 @@ struct PopoverView: View {
         .padding(.vertical, 4)
         .frame(minHeight: 38 * prefs.layoutScale)
         .floatingGlassIsland(in: Capsule(style: .continuous))
+    }
+
+    /// Umschalter Kalender | Zeit. Laufende Erfassung steht zusätzlich in der Menüleiste.
+    private var tabBar: some View {
+        GlassPillBar(items: PopoverTab.allCases, selection: tab, label: { Text($0.title) },
+                     icon: { $0.symbol }, onSelect: { tab = $0 })
     }
 
     private var agenda: some View {
@@ -568,4 +581,12 @@ extension PopoverView {
         .padding(.vertical, 4)
         .floatingGlassIsland(in: Capsule(style: .continuous))
     }
+}
+
+/// Reiter im Popover.
+enum PopoverTab: String, CaseIterable, Hashable {
+    case kalender, zeit
+
+    var title: String { self == .kalender ? "Kalender" : "Zeit" }
+    var symbol: String { self == .kalender ? "calendar" : "clock" }
 }

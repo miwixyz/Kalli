@@ -19,6 +19,8 @@ final class MenuBarLabel {
 
     private let prefs: Preferences
     private let store: CalendarStore
+    /// Zeiterfassung (0.21.0): steuert Symbol und Laufzeit in der Leiste. `nil` in Tests und Bild-Kopie.
+    private let zeit: ZeitErfassung?
     private var timer: Timer?
     private var minuteTicks = 0
 
@@ -36,9 +38,10 @@ final class MenuBarLabel {
         return f
     }()
 
-    init(prefs: Preferences, store: CalendarStore) {
+    init(prefs: Preferences, store: CalendarStore, zeit: ZeitErfassung? = nil) {
         self.prefs = prefs
         self.store = store
+        self.zeit = zeit
         dateFormatter.locale = Locale(identifier: "de_DE")
         update()
 
@@ -90,13 +93,17 @@ final class MenuBarLabel {
 
     func update() {
         let now = Date()
-        let day = Calendar.current.component(.day, from: now)
-        if currentIconDay != day {
-            icon = MenuBarIcon.image(day: day)
-            currentIconDay = day
+        let face = Self.face(zeit: zeit?.zustand, day: Calendar.current.component(.day, from: now))
+        if currentFace != face {
+            icon = MenuBarIcon.image(face: face)
+            currentFace = face
         }
 
         var parts: [String] = []
+        // Läuft die Zeiterfassung, steht ihre Netto-Laufzeit ganz vorn (bei Pause eingefroren).
+        if let zeit, zeit.zustand != .steht {
+            parts.append(Self.laufzeit(zeit.elapsed(at: now)))
+        }
         if prefs.showDateInMenuBar {
             dateFormatter.dateFormat = prefs.menuBarDateFormat
             parts.append(dateFormatter.string(from: now))
@@ -262,9 +269,25 @@ final class MenuBarLabel {
         }
     }
 
-    /// Damit das Symbol nur beim echten Tageswechsel neu gezeichnet wird und
-    /// nicht sechzigmal pro Stunde.
-    private var currentIconDay: Int = 0
+    /// Damit das Symbol nur bei echter Änderung (Tageswechsel, Start, Pause, Stopp) neu gezeichnet wird
+    /// und nicht sechzigmal pro Stunde.
+    private var currentFace: MenuBarIcon.Face?
+
+    /// Welches Gesicht das Symbol trägt: bei laufender Zeiterfassung Abspielzeichen bzw. Pausenstriche,
+    /// sonst die Tageszahl.
+    nonisolated static func face(zeit: ZeitErfassung.Zustand?, day: Int) -> MenuBarIcon.Face {
+        switch zeit {
+        case .laeuft: .running
+        case .pause: .paused
+        case .steht, .none: .day(day)
+        }
+    }
+
+    /// „h:mm“ der Netto-Laufzeit, z. B. „1:05“.
+    nonisolated static func laufzeit(_ interval: TimeInterval) -> String {
+        let minutes = Int(interval) / 60
+        return String(format: "%d:%02d", minutes / 60, minutes % 60)
+    }
 
     /// Kürzt den Titel auf eine feste Länge.
     ///

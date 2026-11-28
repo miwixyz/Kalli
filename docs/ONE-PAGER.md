@@ -18,7 +18,13 @@ Mehr will Kalli nicht sein. Wer nur wissen will, welcher Tag heute ist und was a
 
 ---
 
-## Neu in 0.20: Ein ruhigeres, klareres Popover
+## Neu in 0.21: Arbeitszeiten erfassen, direkt in der Menüleiste
+
+Kalli kann jetzt Arbeitszeiten erfassen. Im Popover gibt es oben einen zweiten Reiter „Zeit“: Projekt anlegen, Abspielknopf drücken, fertig. Du kannst pausieren, beim laufenden Timer einen Kommentar notieren und später jeden Eintrag ändern. Die Übersicht zeigt Woche oder Monat nach Projekt, exportiert wird als CSV oder Markdown. Solange ein Timer läuft, steht seine Zeit in der Menüleiste und das Symbol zeigt ein Abspielzeichen. Alles bleibt als Datei auf deinem Mac.
+
+---
+
+## Seit 0.20: Ein ruhigeres, klareres Popover
 
 Das Popover sieht neu aus. Hinter Monat und Tagesliste liegt jetzt ein ruhiger Farbverlauf in Kallis Blau, und ein buntes Schreibtischbild färbt das Popover nicht mehr ein. Monat, Termine und Einstellungen stehen auf klaren Karten, Kopf- und Fußleiste schweben als Glasleisten darüber, und der heutige Tag leuchtet im Akzent. Kalli sieht damit aus wie die anderen Apps der Familie.
 
@@ -115,6 +121,7 @@ Mitteilungen gehen unter, wenn du tief in einer Arbeit steckst. Deshalb kann sic
 | Rechtzeitig erinnert werden | Drei Wege nach Wahl: Mitteilung, pulsierender Punkt in der Leiste, Vollbild-Hinweis. Alle sind ab Werk aus |
 | Die eine wichtige Aufgabe des Tages im Blick behalten | „Die eine Sache“ steht als eigener Eintrag neben dem Datum. Machst du eine Erinnerung zur Sache, verschwindet sie beim Abhaken von selbst |
 | Nur die Kalender sehen, die zählen | Jeder Kalender und jede Erinnerungsliste lässt sich einzeln ausblenden |
+| Arbeitszeiten pro Projekt festhalten | Reiter „Zeit“ im Popover: Timer starten, pausieren, Kommentar dazu, Übersicht nach Woche oder Monat, Export als CSV oder Markdown. Die laufende Zeit steht in der Menüleiste |
 | Eine App, die aussieht wie macOS selbst | Liquid Glass, Hell und Dunkel nach System oder fest per Knopf |
 
 ---

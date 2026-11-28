@@ -13,6 +13,8 @@ struct KalliApp: App {
     @State private var store: CalendarStore
     @State private var label: MenuBarLabel
     @State private var updater = Updater()
+    /// Zeiterfassung (0.21.0, aus MacStd übernommen).
+    @State private var zeit: ZeitErfassung
     @State private var oneThing: OneThing
     /// Hält den Dienste-Anbieter am Leben (NSApp.servicesProvider hält ihn nicht sicher fest).
     @State private var oneThingService: OneThingService
@@ -40,8 +42,11 @@ struct KalliApp: App {
         let s = CalendarStore(prefs: p)
         _prefs = State(initialValue: p)
         _store = State(initialValue: s)
-        let l = MenuBarLabel(prefs: p, store: s)
+        let z = Self.makeZeit(prefs: p)
+        _zeit = State(initialValue: z)
+        let l = MenuBarLabel(prefs: p, store: s, zeit: z)
         _label = State(initialValue: l)
+        z.onChange = { [l] in l.update() }
         let o = OneThing(lookup: { [s] id in s.reminderLookup(id: id) })
         let service = OneThingService(oneThing: o)
         _oneThing = State(initialValue: o)
@@ -83,6 +88,18 @@ struct KalliApp: App {
         }
     }
 
+    /// Zeiterfassung (0.21.0). „Beenden“ heißt Feierabend: eine laufende Erfassung wird bis jetzt gebucht
+    /// (sonst zählte die Nacht mit). Absturz, Abmelden und Ausschalten lassen sie weiterlaufen: Sie steht
+    /// schon in der Datei.
+    private static func makeZeit(prefs: Preferences) -> ZeitErfassung {
+        let z = ZeitErfassung(soundEnabled: { [prefs] in prefs.zeitSound }, playSound: { ZeitSound.play() })
+        NotificationCenter.default.addObserver(forName: NSApplication.willTerminateNotification, object: nil,
+                                               queue: .main) { [z] _ in
+            MainActor.assumeIsolated { z.prepareForQuit() }
+        }
+        return z
+    }
+
     private static func startedAsBildKopie(prefs: Preferences, store: CalendarStore, label: MenuBarLabel) -> Bool {
         #if DEBUG
         if BildKopie.isActive {
@@ -101,6 +118,7 @@ struct KalliApp: App {
                 .environment(label)
                 .environment(updater)
                 .environment(oneThing)
+                .environment(zeit)
                 .environment(kumikiTermin)
                 .tint(Theme.accent)
                 .task {

@@ -24,6 +24,8 @@ final class DebugBridge {
     private let directory: URL
     private var server: DebugSocketServer?
     private var windows: [String: NSWindow] = [:]
+    /// Beispieldaten für den Reiter „Zeit“ (Wegwerf-Datei im Temp-Ordner, nie die echten Zeiten).
+    private let zeitDemo = ZeitErfassung.demo()
 
     private init(prefs: Preferences, store: CalendarStore, label: MenuBarLabel, directory: URL) {
         self.prefs = prefs
@@ -108,8 +110,9 @@ final class DebugBridge {
         if let w = windows[id] { return w }
         let isHelp = id == DebugCommand.helpWindow
         let isTasks = id == DebugCommand.tasksWindow
+        let isZeit = id == DebugCommand.zeitWindow
         let content = VStack(spacing: 12) {
-            if isTasks { TaskDigest.demoView() } else if isHelp { HelpView() } else { SettingsView() }
+            if isTasks { TaskDigest.demoView() } else if isHelp { HelpView() } else if isZeit { ZeitView() } else { SettingsView() }
         }
         .padding(12)
         // Oben Platz für die unsichtbare Titelleiste; Hintergrund wie im Popover (Glas-Sprache).
@@ -119,12 +122,13 @@ final class DebugBridge {
         .environment(prefs)
         .environment(store)
         .environment(label)
+        .environment(zeitDemo)
         .tint(Theme.accent)
         let controller = NSHostingController(rootView: content)
         let w = NSWindow(contentViewController: controller)
         w.styleMask = isTasks ? [.titled, .closable] : [.titled, .closable, .fullSizeContentView]
         w.titlebarAppearsTransparent = !isTasks
-        w.title = isTasks ? "Aufgaben heute" : (isHelp ? "Hilfe" : "Einstellungen")
+        w.title = isTasks ? "Aufgaben heute" : (isHelp ? "Hilfe" : (isZeit ? "Zeit" : "Einstellungen"))
         w.identifier = NSUserInterfaceItemIdentifier(id)
         w.isReleasedWhenClosed = false
         w.setContentSize(controller.view.fittingSize)

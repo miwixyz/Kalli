@@ -28,6 +28,7 @@ final class Preferences {
         static let fullScreenLead = "fullScreenLeadMinutes"
         static let fullScreenScreens = "fullScreenScreens"
         static let fullScreenSound = "fullScreenSound"
+        static let zeitSound = "zeitSound"
         static let appearance = "appearanceMode"
         static let weekdayHighlights = "weekdayHighlights"
         static let collapsedGroups = "collapsedAgendaGroups"
@@ -241,6 +242,11 @@ final class Preferences {
         didSet { defaults.set(fullScreenScreens.rawValue, forKey: Key.fullScreenScreens) }
     }
 
+    /// Ton beim Starten und Stoppen der Zeiterfassung per Knopf (0.21.0). Ab Werk aus.
+    var zeitSound: Bool {
+        didSet { defaults.set(zeitSound, forKey: Key.zeitSound) }
+    }
+
     /// „Ton zum Hinweis" (App-Familie, 2026-11-26): Kallis Ton (Blatt-Schnippen, 0,24 s), wenn
     /// der Vollbild-Hinweis erscheint. Ab Werk aus: Ein Ton ist eine Änderung, die man bemerkt.
     var fullScreenSound: Bool {
@@ -302,6 +308,7 @@ final class Preferences {
             rawValue: defaults.object(forKey: Key.fullScreenScreens) as? Int ?? 0
         ) ?? .all
         fullScreenSound = defaults.object(forKey: Key.fullScreenSound) as? Bool ?? false
+        zeitSound = defaults.object(forKey: Key.zeitSound) as? Bool ?? false
         appearanceMode = AppearanceMode(
             rawValue: defaults.object(forKey: Key.appearance) as? Int ?? 0
         ) ?? .system

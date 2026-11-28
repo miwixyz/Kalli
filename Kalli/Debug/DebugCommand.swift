@@ -23,7 +23,9 @@ struct DebugCommand: Equatable, Sendable {
     static let tasksWindow = "aufgaben"
     /// Fenster, von denen ein Bild erlaubt ist. Kalender, Agenda und „die eine Sache“ zeigen im echten Kalli echte
     /// Inhalte und fehlen bewusst.
-    static let snapshotWindows: Set<String> = [settingsWindow, helpWindow, tasksWindow]
+    /// Reiter „Zeit“ mit Beispieldaten in einer Wegwerf-Datei (`ZeitErfassung.demo`) – nie mit den echten Zeiten.
+    static let zeitWindow = "zeit"
+    static let snapshotWindows: Set<String> = [settingsWindow, helpWindow, tasksWindow, zeitWindow]
     static let appearances: Set<String> = ["light", "dark", "system"]
 
     /// Größte Nachricht (4 Byte Länge + JSON). Größer → Verbindung zu.
