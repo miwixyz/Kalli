@@ -3,6 +3,17 @@
     <channel>
         <title>Kalli</title>
         <item>
+            <title>0.21.1</title>
+            <pubDate>Sat, 28 Nov 2026 13:12:06 +0100</pubDate>
+            <link>https://github.com/miwixyz/Kalli</link>
+            <sparkle:version>138</sparkle:version>
+            <sparkle:shortVersionString>0.21.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description><![CDATA[<meta charset="utf-8"><p>Zwei Fehler der Zeiterfassung aus 0.21.0.</p><h3>Behoben</h3><ul><li><b>Übersicht im Reiter „Zeit“ war leer:</b> Unter „Woche“ und „Monat“ stand nur die Summe, die Projekte und die einzelnen Timer mit Kommentar fehlten. Die Liste fiel auf Höhe 0 zusammen. Jetzt steht sie da, nach Projekt gruppiert, und ein Klick auf einen Timer öffnet ihn zum Ändern.</li><li><b>Projekt anklicken:</b> Ein Klick auf die Projektzeile startet und stoppt jetzt den Timer, nicht nur der Abspielknopf.</li></ul>]]></description>
+            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.21.1/Kalli-0.21.1.zip" length="4673936" type="application/octet-stream" sparkle:edSignature="i+fBB/2BMII2nen03Q8h3w8zLGHpeu7/I9BnYOITspUNkuTZ4d7uuNzhCEF13VYySHZKanKwtO22kjWROjN4DA=="/>
+        </item>
+        <item>
             <title>0.21.0</title>
             <pubDate>Sat, 28 Nov 2026 12:57:20 +0100</pubDate>
             <link>https://github.com/miwixyz/Kalli</link>
@@ -23,17 +34,6 @@
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <description><![CDATA[<meta charset="utf-8"><p>Kalli bekommt die Glas-Sprache der App-Familie (wie Knippi 0.7.0).</p><h3>Geändert</h3><ul><li><b>Neuer Popover-Hintergrund:</b> ein ruhig lebender Verlauf mit leichtem Glühen im Kalli-Indigo statt getöntem Glas. Er ist deckend, ein buntes Schreibtischbild färbt das Popover nicht mehr ein. Bei „Bewegung reduzieren“ steht er still. Bei „Transparenz reduzieren“ und „Kontrast erhöhen“ ist er ein fester Verlauf.</li><li><b>Schwebende Glas-Inseln:</b> Kopfzeile (Monat, Zurück/Heute/Weiter) und Fußleiste (Zahnrad, Hell/Dunkel, Updates, Beenden) liegen je in einer Glaskapsel. Die Reiter der Einstellungen sind ebenfalls eine Glaskapsel.</li><li><b>Leuchtende Akzent-Pille:</b> Der gewählte Reiter und der heutige Tag im Monatsraster tragen dieselbe Pille im Akzent, mit weißer Schrift.</li><li><b>Feste Karten:</b> Monatsraster, Tagesliste und die Gruppen der Einstellungen liegen auf Karten mit feinem Rand und weichem Schatten.</li></ul>]]></description>
             <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.20.0/Kalli-0.20.0.zip" length="4511956" type="application/octet-stream" sparkle:edSignature="wk3Z2SD176TXOSOyUlyO5GAOfRAPjCPEwz5DDksQUrunk+7LcfUlXzu1oQNursN5elcrgwv3lhsAssFwfFVVCQ=="/>
-        </item>
-        <item>
-            <title>0.19.0</title>
-            <pubDate>Fri, 27 Nov 2026 10:09:10 +0100</pubDate>
-            <link>https://github.com/miwixyz/Kalli</link>
-            <sparkle:version>131</sparkle:version>
-            <sparkle:shortVersionString>0.19.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <description><![CDATA[<meta charset="utf-8"><p>Ein Klick aufs Tagesblatt-Widget öffnet Apple Kalender am heutigen Tag, dazu ein Ton zum Vollbild-Hinweis und das neue App-Symbol der App-Familie.</p><h3>Behoben</h3><ul><li><b>Klick aufs Tagesblatt-Widget tat nichts:</b> Er öffnet jetzt Apple Kalender in der Tagesansicht von heute. Beim ersten Klick fragt macOS, ob Kalli Kalender steuern darf. Springt Kalender nicht auf heute: Systemeinstellungen → Datenschutz &amp; Sicherheit → Automation → Kalli → Kalender einschalten. Kalli liest oder ändert dabei nichts in Kalender.</li></ul><h3>Neu</h3><ul><li><b>Ton zum Hinweis (ab Werk aus):</b> Einstellungen → Menüleiste → Vollbild-Hinweis → „Ton zum Hinweis“. Kallis kurzer Ton aus der App-Familie (Blatt-Schnippen mit Ton, 0,24 s), sobald der Vollbild-Hinweis erscheint, auch beim „Zum Beginn nochmal“. Die Systemmitteilung behält ihren eigenen Ton.</li></ul><h3>Geändert</h3><ul><li><b>Neues App-Symbol:</b> das Kalli-Maskottchen der App-Familie statt des Glas-Symbols, in derselben Geometrie wie Tippi, TippAI und Seam (Squircle 1000 × 1000 im 1024er-Feld, transparente Ecken). Das Menüleisten-Symbol bleibt: Es trägt die Tageszahl und ist damit Information, kein festes Symbol.</li></ul>]]></description>
-            <enclosure url="https://github.com/miwixyz/Kalli/releases/download/v0.19.0/Kalli-0.19.0.zip" length="4483948" type="application/octet-stream" sparkle:edSignature="MW0IzGCftxYGDjZBbqFR3dDns4wVP9A04EZbesmyqFxOnPXl1TiVXZYXBMq46QpWgPdj262AI6QErBB9JVkJAg=="/>
         </item>
     </channel>
 </rss>
