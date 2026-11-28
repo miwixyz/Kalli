@@ -2,6 +2,18 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.21.1] — 2026-11-28
+
+Zwei Fehler der Zeiterfassung aus 0.21.0.
+
+### Behoben
+
+- **Übersicht im Reiter „Zeit“ war leer:** Unter „Woche“ und „Monat“ stand nur die Summe, die Projekte und die
+  einzelnen Timer mit Kommentar fehlten. Die Liste fiel auf Höhe 0 zusammen. Jetzt steht sie da, nach Projekt
+  gruppiert, und ein Klick auf einen Timer öffnet ihn zum Ändern.
+- **Projekt anklicken:** Ein Klick auf die Projektzeile startet und stoppt jetzt den Timer, nicht nur der
+  Abspielknopf.
+
 ## [0.21.0] — 2026-11-28
 
 Zeiterfassung aus MacStd, damit eine App genügt.

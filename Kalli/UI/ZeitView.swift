@@ -156,6 +156,8 @@ struct ZeitView: View {
             .help(active ? "Stoppen und buchen" : "Erfassung starten")
             .accessibilityLabel(Text(active ? "\(project.name) stoppen" : "\(project.name) starten"))
         }
+        .contentShape(Rectangle())
+        .onTapGesture { if renaming != project.id { zeit.toggle(projectID: project.id) } }
         .contextMenu {
             Button("Umbenennen") { renameText = project.name; renaming = project.id; renameFocus = true }
             Button("Löschen (mit allen Einträgen) …", role: .destructive) { pendingDelete = project }
@@ -196,7 +198,10 @@ struct ZeitView: View {
                         }
                     }
                 }
-                .frame(maxHeight: 260 * prefs.layoutScale)
+                // minHeight ist der Punkt: eine ScrollView hat keine eigene Höhe und fällt im VStack sonst auf 0 zusammen
+                // (0.21.0: Liste unsichtbar, nur „Summe“ stand da).
+                .frame(minHeight: min(listHeight(totals: totals.count, entries: entries), 260 * prefs.layoutScale),
+                       maxHeight: 260 * prefs.layoutScale)
                 HStack {
                     Text("Summe").font(font(Theme.Size.itemTime, .semibold)).foregroundStyle(.secondary)
                     Spacer()
@@ -207,6 +212,12 @@ struct ZeitView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .familyContentCard()
+    }
+
+    /// Geschätzte Höhe der Liste (Projektzeile 22, Timerzeile 22, Kommentarzeile 14 je Kommentar, Abstände 10).
+    private func listHeight(totals: Int, entries: [ZeitEintrag]) -> CGFloat {
+        let notes = entries.filter { !$0.note.isEmpty }.count
+        return (CGFloat(totals) * 32 + CGFloat(entries.count) * 22 + CGFloat(notes) * 14) * prefs.layoutScale
     }
 
     private func stepButton(_ symbol: String, _ label: String, action: @escaping () -> Void) -> some View {

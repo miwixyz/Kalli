@@ -175,7 +175,7 @@ Im Popover oben zwischen **Kalender** und **Zeit** umschalten.
 
 - **Projekt anlegen:** im Reiter Zeit unten bei „Neues Projekt“ den Namen tippen, Return. Rechtsklick auf ein
   Projekt: Umbenennen oder Löschen (löscht auch seine Einträge).
-- **Starten und Stoppen:** Abspielknopf beim Projekt. Läuft schon eine Erfassung, bucht der Klick auf ein anderes
+- **Starten und Stoppen:** Abspielknopf beim Projekt oder ein Klick auf die Projektzeile. Läuft schon eine Erfassung, bucht der Klick auf ein anderes
   Projekt die alte und startet die neue. **Pause** und **Weiter** halten die Zeit an; **Stoppen & buchen** legt
   den Eintrag an.
 - **In der Menüleiste:** Läuft die Erfassung, zeigt das Symbol ein Abspielzeichen statt der Tageszahl und davor
