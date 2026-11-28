@@ -2,6 +2,16 @@
 
 Alle nennenswerten Änderungen an Kalli.
 
+## [0.21.2] — 2026-11-28
+
+Neues Menüleistensymbol.
+
+### Geändert
+
+- **Menüleiste:** Kallis Symbol ist jetzt ein Kalenderblatt mit zwei Ringen, die Tageszahl steht im Blatt. Bisher
+  hatte Kalli dieselbe Kopfform mit Ohren wie die anderen Apps der Familie, nebeneinander waren sie kaum zu
+  unterscheiden. Läuft eine Zeiterfassung, steht im Blatt das Abspielzeichen, bei Pause zwei Striche.
+
 ## [0.21.1] — 2026-11-28
 
 Zwei Fehler der Zeiterfassung aus 0.21.0.

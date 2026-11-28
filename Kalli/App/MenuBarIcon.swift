@@ -1,13 +1,14 @@
 import AppKit
 
-/// Zeichnet Kallis Menüleisten-Symbol: die Kopf-Silhouette mit der heutigen
+/// Zeichnet Kallis Menüleisten-Symbol: ein Kalenderblatt mit der heutigen
 /// Tageszahl darin.
 ///
-/// **Warum diese Form:** Tippi verwendet in der Leiste nicht sein Maskottchen,
-/// sondern dessen *Kontur* — runder Kopf, zwei Ohren, innen das Visier. Kalli
-/// übernimmt genau diese Kopfform, damit die beiden Apps nebeneinander als
-/// Familie lesbar sind, und setzt an die Stelle des Visiers die Tageszahl.
-/// Damit ist das Symbol zugleich Marke und Information.
+/// **Warum diese Form (Richtung C, 28.11.2026):** Die Menüleistensymbole der
+/// App-Familie waren mit gemeinsamer Kopf-Silhouette kaum unterscheidbar. Jede
+/// App bekommt deshalb eine eigene Silhouette; Kallis ist das Kalenderblatt mit
+/// zwei Ringen. Vorlage: `07 Anhänge/Brand-Characters/familie/menueleiste/kalli*.svg`
+/// im Vault. Statt der drei Punkte der Vorlage steht im Blatt die Tageszahl —
+/// das Symbol ist zugleich Marke und Information.
 ///
 /// Ein detailliertes Maskottchen wäre hier falsch: Bei 16–20 Punkt Kantenlänge
 /// und einfarbiger Darstellung zerfällt jedes Rendering zu einem grauen Fleck.
@@ -34,56 +35,55 @@ enum MenuBarIcon {
         let side: CGFloat = 18
         let size = NSSize(width: side, height: side)
 
-        let image = NSImage(size: size, flipped: false) { rect in
+        // Koordinaten wie in der SVG-Vorlage (18 × 18, y nach unten); `flipped: true` übernimmt sie 1:1.
+        let image = NSImage(size: size, flipped: true) { _ in
             NSColor.black.setFill()
             NSColor.black.setStroke()
 
-            let line: CGFloat = 1.5
-            // Der Kopf sitzt etwas tiefer, damit die Ohren oben Platz haben.
-            let head = NSRect(
-                x: rect.minX + line / 2 + 0.6,
-                y: rect.minY + line / 2,
-                width: rect.width - line - 1.2,
-                height: rect.height - line - 2.2
-            )
+            // Blatt als Kontur.
+            let sheet = NSBezierPath(roundedRect: NSRect(x: 2, y: 4.4, width: 14, height: 12.2),
+                                     xRadius: 3, yRadius: 3)
+            sheet.lineWidth = 1.5
+            sheet.stroke()
 
-            // Ohren zuerst, damit der Kopf sie sauber überdeckt.
-            let earR = head.width * 0.21
-            for cx in [head.minX + head.width * 0.235, head.maxX - head.width * 0.235] {
-                let ear = NSBezierPath(ovalIn: NSRect(
-                    x: cx - earR, y: head.maxY - earR * 0.75,
-                    width: earR * 2, height: earR * 2
-                ))
-                ear.fill()
+            // Kopfzeile.
+            let header = NSBezierPath()
+            header.move(to: NSPoint(x: 2, y: 8.8))
+            header.line(to: NSPoint(x: 16, y: 8.8))
+            header.lineWidth = 1.5
+            header.stroke()
+
+            // Zwei Ringe oben.
+            for x in [5.8, 12.2] {
+                let ring = NSBezierPath()
+                ring.move(to: NSPoint(x: x, y: 2.2))
+                ring.line(to: NSPoint(x: x, y: 5.6))
+                ring.lineWidth = 2.2
+                ring.lineCapStyle = .round
+                ring.stroke()
             }
-
-            // Kopf als Kontur — wie bei Tippi, nicht als Fläche.
-            let skull = NSBezierPath(roundedRect: head,
-                                     xRadius: head.width * 0.42,
-                                     yRadius: head.height * 0.42)
-            skull.lineWidth = line
-            skull.stroke()
 
             switch face {
             case .day(let day):
-                drawDay(day, in: head)
+                drawDay(day)
             case .running:
-                // Abspielzeichen: ausgefülltes Dreieck, optisch leicht nach rechts gerückt.
-                let h = head.height * 0.36
-                let w = h * 0.86
-                let x = head.midX - w / 2 + 0.5
                 let tri = NSBezierPath()
-                tri.move(to: NSPoint(x: x, y: head.midY - h / 2 - 0.3))
-                tri.line(to: NSPoint(x: x, y: head.midY + h / 2 - 0.3))
-                tri.line(to: NSPoint(x: x + w, y: head.midY - 0.3))
+                tri.move(to: NSPoint(x: 7.7, y: 10.7))
+                tri.line(to: NSPoint(x: 7.7, y: 14.7))
+                tri.line(to: NSPoint(x: 11.2, y: 12.7))
                 tri.close()
+                tri.lineWidth = 0.7
+                tri.lineJoinStyle = .round
                 tri.fill()
+                tri.stroke()
             case .paused:
-                let h = head.height * 0.36
-                let barW: CGFloat = 1.8
-                for dx in [-2.0, 2.0] {
-                    NSBezierPath(roundedRect: NSRect(x: head.midX + dx - barW / 2, y: head.midY - h / 2 - 0.3,
-                                                     width: barW, height: h), xRadius: 0.6, yRadius: 0.6).fill()
+                for x in [7.5, 10.5] {
+                    let bar = NSBezierPath()
+                    bar.move(to: NSPoint(x: x, y: 10.7))
+                    bar.line(to: NSPoint(x: x, y: 14.7))
+                    bar.lineWidth = 1.5
+                    bar.lineCapStyle = .round
+                    bar.stroke()
                 }
             }
             return true
@@ -93,17 +93,17 @@ enum MenuBarIcon {
         return image
     }
 
-    private static func drawDay(_ day: Int, in head: NSRect) {
+    /// Tageszahl in den Rumpf unter der Kopfzeile, optisch an der Versalhöhe zentriert.
+    private static func drawDay(_ day: Int) {
         let text = "\(day)"
-        let fontSize: CGFloat = text.count > 1 ? 8.0 : 9.0
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: fontSize, weight: .bold),
-            .foregroundColor: NSColor.black,
-        ]
-        let measured = text.size(withAttributes: attributes)
-        text.draw(
-            at: NSPoint(x: head.midX - measured.width / 2, y: head.midY - measured.height / 2 - 0.3),
-            withAttributes: attributes
-        )
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 7.0, weight: .bold)
+        let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.black]
+        let width = text.size(withAttributes: attributes).width
+        // Innenraum des Rumpfs: y 9.55 … 15.85 (Striche abgezogen). Mitte 12.5 statt rechnerisch 12.7: gemessen
+        // am gerenderten Bild (2x) sitzt die Ziffer sonst 0,15 pt zu tief.
+        let centerY: CGFloat = 12.5
+        let baseline = centerY + font.capHeight / 2
+        // `draw(at:)` setzt den oberen Rand der Zeile; im gespiegelten Kontext liegt die Grundlinie bei y + ascender.
+        text.draw(at: NSPoint(x: 9 - width / 2, y: baseline - font.ascender), withAttributes: attributes)
     }
 }

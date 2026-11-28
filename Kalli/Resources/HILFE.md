@@ -4,14 +4,13 @@ Kalli zeigt deinen Kalender im Menübalken. Bestehende Termine werden nur gelese
 
 ## Menüleiste
 
-**Kallis Symbol** — die Kopf-Silhouette mit der heutigen Tageszahl darin — ist
+**Kallis Symbol** — ein Kalenderblatt mit der heutigen Tageszahl darin — ist
 ab Werk sichtbar und unter Einstellungen → Menüleiste abschaltbar.
 
-Die Form ist bewusst die gleiche wie bei Tippi: runder Kopf, zwei Ohren. So sind
-die beiden Apps nebeneinander in der Leiste als Familie erkennbar. An die Stelle
-von Tippis Visier tritt bei Kalli die Tageszahl — das Symbol ist damit zugleich
-Marke und Information. Dass die Ohren dabei auch wie Kalenderringe wirken, ist
-ein willkommener Zufall. Daneben lassen sich
+Jede App der Familie hat in der Leiste ihre eigene Form, damit sie nebeneinander
+gut zu unterscheiden sind. Kallis Form ist das Kalenderblatt mit zwei Ringen.
+Läuft eine Zeiterfassung, steht im Blatt das Abspielzeichen statt der Tageszahl,
+bei Pause zwei Striche. Das Symbol ist damit zugleich Marke und Information. Daneben lassen sich
 einblenden:
 
 - **Datum als Text** — Format frei wählbar (`EEE d. MMM` → Mo 21. Sep)
